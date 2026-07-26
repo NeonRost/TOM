@@ -78,7 +78,7 @@ struct TOMApp: App {
         let storedKeyId = defaults.string(forKey: SettingsKeys.selectedKey) ?? SimulatedKey.default.id
         let selectedKey = SimulatedKey.all.first(where: { $0.id == storedKeyId }) ?? .default
         let storedInterval = defaults.double(forKey: SettingsKeys.intervalSeconds)
-        let interval = storedInterval == 0 ? 30 : storedInterval
+        let interval = storedInterval == 0 ? 1 : storedInterval
 
         _keepAwake = StateObject(wrappedValue: KeepAwakeManager(initiallyEnabled: keepAwakeEnabled))
         _keySimulator = StateObject(wrappedValue: KeyPressSimulator(

@@ -3,7 +3,7 @@
 Kleines macOS-Dienstprogramm mit Fenster und optionalem Menüleisten-Symbol. Zwei unabhängige Funktionen:
 
 - **Computer wachhalten** – verhindert per IOKit Power Assertion, dass Bildschirm und System einschlafen. Keine Sonderrechte nötig.
-- **Tastendruck simulieren** – sendet in wählbarer Frequenz (5–600 Sekunden) einen echten Tastendruck per `CGEvent`. Die Taste ist frei wählbar: Buchstaben, Zahlen, Pfeiltasten, Sondertasten (Leertaste, Enter, Strg, …) und die Funktionstasten F13–F19. Praktisch, um z. B. in Spielen als aktiv zu gelten.
+- **Tastendruck simulieren** – sendet in wählbarer Frequenz (1–600 Sekunden) einen echten Tastendruck per `CGEvent`. Die Taste ist frei wählbar: Buchstaben, Zahlen, Pfeiltasten, Sondertasten (Leertaste, Enter, Strg, …) und die Funktionstasten F13–F19. Praktisch, um z. B. in Spielen als aktiv zu gelten.
 
 Beide Funktionen laufen unabhängig voneinander; Einstellungen bleiben über Neustarts erhalten.
 

@@ -30,7 +30,7 @@ final class KeyPressSimulator: ObservableObject {
     }
     @Published var intervalSeconds: Double {
         didSet {
-            let clamped = min(max(intervalSeconds, 5), 600)
+            let clamped = min(max(intervalSeconds, 1), 600)
             if clamped != intervalSeconds {
                 intervalSeconds = clamped
                 return

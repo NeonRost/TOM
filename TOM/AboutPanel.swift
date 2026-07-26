@@ -28,6 +28,9 @@ enum AboutPanel {
         NSApp.activate(ignoringOtherApps: true)
         NSApp.orderFrontStandardAboutPanel(options: [
             .applicationName: "TOM – Tuco on Meth",
+            // Leerer String unterdrückt die eingeklammerte Build-Nummer ("(1)"),
+            // es bleibt "Version <CFBundleShortVersionString>".
+            .version: "",
             .credits: credits
         ])
     }

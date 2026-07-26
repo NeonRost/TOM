@@ -66,7 +66,7 @@ struct ContentView: View {
                             .frame(width: 46)
                             .multilineTextAlignment(.trailing)
                             .textFieldStyle(.roundedBorder)
-                        Stepper("Sekunden", value: $keySimulator.intervalSeconds, in: 5...600, step: 5)
+                        Stepper("Sekunden", value: $keySimulator.intervalSeconds, in: 1...600, step: 1)
                     }
 
                     Toggle("Tastendruck aktiv", isOn: $keySimulator.isEnabled)
