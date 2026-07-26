@@ -1,0 +1,21 @@
+# Xcode
+xcuserdata/
+*.xcuserdatad/
+DerivedData/
+build/
+.build/
+.build-release/
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+timeline.xctimeline
+playground.xcworkspace
+
+# Build-Artefakte
+TOM.app/
+TOM.zip
+*.dSYM.zip
+*.dSYM
+
+# macOS
+.DS_Store

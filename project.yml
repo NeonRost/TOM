@@ -1,0 +1,31 @@
+name: TOM
+options:
+  bundleIdPrefix: com.neonrost
+  deploymentTarget:
+    macOS: "13.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    GENERATE_INFOPLIST_FILE: NO
+    COMBINE_HIDPI_IMAGES: YES
+    ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: NO
+targets:
+  TOM:
+    type: application
+    platform: macOS
+    deploymentTarget: "13.0"
+    sources:
+      - path: TOM
+        excludes:
+          - "Info.plist"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.neonrost.TOM
+        PRODUCT_NAME: TOM
+        INFOPLIST_FILE: TOM/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    dependencies:
+      - sdk: IOKit.framework

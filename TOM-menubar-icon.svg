@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" width="100" height="120" role="img" aria-label="Tuetchen mit blauem Inhalt">
+  <!-- Zip-Lasche oben -->
+  <rect x="23" y="15" width="11" height="9" rx="2.5" fill="#cdd8e0" stroke="#7c8b98" stroke-width="2"/>
+  <rect x="66" y="15" width="11" height="9" rx="2.5" fill="#cdd8e0" stroke="#7c8b98" stroke-width="2"/>
+  <path d="M25 21 h50 a4 4 0 0 1 4 4 v6 h-58 v-6 a4 4 0 0 1 4 -4 z" fill="#d4dee6" stroke="#7c8b98" stroke-width="2"/>
+  <!-- Tuetchen-Koerper (leicht transparentes Plastik) -->
+  <path d="M21 31 h58 v64 a9 9 0 0 1 -9 9 h-40 a9 9 0 0 1 -9 -9 z" fill="#e2eef8" fill-opacity="0.55" stroke="#7c8b98" stroke-width="2"/>
+  <!-- Zip-Naht -->
+  <line x1="24" y1="36" x2="76" y2="36" stroke="#7c8b98" stroke-width="1.5" stroke-dasharray="3 2.5"/>
+  <!-- Blaue Kristalle -->
+  <polygon points="31,94 37,70 45,67 39,95" fill="#1b5da6"/>
+  <polygon points="39,95 45,67 53,73 48,97" fill="#2e7fd4"/>
+  <polygon points="45,67 51,47 58,52 53,73" fill="#5aa6ee"/>
+  <polygon points="53,73 58,52 64,60 61,80 55,96" fill="#1b5da6"/>
+  <polygon points="61,80 64,60 70,66 66,90" fill="#2e7fd4"/>
+  <polygon points="51,47 55,49 52,64 49,61" fill="#aad4f7"/>
+  <polygon points="58,52 61,55 59,70 56,66" fill="#7cbdf2"/>
+</svg>
