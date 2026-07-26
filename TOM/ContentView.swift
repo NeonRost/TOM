@@ -116,11 +116,7 @@ struct ContentView: View {
 
     private var settingsForm: some View {
         Form {
-            Section {
-                Toggle("Computer wachhalten", isOn: $keepAwake.isEnabled)
-                    .toggleStyle(.switch)
-            }
-
+            keepAwakeSection
             keyPressSection
             mouseMoveSection
             mouseClickSection
@@ -145,6 +141,17 @@ struct ContentView: View {
     }
 
     // MARK: - Abschnitte
+
+    private var keepAwakeSection: some View {
+        Section {
+            Toggle("Computer wachhalten", isOn: $keepAwake.isEnabled)
+                .toggleStyle(.switch)
+        } footer: {
+            Text("Verhindert, dass Bildschirm und System bei Inaktivität in den Ruhezustand gehen. Für reines Wachhalten genügt dieser Schalter.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
 
     private var keyPressSection: some View {
         Section("Tastendruck simulieren") {
@@ -256,7 +263,7 @@ struct ContentView: View {
     // Eine gruppierte Form meldet keine Eigenhöhe; die Fensterhöhe wird deshalb
     // aus dem sichtbaren Inhalt berechnet.
     private var contentHeight: CGFloat {
-        var height: CGFloat = 706
+        var height: CGFloat = 748
         if keySimulator.accessibilityDenied { height += 72 }
         if mouseMove.accessibilityDenied { height += 72 }
         if mouseClick.accessibilityDenied { height += 72 }
