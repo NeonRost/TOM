@@ -23,15 +23,17 @@ struct ContentView: View {
     @AppStorage(SettingsKeys.showMenuBarIcon) private var showMenuBarIcon = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            GroupBox {
-                Toggle("Computer wachhalten", isOn: $keepAwake.isEnabled)
-                    .toggleStyle(.switch)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
+        VStack(spacing: 0) {
+            Form {
+                Section {
+                    Toggle("Computer wachhalten", isOn: $keepAwake.isEnabled)
+                        .toggleStyle(.switch)
+                }
 
-            GroupBox("Tastendruck simulieren") {
-                VStack(alignment: .leading, spacing: 10) {
+                Section("Tastendruck simulieren") {
+                    Toggle("Tastendruck aktiv", isOn: $keySimulator.isEnabled)
+                        .toggleStyle(.switch)
+
                     Picker("Taste", selection: $keySimulator.selectedKey) {
                         Section("Buchstaben") {
                             ForEach(SimulatedKey.letters) { key in
@@ -59,18 +61,20 @@ struct ContentView: View {
                             }
                         }
                     }
+                    .disabled(!keySimulator.isEnabled)
 
-                    HStack {
-                        Text("Alle")
-                        TextField("", value: $keySimulator.intervalSeconds, format: .number)
-                            .frame(width: 46)
-                            .multilineTextAlignment(.trailing)
-                            .textFieldStyle(.roundedBorder)
-                        Stepper("Sekunden", value: $keySimulator.intervalSeconds, in: 1...600, step: 1)
+                    LabeledContent("Intervall") {
+                        HStack(spacing: 6) {
+                            TextField("", value: $keySimulator.intervalSeconds, format: .number)
+                                .frame(width: 50)
+                                .multilineTextAlignment(.trailing)
+                                .textFieldStyle(.roundedBorder)
+                            Stepper("Intervall", value: $keySimulator.intervalSeconds, in: 1...600, step: 1)
+                                .labelsHidden()
+                            Text("Sekunden")
+                        }
                     }
-
-                    Toggle("Tastendruck aktiv", isOn: $keySimulator.isEnabled)
-                        .toggleStyle(.switch)
+                    .disabled(!keySimulator.isEnabled)
 
                     if keySimulator.accessibilityDenied {
                         VStack(alignment: .leading, spacing: 4) {
@@ -84,12 +88,13 @@ struct ContentView: View {
                         }
                     }
                 }
+
+                Section {
+                    Toggle("TOM in der Menüleiste anzeigen", isOn: $showMenuBarIcon)
+                        .toggleStyle(.switch)
+                }
             }
-
-            Toggle("TOM in der Menüleiste anzeigen", isOn: $showMenuBarIcon)
-                .toggleStyle(.switch)
-
-            Divider()
+            .formStyle(.grouped)
 
             HStack {
                 Spacer()
@@ -97,9 +102,12 @@ struct ContentView: View {
                     NSApplication.shared.terminate(nil)
                 }
             }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 14)
         }
-        .padding(16)
-        .frame(width: 280)
+        // Feste Höhe, weil eine gruppierte Form keine Eigenhöhe meldet; mit
+        // sichtbarem Berechtigungshinweis braucht der mittlere Abschnitt mehr Platz.
+        .frame(width: 380, height: keySimulator.accessibilityDenied ? 414 : 342)
         .onChange(of: keepAwake.isEnabled) { newValue in
             UserDefaults.standard.set(newValue, forKey: SettingsKeys.keepAwakeEnabled)
         }

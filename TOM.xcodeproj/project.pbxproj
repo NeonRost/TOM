@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		45CE25C7F894BAEF76F02407 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 7682C88C6015E0AAD5D4A427 /* LICENSE */; };
 		608D071D5BB89B2EA438A483 /* SimulatedKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AD62F392BECF028E23F72B7 /* SimulatedKey.swift */; };
 		60F276EFF0C28917DCE66EF4 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 876169FF271D88EF87CDBF06 /* IOKit.framework */; };
 		6AF41367EEA802CC8CDEDA51 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 956130B73839F3B86085C047 /* Assets.xcassets */; };
@@ -20,6 +21,7 @@
 /* Begin PBXFileReference section */
 		0853DED1148392513B29493F /* KeepAwakeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeepAwakeManager.swift; sourceTree = "<group>"; };
 		0C4A4B0365F1C26B15C4F2CD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		7682C88C6015E0AAD5D4A427 /* LICENSE */ = {isa = PBXFileReference; path = LICENSE; sourceTree = "<group>"; };
 		7AD62F392BECF028E23F72B7 /* SimulatedKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatedKey.swift; sourceTree = "<group>"; };
 		876169FF271D88EF87CDBF06 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		956130B73839F3B86085C047 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -60,6 +62,7 @@
 		3ECFE9686B3C3794F9B05512 = {
 			isa = PBXGroup;
 			children = (
+				7682C88C6015E0AAD5D4A427 /* LICENSE */,
 				71AF84146B81000D33FD2A6D /* TOM */,
 				23C47B21995A530EB2E76203 /* Frameworks */,
 				39C0B100CCF4E6842FBC0DE1 /* Products */,
@@ -138,6 +141,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6AF41367EEA802CC8CDEDA51 /* Assets.xcassets in Resources */,
+				45CE25C7F894BAEF76F02407 /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

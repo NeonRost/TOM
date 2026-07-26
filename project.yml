@@ -21,6 +21,8 @@ targets:
       - path: TOM
         excludes:
           - "Info.plist"
+      - path: LICENSE
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.neonrost.TOM

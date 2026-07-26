@@ -50,6 +50,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
+// Eigene View, weil openWindow nur über die View-Environment verfügbar ist,
+// nicht direkt im Commands-Kontext.
+private struct AboutCommand: View {
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some View {
+        Button("Über TOM") {
+            openWindow(id: "about")
+        }
+    }
+}
+
 private struct MainWindowContent: View {
     @ObservedObject var keepAwake: KeepAwakeManager
     @ObservedObject var keySimulator: KeyPressSimulator
@@ -95,10 +107,17 @@ struct TOMApp: App {
         .windowResizability(.contentSize)
         .commands {
             CommandGroup(replacing: .appInfo) {
-                Button("Über TOM") {
-                    AboutPanel.show()
-                }
+                AboutCommand()
             }
+        }
+
+        Window("Über TOM", id: "about") {
+            AboutView()
+        }
+        .windowResizability(.contentSize)
+
+        Window("GNU General Public License v3", id: "license") {
+            LicenseView()
         }
 
         MenuBarExtra(isInserted: $showMenuBarIcon) {
