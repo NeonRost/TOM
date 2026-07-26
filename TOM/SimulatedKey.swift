@@ -119,6 +119,12 @@ struct SimulatedKey: Identifiable, Hashable {
         SimulatedKey(keyCode: 0x50, fixedLabel: "F19")
     ]
 
+    // Fuer die Auswahlliste alphabetisch nach der Beschriftung im aktiven
+    // Layout – auf QWERTZ steht damit Z an der richtigen Stelle.
+    static var letters: [SimulatedKey] {
+        letterRows.flatMap { $0 }.sorted { $0.displayName < $1.displayName }
+    }
+
     static let others: [SimulatedKey] = numbers + arrows + special + functionKeys
 
     static let all: [SimulatedKey] = letterRows.flatMap { $0 } + others

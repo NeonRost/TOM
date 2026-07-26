@@ -39,8 +39,12 @@ final class KeyPressSimulator: ObservableObject {
         }
     }
     @Published private(set) var accessibilityDenied = false
+    @Published private(set) var countdownRemaining = 0
+
+    static let startDelaySeconds = 5
 
     private var timer: Timer?
+    private var countdownTimer: Timer?
 
     init(initiallyEnabled: Bool, selectedKey: SimulatedKey, intervalSeconds: Double) {
         self.isEnabled = false
@@ -60,10 +64,28 @@ final class KeyPressSimulator: ObservableObject {
             return
         }
         accessibilityDenied = false
-        scheduleTimer()
+        beginCountdown()
+    }
+
+    // Startverzoegerung, damit das Zielfenster in Ruhe nach vorne geholt
+    // werden kann, bevor der erste Tastendruck kommt.
+    private func beginCountdown() {
+        countdownRemaining = Self.startDelaySeconds
+        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            self.countdownRemaining -= 1
+            if self.countdownRemaining <= 0 {
+                self.countdownTimer?.invalidate()
+                self.countdownTimer = nil
+                self.scheduleTimer()
+            }
+        }
     }
 
     private func stop() {
+        countdownTimer?.invalidate()
+        countdownTimer = nil
+        countdownRemaining = 0
         timer?.invalidate()
         timer = nil
     }
@@ -101,5 +123,6 @@ final class KeyPressSimulator: ObservableObject {
 
     deinit {
         timer?.invalidate()
+        countdownTimer?.invalidate()
     }
 }

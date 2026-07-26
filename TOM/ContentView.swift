@@ -17,24 +17,6 @@
 import AppKit
 import SwiftUI
 
-private struct KeyButton: View {
-    let key: SimulatedKey
-    let isSelected: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Text(key.displayName)
-                .font(.system(size: 11, weight: .medium))
-                .frame(width: 23, height: 23)
-        }
-        .buttonStyle(.plain)
-        .background(isSelected ? Color.accentColor : Color(nsColor: .quaternaryLabelColor))
-        .foregroundStyle(isSelected ? Color.white : Color.primary)
-        .clipShape(RoundedRectangle(cornerRadius: 5))
-    }
-}
-
 private struct IntervalRow: View {
     @Binding var value: Double
     let range: ClosedRange<Double>
@@ -169,14 +151,15 @@ struct ContentView: View {
             Toggle("Tastendruck aktiv", isOn: $keySimulator.isEnabled)
                 .toggleStyle(.switch)
 
-            keyPad
-                .disabled(!keySimulator.isEnabled)
-
-            otherKeysPicker
-                .disabled(!keySimulator.isEnabled)
+            keyPicker
 
             IntervalRow(value: $keySimulator.intervalSeconds, range: 1...600, step: 1)
-                .disabled(!keySimulator.isEnabled)
+
+            if keySimulator.countdownRemaining > 0 {
+                Text("Tastendruck startet in \(keySimulator.countdownRemaining) s – Zielfenster jetzt nach vorne holen …")
+                    .font(.callout.bold())
+                    .foregroundStyle(.orange)
+            }
 
             if keySimulator.accessibilityDenied {
                 AccessibilityHint { keySimulator.openAccessibilitySettings() }
@@ -190,7 +173,6 @@ struct ContentView: View {
                 .toggleStyle(.switch)
 
             IntervalRow(value: $mouseMove.intervalSeconds, range: 1...600, step: 1)
-                .disabled(!mouseMove.isEnabled)
 
             if mouseMove.accessibilityDenied {
                 AccessibilityHint { keySimulator.openAccessibilitySettings() }
@@ -209,10 +191,8 @@ struct ContentView: View {
                 }
             }
             .pickerStyle(.segmented)
-            .disabled(!mouseClick.isEnabled)
 
             IntervalRow(value: $mouseClick.intervalSeconds, range: 0.1...600, step: 0.1)
-                .disabled(!mouseClick.isEnabled)
 
             if mouseClick.countdownRemaining > 0 {
                 Text("Klick startet in \(mouseClick.countdownRemaining) s – Zeiger jetzt positionieren …")
@@ -241,60 +221,33 @@ struct ContentView: View {
 
     // MARK: - Tastenauswahl
 
-    // Buchstabentasten in drei Reihen mit dem Versatz einer echten Tastatur;
-    // Beschriftung kommt aus dem aktiven Tastaturlayout.
-    private var keyPad: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            ForEach(Array(SimulatedKey.letterRows.enumerated()), id: \.offset) { rowIndex, row in
-                HStack(spacing: 3) {
-                    ForEach(row) { key in
-                        KeyButton(key: key, isSelected: keySimulator.selectedKey == key) {
-                            keySimulator.selectedKey = key
-                        }
-                    }
-                }
-                .padding(.leading, CGFloat(rowIndex) * 13)
-            }
-        }
-        .padding(.vertical, 4)
-    }
-
-    // Bindet die Zusatzliste nur an Nicht-Buchstaben-Tasten; ist eine
-    // Buchstabentaste gewaehlt, zeigt die Liste keine Auswahl ("–").
-    private var otherKeyBinding: Binding<SimulatedKey?> {
-        Binding(
-            get: {
-                SimulatedKey.others.contains(keySimulator.selectedKey) ? keySimulator.selectedKey : nil
-            },
-            set: { newValue in
-                if let newValue {
-                    keySimulator.selectedKey = newValue
+    // Beschriftungen kommen aus dem aktiven Tastaturlayout, gespeichert wird
+    // der Keycode (Tastenposition).
+    private var keyPicker: some View {
+        Picker("Taste", selection: $keySimulator.selectedKey) {
+            Section("Buchstaben") {
+                ForEach(SimulatedKey.letters) { key in
+                    Text(key.displayName).tag(key)
                 }
             }
-        )
-    }
-
-    private var otherKeysPicker: some View {
-        Picker("Weitere Tasten", selection: otherKeyBinding) {
-            Text("–").tag(SimulatedKey?.none)
             Section("Zahlen") {
                 ForEach(SimulatedKey.numbers) { key in
-                    Text(key.displayName).tag(Optional(key))
+                    Text(key.displayName).tag(key)
                 }
             }
             Section("Pfeiltasten") {
                 ForEach(SimulatedKey.arrows) { key in
-                    Text(key.displayName).tag(Optional(key))
+                    Text(key.displayName).tag(key)
                 }
             }
             Section("Sondertasten") {
                 ForEach(SimulatedKey.special) { key in
-                    Text(key.displayName).tag(Optional(key))
+                    Text(key.displayName).tag(key)
                 }
             }
             Section("Funktionstasten") {
                 ForEach(SimulatedKey.functionKeys) { key in
-                    Text(key.displayName).tag(Optional(key))
+                    Text(key.displayName).tag(key)
                 }
             }
         }
@@ -303,10 +256,11 @@ struct ContentView: View {
     // Eine gruppierte Form meldet keine Eigenhöhe; die Fensterhöhe wird deshalb
     // aus dem sichtbaren Inhalt berechnet.
     private var contentHeight: CGFloat {
-        var height: CGFloat = 872
+        var height: CGFloat = 706
         if keySimulator.accessibilityDenied { height += 72 }
         if mouseMove.accessibilityDenied { height += 72 }
         if mouseClick.accessibilityDenied { height += 72 }
+        if keySimulator.countdownRemaining > 0 { height += 40 }
         if mouseClick.countdownRemaining > 0 { height += 40 }
         if anyMouseActive { height += 22 }
         // Nicht hoeher als der sichtbare Bildschirm – dann scrollt die Form,
