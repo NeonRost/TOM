@@ -5,25 +5,114 @@
     </clipPath>
   </defs>
   <!-- Verschlusslasche oben, buendig mit dem Koerper -->
-  <path d="M25 18 h50 a4 4 0 0 1 4 4 v9 h-58 v-9 a4 4 0 0 1 4 -4 z" fill="#d4dee6" stroke="#7c8b98" stroke-width="2"/>
+  <path d="M25 18 h50 a4 4 0 0 1 4 4 v9 h-58 v-9 a4 4 0 0 1 4 -4 z" fill="#d4dee6" stroke="#7c8b98" stroke-width="1.4"/>
   <!-- Tuetchen-Koerper (leicht transparentes Plastik) -->
-  <path d="M21 31 h58 v64 a9 9 0 0 1 -9 9 h-40 a9 9 0 0 1 -9 -9 z" fill="#e2eef8" fill-opacity="0.55" stroke="#7c8b98" stroke-width="2"/>
-  <!-- Blue Meth: fuellt das Tuetchen unten komplett, oben eine unregelmaessige Schuettkante -->
+  <path d="M21 31 h58 v64 a9 9 0 0 1 -9 9 h-40 a9 9 0 0 1 -9 -9 z" fill="#e2eef8" fill-opacity="0.55" stroke="#7c8b98" stroke-width="1.4"/>
+  <!-- Blue Meth: durchgehend kristalline Facetten, oben unregelmaessige Schuettkante -->
+  <g clip-path="url(#bagClip)" stroke="#ffffff" stroke-opacity="0.22" stroke-width="0.35" stroke-linejoin="round">
+    <polygon points="21.0,56.7 27.0,59.7 27.0,67.8" fill="#7abbef"/>
+    <polygon points="21.0,56.7 27.0,67.8 21.0,66.2" fill="#7abbef"/>
+    <polygon points="27.0,59.7 33.3,52.8 27.0,67.8" fill="#3f88cf"/>
+    <polygon points="33.3,52.8 33.2,63.0 27.0,67.8" fill="#559de0"/>
+    <polygon points="33.3,52.8 40.8,60.1 42.1,68.8" fill="#88c5f3"/>
+    <polygon points="33.3,52.8 42.1,68.8 33.2,63.0" fill="#88c5f3"/>
+    <polygon points="40.8,60.1 48.5,56.6 42.1,68.8" fill="#4a93d8"/>
+    <polygon points="48.5,56.6 49.1,65.8 42.1,68.8" fill="#61a7e6"/>
+    <polygon points="48.5,56.6 55.1,61.1 57.1,68.7" fill="#61a7e6"/>
+    <polygon points="48.5,56.6 57.1,68.7 49.1,65.8" fill="#6db1ea"/>
+    <polygon points="55.1,61.1 63.4,52.6 57.1,68.7" fill="#3f88cf"/>
+    <polygon points="63.4,52.6 66.3,60.0 57.1,68.7" fill="#4a93d8"/>
+    <polygon points="63.4,52.6 72.2,60.8 72.8,67.0" fill="#559de0"/>
+    <polygon points="63.4,52.6 72.8,67.0 66.3,60.0" fill="#88c5f3"/>
+    <polygon points="72.2,60.8 79.0,55.8 72.8,67.0" fill="#88c5f3"/>
+    <polygon points="79.0,55.8 79.0,62.8 72.8,67.0" fill="#4a93d8"/>
+    <polygon points="21.0,66.2 27.0,67.8 21.0,75.1" fill="#559de0"/>
+    <polygon points="27.0,67.8 27.0,76.7 21.0,75.1" fill="#4a93d8"/>
+    <polygon points="27.0,67.8 33.2,63.0 34.9,71.1" fill="#6db1ea"/>
+    <polygon points="27.0,67.8 34.9,71.1 27.0,76.7" fill="#61a7e6"/>
+    <polygon points="33.2,63.0 42.1,68.8 34.9,71.1" fill="#3f88cf"/>
+    <polygon points="42.1,68.8 43.4,77.3 34.9,71.1" fill="#559de0"/>
+    <polygon points="42.1,68.8 49.1,65.8 51.6,75.0" fill="#559de0"/>
+    <polygon points="42.1,68.8 51.6,75.0 43.4,77.3" fill="#7abbef"/>
+    <polygon points="49.1,65.8 57.1,68.7 51.6,75.0" fill="#559de0"/>
+    <polygon points="57.1,68.7 58.1,77.3 51.6,75.0" fill="#6db1ea"/>
+    <polygon points="57.1,68.7 66.3,60.0 63.2,70.1" fill="#61a7e6"/>
+    <polygon points="57.1,68.7 63.2,70.1 58.1,77.3" fill="#559de0"/>
+    <polygon points="66.3,60.0 72.8,67.0 63.2,70.1" fill="#88c5f3"/>
+    <polygon points="72.8,67.0 70.0,75.4 63.2,70.1" fill="#6db1ea"/>
+    <polygon points="72.8,67.0 79.0,62.8 79.0,73.2" fill="#4a93d8"/>
+    <polygon points="72.8,67.0 79.0,73.2 70.0,75.4" fill="#3f88cf"/>
+    <polygon points="21.0,75.1 27.0,76.7 28.9,84.4" fill="#88c5f3"/>
+    <polygon points="21.0,75.1 28.9,84.4 21.0,80.4" fill="#7abbef"/>
+    <polygon points="27.0,76.7 34.9,71.1 28.9,84.4" fill="#3f88cf"/>
+    <polygon points="34.9,71.1 36.4,80.7 28.9,84.4" fill="#88c5f3"/>
+    <polygon points="34.9,71.1 43.4,77.3 41.7,82.7" fill="#6db1ea"/>
+    <polygon points="34.9,71.1 41.7,82.7 36.4,80.7" fill="#61a7e6"/>
+    <polygon points="43.4,77.3 51.6,75.0 41.7,82.7" fill="#88c5f3"/>
+    <polygon points="51.6,75.0 52.4,80.0 41.7,82.7" fill="#61a7e6"/>
+    <polygon points="51.6,75.0 58.1,77.3 58.3,82.5" fill="#61a7e6"/>
+    <polygon points="51.6,75.0 58.3,82.5 52.4,80.0" fill="#3f88cf"/>
+    <polygon points="58.1,77.3 63.2,70.1 58.3,82.5" fill="#3f88cf"/>
+    <polygon points="63.2,70.1 63.6,77.5 58.3,82.5" fill="#6db1ea"/>
+    <polygon points="63.2,70.1 70.0,75.4 70.9,83.8" fill="#4a93d8"/>
+    <polygon points="63.2,70.1 70.9,83.8 63.6,77.5" fill="#88c5f3"/>
+    <polygon points="70.0,75.4 79.0,73.2 70.9,83.8" fill="#4a93d8"/>
+    <polygon points="79.0,73.2 79.0,79.3 70.9,83.8" fill="#7abbef"/>
+    <polygon points="21.0,80.4 28.9,84.4 21.0,89.0" fill="#3f88cf"/>
+    <polygon points="28.9,84.4 27.3,89.3 21.0,89.0" fill="#559de0"/>
+    <polygon points="28.9,84.4 36.4,80.7 33.9,88.6" fill="#6db1ea"/>
+    <polygon points="28.9,84.4 33.9,88.6 27.3,89.3" fill="#61a7e6"/>
+    <polygon points="36.4,80.7 41.7,82.7 33.9,88.6" fill="#4a93d8"/>
+    <polygon points="41.7,82.7 45.0,90.8 33.9,88.6" fill="#88c5f3"/>
+    <polygon points="41.7,82.7 52.4,80.0 48.9,89.0" fill="#6db1ea"/>
+    <polygon points="41.7,82.7 48.9,89.0 45.0,90.8" fill="#3f88cf"/>
+    <polygon points="52.4,80.0 58.3,82.5 48.9,89.0" fill="#559de0"/>
+    <polygon points="58.3,82.5 57.1,91.8 48.9,89.0" fill="#88c5f3"/>
+    <polygon points="58.3,82.5 63.6,77.5 63.2,89.3" fill="#88c5f3"/>
+    <polygon points="58.3,82.5 63.2,89.3 57.1,91.8" fill="#3f88cf"/>
+    <polygon points="63.6,77.5 70.9,83.8 63.2,89.3" fill="#4a93d8"/>
+    <polygon points="70.9,83.8 72.9,91.1 63.2,89.3" fill="#4a93d8"/>
+    <polygon points="70.9,83.8 79.0,79.3 79.0,89.7" fill="#3f88cf"/>
+    <polygon points="70.9,83.8 79.0,89.7 72.9,91.1" fill="#3f88cf"/>
+    <polygon points="21.0,89.0 27.3,89.3 30.4,97.5" fill="#4a93d8"/>
+    <polygon points="21.0,89.0 30.4,97.5 21.0,99.4" fill="#61a7e6"/>
+    <polygon points="27.3,89.3 33.9,88.6 30.4,97.5" fill="#4a93d8"/>
+    <polygon points="33.9,88.6 34.2,96.0 30.4,97.5" fill="#6db1ea"/>
+    <polygon points="33.9,88.6 45.0,90.8 44.0,98.0" fill="#3f88cf"/>
+    <polygon points="33.9,88.6 44.0,98.0 34.2,96.0" fill="#61a7e6"/>
+    <polygon points="45.0,90.8 48.9,89.0 44.0,98.0" fill="#88c5f3"/>
+    <polygon points="48.9,89.0 49.8,99.6 44.0,98.0" fill="#559de0"/>
+    <polygon points="48.9,89.0 57.1,91.8 55.7,96.9" fill="#6db1ea"/>
+    <polygon points="48.9,89.0 55.7,96.9 49.8,99.6" fill="#61a7e6"/>
+    <polygon points="57.1,91.8 63.2,89.3 55.7,96.9" fill="#4a93d8"/>
+    <polygon points="63.2,89.3 63.7,98.1 55.7,96.9" fill="#7abbef"/>
+    <polygon points="63.2,89.3 72.9,91.1 73.5,99.7" fill="#6db1ea"/>
+    <polygon points="63.2,89.3 73.5,99.7 63.7,98.1" fill="#7abbef"/>
+    <polygon points="72.9,91.1 79.0,89.7 73.5,99.7" fill="#4a93d8"/>
+    <polygon points="79.0,89.7 79.0,95.8 73.5,99.7" fill="#61a7e6"/>
+    <polygon points="21.0,99.4 30.4,97.5 21.0,104.4" fill="#6db1ea"/>
+    <polygon points="30.4,97.5 28.2,105.6 21.0,104.4" fill="#7abbef"/>
+    <polygon points="30.4,97.5 34.2,96.0 36.7,106.4" fill="#61a7e6"/>
+    <polygon points="30.4,97.5 36.7,106.4 28.2,105.6" fill="#3f88cf"/>
+    <polygon points="34.2,96.0 44.0,98.0 36.7,106.4" fill="#88c5f3"/>
+    <polygon points="44.0,98.0 44.6,104.7 36.7,106.4" fill="#88c5f3"/>
+    <polygon points="44.0,98.0 49.8,99.6 48.1,104.4" fill="#61a7e6"/>
+    <polygon points="44.0,98.0 48.1,104.4 44.6,104.7" fill="#559de0"/>
+    <polygon points="49.8,99.6 55.7,96.9 48.1,104.4" fill="#61a7e6"/>
+    <polygon points="55.7,96.9 58.9,107.2 48.1,104.4" fill="#4a93d8"/>
+    <polygon points="55.7,96.9 63.7,98.1 64.0,104.5" fill="#6db1ea"/>
+    <polygon points="55.7,96.9 64.0,104.5 58.9,107.2" fill="#6db1ea"/>
+    <polygon points="63.7,98.1 73.5,99.7 64.0,104.5" fill="#6db1ea"/>
+    <polygon points="73.5,99.7 73.4,106.0 64.0,104.5" fill="#88c5f3"/>
+    <polygon points="73.5,99.7 79.0,95.8 79.0,104.6" fill="#61a7e6"/>
+    <polygon points="73.5,99.7 79.0,104.6 73.4,106.0" fill="#88c5f3"/>
+  </g>
   <g clip-path="url(#bagClip)">
-    <polygon points="21,66 26,61 31,65 36,58 42,63 47,59 53,64 58,57 64,62 69,58 74,63 79,60 79,104 21,104" fill="#2e7fd4"/>
-    <polygon points="21,104 21,78 31,65 36,58 40,90" fill="#1b5da6"/>
-    <polygon points="36,58 42,63 47,59 52,104 38,104" fill="#5aa6ee"/>
-    <polygon points="53,64 58,57 64,62 68,104 55,104" fill="#1b5da6"/>
-    <polygon points="69,58 74,63 79,60 79,88 71,104" fill="#5aa6ee"/>
-    <polygon points="26,61 31,65 29,74 24,70" fill="#aad4f7"/>
-    <polygon points="58,57 62,60 60,70 56,66" fill="#aad4f7"/>
-    <polygon points="42,63 46,66 44,76 40,72" fill="#7cbdf2"/>
-    <polygon points="74,63 77,66 75,75 71,71" fill="#7cbdf2"/>
     <!-- Plastikglanz -->
-    <polygon points="40,31 50,31 30,104 22,104" fill="#ffffff" opacity="0.16"/>
+    <polygon points="40,31 50,31 30,104 22,104" fill="#ffffff" opacity="0.14"/>
   </g>
   <!-- Kontur ueber dem Inhalt, damit der Rand sauber bleibt -->
-  <path d="M21 31 h58 v64 a9 9 0 0 1 -9 9 h-40 a9 9 0 0 1 -9 -9 z" fill="none" stroke="#7c8b98" stroke-width="2"/>
+  <path d="M21 31 h58 v64 a9 9 0 0 1 -9 9 h-40 a9 9 0 0 1 -9 -9 z" fill="none" stroke="#7c8b98" stroke-width="1.4"/>
   <!-- Zip-Naht -->
-  <line x1="24" y1="36" x2="76" y2="36" stroke="#7c8b98" stroke-width="1.5" stroke-dasharray="3 2.5"/>
+  <line x1="24" y1="36" x2="76" y2="36" stroke="#7c8b98" stroke-width="1.2" stroke-dasharray="3 2.5"/>
 </svg>

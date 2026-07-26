@@ -152,7 +152,7 @@ struct ContentView: View {
         } header: {
             Text("Computer wachhalten")
         } footer: {
-            Text("Verhindert, dass Bildschirm und System in den Ruhezustand gehen.")
+            Text("Verhindert den Ruhezustand des Systems.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -185,6 +185,12 @@ struct ContentView: View {
                 .toggleStyle(.switch)
 
             IntervalRow(value: $mouseMove.intervalSeconds, range: 1...600, step: 1)
+
+            if mouseMove.countdownRemaining > 0 {
+                Text("Mausbewegung startet in \(mouseMove.countdownRemaining) s …")
+                    .font(.callout.bold())
+                    .foregroundStyle(.orange)
+            }
 
             if mouseMove.accessibilityDenied {
                 AccessibilityHint { keySimulator.openAccessibilitySettings() }
@@ -268,11 +274,12 @@ struct ContentView: View {
     // Eine gruppierte Form meldet keine Eigenhöhe; die Fensterhöhe wird deshalb
     // aus dem sichtbaren Inhalt berechnet.
     private var contentHeight: CGFloat {
-        var height: CGFloat = 834
+        var height: CGFloat = 818
         if keySimulator.accessibilityDenied { height += 72 }
         if mouseMove.accessibilityDenied { height += 72 }
         if mouseClick.accessibilityDenied { height += 72 }
         if keySimulator.countdownRemaining > 0 { height += 40 }
+        if mouseMove.countdownRemaining > 0 { height += 40 }
         if mouseClick.countdownRemaining > 0 { height += 40 }
         if anyMouseActive { height += 22 }
         // Nicht hoeher als der sichtbare Bildschirm – dann scrollt die Form,
