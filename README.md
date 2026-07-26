@@ -3,9 +3,13 @@
 Kleines macOS-Dienstprogramm mit Fenster und optionalem Menüleisten-Symbol. Zwei unabhängige Funktionen:
 
 - **Computer wachhalten** – verhindert per IOKit Power Assertion, dass Bildschirm und System einschlafen. Keine Sonderrechte nötig.
-- **Tastendruck simulieren** – sendet in wählbarer Frequenz (1–600 Sekunden) einen echten Tastendruck per `CGEvent`. Die Taste ist frei wählbar: Buchstaben, Zahlen, Pfeiltasten, Sondertasten (Leertaste, Enter, Strg, …) und die Funktionstasten F13–F19. Praktisch, um z. B. in Spielen als aktiv zu gelten.
+- **Tastendruck simulieren** – sendet in wählbarer Frequenz (1–600 Sekunden) einen echten Tastendruck per `CGEvent`. Die Taste wird über ein Tastenfeld gewählt, dessen Beschriftung dem aktiven Tastaturlayout folgt (QWERTZ, AZERTY, …); zusätzlich stehen Zahlen, Pfeiltasten, Sondertasten (Leertaste, Enter, Strg, …) und F13–F19 zur Auswahl. Praktisch, um z. B. in Spielen als aktiv zu gelten.
+- **Mausbewegung simulieren** – bewegt den Zeiger im gewählten Intervall um ein Pixel und sofort zurück (kein Klick, keine sichtbare Bewegung).
+- **Mausklick simulieren** – klickt im gewählten Intervall (ab 0,1 s) mit linker oder rechter Maustaste an der aktuellen Zeigerposition. Startet mit 5 Sekunden Verzögerung (sichtbarer Countdown) und endet automatisch nach 8 Stunden.
 
-Beide Funktionen laufen unabhängig voneinander; Einstellungen bleiben über Neustarts erhalten.
+Sicherheit: **⌃⌥⌘K** stoppt Mausklick und Mausbewegung jederzeit sofort, egal welche App im Vordergrund ist. Mausbewegung und Mausklick schließen sich gegenseitig aus; ihre Ein-Zustände werden bewusst nicht über Neustarts gespeichert.
+
+Die Funktionen laufen unabhängig voneinander; Einstellungen bleiben über Neustarts erhalten.
 
 ## Systemvoraussetzungen
 

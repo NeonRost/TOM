@@ -20,9 +20,14 @@ import SwiftUI
 enum SettingsKeys {
     static let keepAwakeEnabled = "keepAwakeEnabled"
     static let keySimEnabled = "keySimEnabled"
-    static let selectedKey = "selectedKey"
+    // Speichert den Keycode (Tastenposition) als Zahl, nicht das Zeichen —
+    // das Zeichen haengt vom aktiven Tastaturlayout ab.
+    static let selectedKeyCode = "selectedKeyCode"
     static let intervalSeconds = "intervalSeconds"
     static let showMenuBarIcon = "showMenuBarIcon"
+    static let mouseMoveInterval = "mouseMoveInterval"
+    static let mouseClickInterval = "mouseClickInterval"
+    static let mouseClickButton = "mouseClickButton"
 }
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -36,6 +41,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // der Tastendruck-Timer weiterlaufen sollen.
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         false
+    }
+
+    // Das Fenster ist hoch; ohne Zentrierung platziert macOS es gern so tief,
+    // dass der untere Teil hinter dem Dock verschwindet.
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        DispatchQueue.main.async {
+            NSApp.windows.first { $0.identifier?.rawValue.hasPrefix("main") == true }?.center()
+        }
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
@@ -65,11 +78,13 @@ private struct AboutCommand: View {
 private struct MainWindowContent: View {
     @ObservedObject var keepAwake: KeepAwakeManager
     @ObservedObject var keySimulator: KeyPressSimulator
+    @ObservedObject var mouseMove: MouseMoveSimulator
+    @ObservedObject var mouseClick: MouseClickSimulator
     let appDelegate: AppDelegate
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        ContentView(keepAwake: keepAwake, keySimulator: keySimulator)
+        ContentView(keepAwake: keepAwake, keySimulator: keySimulator, mouseMove: mouseMove, mouseClick: mouseClick)
             .onAppear {
                 appDelegate.openMainWindow = { openWindow(id: "main") }
             }
@@ -81,16 +96,22 @@ struct TOMApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var keepAwake: KeepAwakeManager
     @StateObject private var keySimulator: KeyPressSimulator
+    @StateObject private var mouseMove: MouseMoveSimulator
+    @StateObject private var mouseClick: MouseClickSimulator
     @AppStorage(SettingsKeys.showMenuBarIcon) private var showMenuBarIcon = false
 
     init() {
         let defaults = UserDefaults.standard
         let keepAwakeEnabled = defaults.bool(forKey: SettingsKeys.keepAwakeEnabled)
         let keySimEnabled = defaults.bool(forKey: SettingsKeys.keySimEnabled)
-        let storedKeyId = defaults.string(forKey: SettingsKeys.selectedKey) ?? SimulatedKey.default.id
-        let selectedKey = SimulatedKey.all.first(where: { $0.id == storedKeyId }) ?? .default
+        let storedKeyCode = defaults.object(forKey: SettingsKeys.selectedKeyCode) as? Int
+        let selectedKey = storedKeyCode.flatMap { SimulatedKey.byCode(CGKeyCode($0)) } ?? .default
         let storedInterval = defaults.double(forKey: SettingsKeys.intervalSeconds)
         let interval = storedInterval == 0 ? 1 : storedInterval
+        let storedMoveInterval = defaults.double(forKey: SettingsKeys.mouseMoveInterval)
+        let storedClickInterval = defaults.double(forKey: SettingsKeys.mouseClickInterval)
+        let storedButton = defaults.string(forKey: SettingsKeys.mouseClickButton)
+            .flatMap(MouseButtonChoice.init(rawValue:)) ?? .left
 
         _keepAwake = StateObject(wrappedValue: KeepAwakeManager(initiallyEnabled: keepAwakeEnabled))
         _keySimulator = StateObject(wrappedValue: KeyPressSimulator(
@@ -98,11 +119,30 @@ struct TOMApp: App {
             selectedKey: selectedKey,
             intervalSeconds: interval
         ))
+
+        // Die Ein-Zustaende der Mausfunktionen werden bewusst NICHT gespeichert:
+        // eine App, die nach dem Start unaufgefordert klickt, waere gefaehrlich.
+        let move = MouseMoveSimulator(intervalSeconds: storedMoveInterval == 0 ? 30 : storedMoveInterval)
+        let click = MouseClickSimulator(
+            buttonChoice: storedButton,
+            intervalSeconds: storedClickInterval == 0 ? 1 : storedClickInterval
+        )
+        move.counterpart = click
+        click.counterpart = move
+        MouseSafety.shared.isAnyActive = { [weak move, weak click] in
+            (move?.isEnabled ?? false) || (click?.isEnabled ?? false)
+        }
+        MouseSafety.shared.stopAll = { [weak move, weak click] in
+            move?.isEnabled = false
+            click?.isEnabled = false
+        }
+        _mouseMove = StateObject(wrappedValue: move)
+        _mouseClick = StateObject(wrappedValue: click)
     }
 
     var body: some Scene {
         Window("TOM", id: "main") {
-            MainWindowContent(keepAwake: keepAwake, keySimulator: keySimulator, appDelegate: appDelegate)
+            MainWindowContent(keepAwake: keepAwake, keySimulator: keySimulator, mouseMove: mouseMove, mouseClick: mouseClick, appDelegate: appDelegate)
         }
         .windowResizability(.contentSize)
         .commands {
@@ -121,7 +161,7 @@ struct TOMApp: App {
         }
 
         MenuBarExtra(isInserted: $showMenuBarIcon) {
-            ContentView(keepAwake: keepAwake, keySimulator: keySimulator)
+            ContentView(keepAwake: keepAwake, keySimulator: keySimulator, mouseMove: mouseMove, mouseClick: mouseClick)
         } label: {
             Image("MenuBarIcon")
                 .resizable()

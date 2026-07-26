@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		29DBE3F45BECD1A1B5F360E2 /* MouseSimulators.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2A09EEB138FEE6D7D2BCBFC /* MouseSimulators.swift */; };
 		45CE25C7F894BAEF76F02407 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 7682C88C6015E0AAD5D4A427 /* LICENSE */; };
 		608D071D5BB89B2EA438A483 /* SimulatedKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AD62F392BECF028E23F72B7 /* SimulatedKey.swift */; };
 		60F276EFF0C28917DCE66EF4 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 876169FF271D88EF87CDBF06 /* IOKit.framework */; };
@@ -28,6 +29,7 @@
 		AF8D772A9A8535A178E6970C /* AboutPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutPanel.swift; sourceTree = "<group>"; };
 		D9D7BC145A288EE86D2D007F /* KeyPressSimulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPressSimulator.swift; sourceTree = "<group>"; };
 		F1ED7E215F0EF2D6EC65F25C /* TOM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TOM.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F2A09EEB138FEE6D7D2BCBFC /* MouseSimulators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MouseSimulators.swift; sourceTree = "<group>"; };
 		F9D23E61C318A4BBF96143D1 /* TOMApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TOMApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -77,6 +79,7 @@
 				0C4A4B0365F1C26B15C4F2CD /* ContentView.swift */,
 				0853DED1148392513B29493F /* KeepAwakeManager.swift */,
 				D9D7BC145A288EE86D2D007F /* KeyPressSimulator.swift */,
+				F2A09EEB138FEE6D7D2BCBFC /* MouseSimulators.swift */,
 				7AD62F392BECF028E23F72B7 /* SimulatedKey.swift */,
 				F9D23E61C318A4BBF96143D1 /* TOMApp.swift */,
 			);
@@ -156,6 +159,7 @@
 				87B17A23B079FBFB2B991AC5 /* ContentView.swift in Sources */,
 				C821D94B7D8F1D41A1E1775E /* KeepAwakeManager.swift in Sources */,
 				BC7CCBDE78D6F3234D1F0E26 /* KeyPressSimulator.swift in Sources */,
+				29DBE3F45BECD1A1B5F360E2 /* MouseSimulators.swift in Sources */,
 				608D071D5BB89B2EA438A483 /* SimulatedKey.swift in Sources */,
 				BDAF07C4ACF64AED49B687F1 /* TOMApp.swift in Sources */,
 			);

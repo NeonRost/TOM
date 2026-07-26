@@ -14,69 +14,119 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import Carbon.HIToolbox
 import CoreGraphics
 
+// Keycodes bezeichnen Tastenpositionen, keine Buchstaben. Das Zeichen einer
+// Position haengt vom aktiven Tastaturlayout ab (QWERTY/QWERTZ/AZERTY …) und
+// wird deshalb zur Laufzeit ueber das aktuelle Layout aufgeloest.
+enum KeyboardLayout {
+    static func label(for keyCode: CGKeyCode) -> String {
+        guard let source = TISCopyCurrentKeyboardLayoutInputSource()?.takeRetainedValue(),
+              let rawLayoutData = TISGetInputSourceProperty(source, kTISPropertyUnicodeKeyLayoutData) else {
+            return "?"
+        }
+        let layoutData = Unmanaged<CFData>.fromOpaque(rawLayoutData).takeUnretainedValue() as Data
+        var chars = [UniChar](repeating: 0, count: 4)
+        var length = 0
+        var deadKeyState: UInt32 = 0
+        let status = layoutData.withUnsafeBytes { (buffer: UnsafeRawBufferPointer) -> OSStatus in
+            guard let layout = buffer.baseAddress?.assumingMemoryBound(to: UCKeyboardLayout.self) else {
+                return OSStatus(paramErr)
+            }
+            return UCKeyTranslate(
+                layout,
+                keyCode,
+                UInt16(kUCKeyActionDisplay),
+                0,
+                UInt32(LMGetKbdType()),
+                OptionBits(kUCKeyTranslateNoDeadKeysBit),
+                &deadKeyState,
+                chars.count,
+                &length,
+                &chars
+            )
+        }
+        guard status == noErr, length > 0 else { return "?" }
+        return String(utf16CodeUnits: chars, count: length).uppercased()
+    }
+}
+
 struct SimulatedKey: Identifiable, Hashable {
-    let id: String
-    let displayName: String
     let keyCode: CGKeyCode
+    // nil = Beschriftung kommt zur Laufzeit aus dem aktiven Tastaturlayout.
+    let fixedLabel: String?
 
-    private static let letterKeyCodes: [Character: CGKeyCode] = [
-        "A": 0x00, "B": 0x0B, "C": 0x08, "D": 0x02, "E": 0x0E, "F": 0x03, "G": 0x05, "H": 0x04,
-        "I": 0x22, "J": 0x26, "K": 0x28, "L": 0x25, "M": 0x2E, "N": 0x2D, "O": 0x1F, "P": 0x23,
-        "Q": 0x0C, "R": 0x0F, "S": 0x01, "T": 0x11, "U": 0x20, "V": 0x09, "W": 0x0D, "X": 0x07,
-        "Y": 0x10, "Z": 0x06
-    ]
+    var id: CGKeyCode { keyCode }
 
-    static let letters: [SimulatedKey] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".map { letter in
-        SimulatedKey(id: String(letter), displayName: String(letter), keyCode: letterKeyCodes[letter]!)
+    var displayName: String {
+        fixedLabel ?? KeyboardLayout.label(for: keyCode)
     }
 
+    private static func layoutKeys(_ codes: [CGKeyCode]) -> [SimulatedKey] {
+        codes.map { SimulatedKey(keyCode: $0, fixedLabel: nil) }
+    }
+
+    // Die drei Buchstabenreihen als physische Tastenpositionen (ANSI),
+    // von oben nach unten – auf US-Layout Q…P, A…L, Z…M.
+    static let letterRows: [[SimulatedKey]] = [
+        layoutKeys([0x0C, 0x0D, 0x0E, 0x0F, 0x11, 0x10, 0x20, 0x22, 0x1F, 0x23]),
+        layoutKeys([0x00, 0x01, 0x02, 0x03, 0x05, 0x04, 0x26, 0x28, 0x25]),
+        layoutKeys([0x06, 0x07, 0x08, 0x09, 0x0B, 0x2D, 0x2E])
+    ]
+
     static let numbers: [SimulatedKey] = [
-        SimulatedKey(id: "0", displayName: "0", keyCode: 0x1D),
-        SimulatedKey(id: "1", displayName: "1", keyCode: 0x12),
-        SimulatedKey(id: "2", displayName: "2", keyCode: 0x13),
-        SimulatedKey(id: "3", displayName: "3", keyCode: 0x14),
-        SimulatedKey(id: "4", displayName: "4", keyCode: 0x15),
-        SimulatedKey(id: "5", displayName: "5", keyCode: 0x17),
-        SimulatedKey(id: "6", displayName: "6", keyCode: 0x16),
-        SimulatedKey(id: "7", displayName: "7", keyCode: 0x1A),
-        SimulatedKey(id: "8", displayName: "8", keyCode: 0x1C),
-        SimulatedKey(id: "9", displayName: "9", keyCode: 0x19)
+        SimulatedKey(keyCode: 0x1D, fixedLabel: "0"),
+        SimulatedKey(keyCode: 0x12, fixedLabel: "1"),
+        SimulatedKey(keyCode: 0x13, fixedLabel: "2"),
+        SimulatedKey(keyCode: 0x14, fixedLabel: "3"),
+        SimulatedKey(keyCode: 0x15, fixedLabel: "4"),
+        SimulatedKey(keyCode: 0x17, fixedLabel: "5"),
+        SimulatedKey(keyCode: 0x16, fixedLabel: "6"),
+        SimulatedKey(keyCode: 0x1A, fixedLabel: "7"),
+        SimulatedKey(keyCode: 0x1C, fixedLabel: "8"),
+        SimulatedKey(keyCode: 0x19, fixedLabel: "9")
     ]
 
     static let arrows: [SimulatedKey] = [
-        SimulatedKey(id: "left", displayName: "◀ Pfeil links", keyCode: 0x7B),
-        SimulatedKey(id: "right", displayName: "▶ Pfeil rechts", keyCode: 0x7C),
-        SimulatedKey(id: "down", displayName: "▼ Pfeil runter", keyCode: 0x7D),
-        SimulatedKey(id: "up", displayName: "▲ Pfeil hoch", keyCode: 0x7E)
+        SimulatedKey(keyCode: 0x7B, fixedLabel: "◀ Pfeil links"),
+        SimulatedKey(keyCode: 0x7C, fixedLabel: "▶ Pfeil rechts"),
+        SimulatedKey(keyCode: 0x7D, fixedLabel: "▼ Pfeil runter"),
+        SimulatedKey(keyCode: 0x7E, fixedLabel: "▲ Pfeil hoch")
     ]
 
     static let special: [SimulatedKey] = [
-        SimulatedKey(id: "space", displayName: "Leertaste", keyCode: 0x31),
-        SimulatedKey(id: "return", displayName: "Enter", keyCode: 0x24),
-        SimulatedKey(id: "tab", displayName: "Tab", keyCode: 0x30),
-        SimulatedKey(id: "escape", displayName: "Esc", keyCode: 0x35),
-        SimulatedKey(id: "delete", displayName: "Löschen", keyCode: 0x33),
-        SimulatedKey(id: "control", displayName: "Strg", keyCode: 0x3B),
-        SimulatedKey(id: "shift", displayName: "Umschalt", keyCode: 0x38),
-        SimulatedKey(id: "option", displayName: "Alt", keyCode: 0x3A),
-        SimulatedKey(id: "command", displayName: "Cmd", keyCode: 0x37)
+        SimulatedKey(keyCode: 0x31, fixedLabel: "Leertaste"),
+        SimulatedKey(keyCode: 0x24, fixedLabel: "Enter"),
+        SimulatedKey(keyCode: 0x30, fixedLabel: "Tab"),
+        SimulatedKey(keyCode: 0x35, fixedLabel: "Esc"),
+        SimulatedKey(keyCode: 0x33, fixedLabel: "Löschen"),
+        SimulatedKey(keyCode: 0x3B, fixedLabel: "Strg"),
+        SimulatedKey(keyCode: 0x38, fixedLabel: "Umschalt"),
+        SimulatedKey(keyCode: 0x3A, fixedLabel: "Alt"),
+        SimulatedKey(keyCode: 0x37, fixedLabel: "Cmd")
     ]
 
     // "Unsichtbare" Funktionstasten ohne Standardbelegung – praktisch, wenn keine
     // sichtbare Aktion in der jeweiligen Anwendung ausgelöst werden soll.
     static let functionKeys: [SimulatedKey] = [
-        SimulatedKey(id: "f13", displayName: "F13", keyCode: 0x69),
-        SimulatedKey(id: "f14", displayName: "F14", keyCode: 0x6B),
-        SimulatedKey(id: "f15", displayName: "F15", keyCode: 0x71),
-        SimulatedKey(id: "f16", displayName: "F16", keyCode: 0x6A),
-        SimulatedKey(id: "f17", displayName: "F17", keyCode: 0x40),
-        SimulatedKey(id: "f18", displayName: "F18", keyCode: 0x4F),
-        SimulatedKey(id: "f19", displayName: "F19", keyCode: 0x50)
+        SimulatedKey(keyCode: 0x69, fixedLabel: "F13"),
+        SimulatedKey(keyCode: 0x6B, fixedLabel: "F14"),
+        SimulatedKey(keyCode: 0x71, fixedLabel: "F15"),
+        SimulatedKey(keyCode: 0x6A, fixedLabel: "F16"),
+        SimulatedKey(keyCode: 0x40, fixedLabel: "F17"),
+        SimulatedKey(keyCode: 0x4F, fixedLabel: "F18"),
+        SimulatedKey(keyCode: 0x50, fixedLabel: "F19")
     ]
 
-    static let all: [SimulatedKey] = letters + numbers + arrows + special + functionKeys
+    static let others: [SimulatedKey] = numbers + arrows + special + functionKeys
 
-    static let `default`: SimulatedKey = letters.first(where: { $0.id == "W" })!
+    static let all: [SimulatedKey] = letterRows.flatMap { $0 } + others
+
+    static func byCode(_ code: CGKeyCode) -> SimulatedKey? {
+        all.first { $0.keyCode == code }
+    }
+
+    // Position der US-Taste "W" – auf QWERTZ und QWERTY dieselbe Beschriftung.
+    static let `default` = SimulatedKey(keyCode: 0x0D, fixedLabel: nil)
 }
