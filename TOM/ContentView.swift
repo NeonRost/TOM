@@ -121,7 +121,7 @@ struct ContentView: View {
             mouseMoveSection
             mouseClickSection
 
-            Section {
+            Section("Darstellung") {
                 Toggle("TOM in der Menüleiste anzeigen", isOn: $showMenuBarIcon)
                     .toggleStyle(.switch)
             }
@@ -137,6 +137,9 @@ struct ContentView: View {
             }
         }
         .padding(.horizontal, 20)
+        // Gleicher Abstand wie zwischen den Abschnitten, damit der Button
+        // nicht am letzten Kasten klebt.
+        .padding(.top, 20)
         .padding(.bottom, 14)
     }
 
@@ -144,10 +147,12 @@ struct ContentView: View {
 
     private var keepAwakeSection: some View {
         Section {
-            Toggle("Computer wachhalten", isOn: $keepAwake.isEnabled)
+            Toggle("Aktiv", isOn: $keepAwake.isEnabled)
                 .toggleStyle(.switch)
+        } header: {
+            Text("Computer wachhalten")
         } footer: {
-            Text("Verhindert, dass Bildschirm und System bei Inaktivität in den Ruhezustand gehen. Für reines Wachhalten genügt dieser Schalter.")
+            Text("Verhindert, dass Bildschirm und System in den Ruhezustand gehen.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -155,7 +160,7 @@ struct ContentView: View {
 
     private var keyPressSection: some View {
         Section("Tastendruck simulieren") {
-            Toggle("Tastendruck aktiv", isOn: $keySimulator.isEnabled)
+            Toggle("Aktiv", isOn: $keySimulator.isEnabled)
                 .toggleStyle(.switch)
 
             keyPicker
@@ -176,7 +181,7 @@ struct ContentView: View {
 
     private var mouseMoveSection: some View {
         Section("Mausbewegung simulieren") {
-            Toggle("Mausbewegung aktiv", isOn: $mouseMove.isEnabled)
+            Toggle("Aktiv", isOn: $mouseMove.isEnabled)
                 .toggleStyle(.switch)
 
             IntervalRow(value: $mouseMove.intervalSeconds, range: 1...600, step: 1)
@@ -189,7 +194,7 @@ struct ContentView: View {
 
     private var mouseClickSection: some View {
         Section {
-            Toggle("Mausklick aktiv", isOn: $mouseClick.isEnabled)
+            Toggle("Aktiv", isOn: $mouseClick.isEnabled)
                 .toggleStyle(.switch)
 
             Picker("Maustaste", selection: $mouseClick.buttonChoice) {
@@ -263,7 +268,7 @@ struct ContentView: View {
     // Eine gruppierte Form meldet keine Eigenhöhe; die Fensterhöhe wird deshalb
     // aus dem sichtbaren Inhalt berechnet.
     private var contentHeight: CGFloat {
-        var height: CGFloat = 748
+        var height: CGFloat = 834
         if keySimulator.accessibilityDenied { height += 72 }
         if mouseMove.accessibilityDenied { height += 72 }
         if mouseClick.accessibilityDenied { height += 72 }

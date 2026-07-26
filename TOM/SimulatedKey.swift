@@ -133,6 +133,6 @@ struct SimulatedKey: Identifiable, Hashable {
         all.first { $0.keyCode == code }
     }
 
-    // Position der US-Taste "W" – auf QWERTZ und QWERTY dieselbe Beschriftung.
-    static let `default` = SimulatedKey(keyCode: 0x0D, fixedLabel: nil)
+    // Position der Taste "T" – auf QWERTZ, QWERTY und AZERTY dieselbe Stelle.
+    static let `default` = SimulatedKey(keyCode: 0x11, fixedLabel: nil)
 }

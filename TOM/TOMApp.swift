@@ -107,7 +107,7 @@ struct TOMApp: App {
         let storedKeyCode = defaults.object(forKey: SettingsKeys.selectedKeyCode) as? Int
         let selectedKey = storedKeyCode.flatMap { SimulatedKey.byCode(CGKeyCode($0)) } ?? .default
         let storedInterval = defaults.double(forKey: SettingsKeys.intervalSeconds)
-        let interval = storedInterval == 0 ? 1 : storedInterval
+        let interval = storedInterval == 0 ? 30 : storedInterval
         let storedMoveInterval = defaults.double(forKey: SettingsKeys.mouseMoveInterval)
         let storedClickInterval = defaults.double(forKey: SettingsKeys.mouseClickInterval)
         let storedButton = defaults.string(forKey: SettingsKeys.mouseClickButton)
@@ -125,7 +125,7 @@ struct TOMApp: App {
         let move = MouseMoveSimulator(intervalSeconds: storedMoveInterval == 0 ? 30 : storedMoveInterval)
         let click = MouseClickSimulator(
             buttonChoice: storedButton,
-            intervalSeconds: storedClickInterval == 0 ? 1 : storedClickInterval
+            intervalSeconds: storedClickInterval == 0 ? 30 : storedClickInterval
         )
         move.counterpart = click
         click.counterpart = move
