@@ -1,6 +1,15 @@
 # TOM
 
-macOS-Menüleisten- und Fenster-App (SwiftUI, macOS 13+). Xcode-Projekt wird von XcodeGen aus `project.yml` erzeugt.
+macOS-Menüleisten- und Fenster-App (SwiftUI, macOS 13+). Xcode-Projekt wird von XcodeGen aus `project.yml` erzeugt. Das Projekt liegt als Open-Source-Repository auf GitHub.
+
+## README
+
+Die `README.md` ist auf Englisch und enthält Bestandteile, die **unverändert erhalten bleiben müssen**, auch wenn die Datei sonst umgeschrieben wird:
+
+- die Bild-Einbindungen aus dem Repository (`<img src="images/TOM_Icon.png" …>` und `<img src="images/TOM_Screenshot.png" …>`) samt Position, Größe und `alt`-Text
+- der Abschnitt **Support** mit dem Ko-fi-Link (https://ko-fi.com/neonrost)
+
+Vor einer Änderung an der Datei prüfen, ob diese Stellen noch vorhanden sind, und sie danach unverändert wieder enthalten sein lassen. Die Bilder liegen im Ordner `images/`.
 
 ## Mehrsprachigkeit
 
