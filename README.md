@@ -12,7 +12,20 @@ A small macOS utility with a window and an optional menu bar icon. Four independ
 Safety: **⌃⌥⌘K** stops mouse click and mouse movement immediately, no matter which app is in the foreground. Mouse movement and mouse click are mutually exclusive, and their on/off states are deliberately not restored on launch — an app that starts clicking by itself after a restart would be dangerous.
 
 The functions run independently of each other; settings are preserved across restarts.
+
 <img src="images/TOM_Screenshot.png" width="400" alt="TOM Screenshot">
+
+## Requirements
+
+- macOS 13 (Ventura) or newer
+- Apple Silicon (arm64)
+
+## Download
+
+Grab the latest build from the [Releases](../../releases) page, unzip it and move `TOM.app` to your Applications folder.
+
+The app is not notarized, so macOS will refuse to open it on first launch. Go to **System Settings → Privacy & Security**, scroll down to the message about TOM and click **Open Anyway**.
+
 ## Languages
 
 The interface is available in **English**, **German** and **Spanish**, selected automatically from the system language. Unsupported languages fall back to English.
@@ -23,12 +36,16 @@ To try a language without changing your system settings, launch the binary direc
 TOM.app/Contents/MacOS/TOM -AppleLanguages '(es)'
 ```
 
-## Requirements
+## Permissions
 
-- macOS 13 (Ventura) or newer
-- To build: Xcode 15+
+- **Keep Mac Awake:** none.
+- **Key press, mouse movement and mouse click:** require the **Accessibility** permission (System Settings → Privacy & Security → Accessibility). The app asks for it the first time you switch one of them on and links straight to the right pane. Note: after rebuilding with an ad-hoc signature, macOS treats the app as new, so the permission may have to be granted again (toggle the checkbox off and on).
+
+The app is not sandboxed — required for `CGEvent` injection.
 
 ## Building
+
+Requires Xcode 15 or newer.
 
 The Xcode project is generated from `project.yml` with [XcodeGen](https://github.com/yonaskolb/XcodeGen), but the generated project is checked in as well:
 
@@ -42,13 +59,6 @@ Then build and run in Xcode (⌘R). After changing `project.yml`:
 brew install xcodegen   # if not already installed
 xcodegen generate
 ```
-
-## Permissions
-
-- **Keep Mac Awake:** none.
-- **Key press, mouse movement and mouse click:** require the **Accessibility** permission (System Settings → Privacy & Security → Accessibility). The app asks for it the first time you switch one of them on and links straight to the right pane. Note: after rebuilding with an ad-hoc signature, macOS treats the app as new, so the permission may have to be granted again (toggle the checkbox off and on).
-
-The app is not sandboxed — required for `CGEvent` injection.
 
 ## License
 
