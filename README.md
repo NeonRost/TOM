@@ -1,6 +1,6 @@
 # TOM – Tuco on Meth
 
-<img src="images/TOM_Icon.png" width="300" alt="TOM Icon">
+<img src="images/TOM_Icon.png" width="200" alt="TOM Icon">
 
 A small macOS utility with a window and an optional menu bar icon. Four independent functions:
 
@@ -12,7 +12,7 @@ A small macOS utility with a window and an optional menu bar icon. Four independ
 Safety: **⌃⌥⌘K** stops mouse click and mouse movement immediately, no matter which app is in the foreground. Mouse movement and mouse click are mutually exclusive, and their on/off states are deliberately not restored on launch — an app that starts clicking by itself after a restart would be dangerous.
 
 The functions run independently of each other; settings are preserved across restarts.
-
+<img src="images/TOM_Screenshot.png" width="400" alt="TOM Screenshot">
 ## Languages
 
 The interface is available in **English**, **German** and **Spanish**, selected automatically from the system language. Unsupported languages fall back to English.
