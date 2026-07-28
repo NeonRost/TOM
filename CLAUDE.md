@@ -1,35 +1,35 @@
 # TOM
 
-macOS-Menüleisten- und Fenster-App (SwiftUI, macOS 13+). Xcode-Projekt wird von XcodeGen aus `project.yml` erzeugt. Das Projekt liegt als Open-Source-Repository auf GitHub.
+macOS menu bar and window app (SwiftUI, macOS 13+). The Xcode project is generated from `project.yml` with XcodeGen. The project is an open source repository on GitHub.
 
 ## README
 
-Die `README.md` ist auf Englisch und enthält Bestandteile, die **unverändert erhalten bleiben müssen**, auch wenn die Datei sonst umgeschrieben wird:
+`README.md` is written in English and contains parts that **must be preserved unchanged**, even when the file is otherwise rewritten:
 
-- die Bild-Einbindungen aus dem Repository (`<img src="images/TOM_Icon.png" …>` und `<img src="images/TOM_Screenshot.png" …>`) samt Position, Größe und `alt`-Text
-- der Abschnitt **Support** mit dem Ko-fi-Link (https://ko-fi.com/neonrost)
+- the repository image embeds (`<img src="images/TOM_Icon.png" …>` and `<img src="images/TOM_Screenshot.png" …>`) including their position, size and `alt` text
+- the **Support** section with the Ko-fi link (https://ko-fi.com/neonrost)
 
-Vor einer Änderung an der Datei prüfen, ob diese Stellen noch vorhanden sind, und sie danach unverändert wieder enthalten sein lassen. Die Bilder liegen im Ordner `images/`.
+Before editing the file, check that these parts are present, and make sure they are still there afterwards, unchanged. The images live in the `images/` folder.
 
-## Mehrsprachigkeit
+## Localization
 
-Die App ist mehrsprachig über `TOM/Localizable.xcstrings`. Basissprache ist **Englisch**, Übersetzungen bestehen für **Deutsch** und **Spanisch**.
+The app is localized through `TOM/Localizable.xcstrings`. The base language is **English**; translations exist for **German** and **Spanish**.
 
-Bei jeder Änderung an sichtbaren Texten müssen alle drei Sprachen mitgepflegt werden.
+Any change to user-visible text must be carried through all three languages.
 
-Am Ende jeder Aufgabe prüfen, ob unübersetzte Einträge zurückgeblieben sind, und diese melden.
+At the end of every task, check whether untranslated entries are left behind, and report them.
 
-### Hinweise zur Umsetzung
+### Implementation notes
 
-- Neue Texte im Code auf Englisch schreiben – das Literal ist zugleich der Schlüssel im Katalog.
-- SwiftUI lokalisiert nur String-**Literale**. Texte, die über eine String-Variable in die Ansicht kommen (Tastenbezeichnungen, Maustasten, Fehlermeldungen), müssen ihre Übersetzung selbst per `String(localized:)` nachschlagen.
-- Übersetzungen kurz halten: Beschriftungen dürfen nicht wesentlich länger werden als im Englischen, sonst bricht das Layout um. Besonders empfindlich sind Abschnittsüberschriften, Schalterbeschriftungen und die Intervall-Zeile.
-- Unübersetzte Einträge findet man mit:
+- Write new text in the code in English – the literal doubles as the key in the catalog.
+- SwiftUI only localizes string **literals**. Text that reaches the view through a String variable (key names, mouse buttons, error messages) has to look up its own translation via `String(localized:)`.
+- Keep translations short: labels must not grow much longer than the English source, or the layout wraps. Section headers, switch labels and the interval row are the sensitive spots.
+- Find untranslated entries with:
   ```sh
   python3 -c "import json;c=json.load(open('TOM/Localizable.xcstrings'));[print(k) for k,v in c['strings'].items() for l in ('de','es') if l not in v.get('localizations',{})]"
   ```
 
-### In einer bestimmten Sprache starten (ohne Systemumstellung)
+### Launching in a specific language (without changing system settings)
 
 ```sh
 TOM.app/Contents/MacOS/TOM -AppleLanguages '(es)'
