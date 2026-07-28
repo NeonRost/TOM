@@ -23,15 +23,15 @@ private struct IntervalRow: View {
     let step: Double
 
     var body: some View {
-        LabeledContent("Intervall") {
+        LabeledContent("Interval") {
             HStack(spacing: 6) {
                 TextField("", value: $value, format: .number)
                     .frame(width: 50)
                     .multilineTextAlignment(.trailing)
                     .textFieldStyle(.roundedBorder)
-                Stepper("Intervall", value: $value, in: range, step: step)
+                Stepper("Interval", value: $value, in: range, step: step)
                     .labelsHidden()
-                Text("Sekunden")
+                Text("Seconds")
             }
         }
     }
@@ -42,10 +42,10 @@ private struct AccessibilityHint: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text("Bedienungshilfen-Berechtigung fehlt.")
+            Text("Accessibility permission is missing.")
                 .font(.caption)
                 .foregroundStyle(.red)
-            Button("Systemeinstellungen öffnen", action: openSettings)
+            Button("Open System Settings", action: openSettings)
                 .font(.caption)
         }
     }
@@ -121,8 +121,8 @@ struct ContentView: View {
             mouseMoveSection
             mouseClickSection
 
-            Section("Darstellung") {
-                Toggle("TOM in der Menüleiste anzeigen", isOn: $showMenuBarIcon)
+            Section("Appearance") {
+                Toggle("Show TOM in the menu bar", isOn: $showMenuBarIcon)
                     .toggleStyle(.switch)
             }
         }
@@ -132,7 +132,7 @@ struct ContentView: View {
     private var quitRow: some View {
         HStack {
             Spacer()
-            Button("Beenden") {
+            Button("Quit") {
                 NSApplication.shared.terminate(nil)
             }
         }
@@ -147,20 +147,20 @@ struct ContentView: View {
 
     private var keepAwakeSection: some View {
         Section {
-            Toggle("Aktiv", isOn: $keepAwake.isEnabled)
+            Toggle("Active", isOn: $keepAwake.isEnabled)
                 .toggleStyle(.switch)
         } header: {
-            Text("Computer wachhalten")
+            Text("Keep Mac Awake")
         } footer: {
-            Text("Verhindert den Ruhezustand des Systems.")
+            Text("Prevents the system from going to sleep.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
     }
 
     private var keyPressSection: some View {
-        Section("Tastendruck simulieren") {
-            Toggle("Aktiv", isOn: $keySimulator.isEnabled)
+        Section("Simulate Key Press") {
+            Toggle("Active", isOn: $keySimulator.isEnabled)
                 .toggleStyle(.switch)
 
             keyPicker
@@ -168,7 +168,7 @@ struct ContentView: View {
             IntervalRow(value: $keySimulator.intervalSeconds, range: 1...600, step: 1)
 
             if keySimulator.countdownRemaining > 0 {
-                Text("Tastendruck startet in \(keySimulator.countdownRemaining) s – Zielfenster jetzt nach vorne holen …")
+                Text("Key press starts in \(keySimulator.countdownRemaining) s – bring the target window to the front now …")
                     .font(.callout.bold())
                     .foregroundStyle(.orange)
             }
@@ -180,14 +180,14 @@ struct ContentView: View {
     }
 
     private var mouseMoveSection: some View {
-        Section("Mausbewegung simulieren") {
-            Toggle("Aktiv", isOn: $mouseMove.isEnabled)
+        Section("Simulate Mouse Movement") {
+            Toggle("Active", isOn: $mouseMove.isEnabled)
                 .toggleStyle(.switch)
 
             IntervalRow(value: $mouseMove.intervalSeconds, range: 1...600, step: 1)
 
             if mouseMove.countdownRemaining > 0 {
-                Text("Mausbewegung startet in \(mouseMove.countdownRemaining) s …")
+                Text("Mouse movement starts in \(mouseMove.countdownRemaining) s …")
                     .font(.callout.bold())
                     .foregroundStyle(.orange)
             }
@@ -200,10 +200,10 @@ struct ContentView: View {
 
     private var mouseClickSection: some View {
         Section {
-            Toggle("Aktiv", isOn: $mouseClick.isEnabled)
+            Toggle("Active", isOn: $mouseClick.isEnabled)
                 .toggleStyle(.switch)
 
-            Picker("Maustaste", selection: $mouseClick.buttonChoice) {
+            Picker("Mouse Button", selection: $mouseClick.buttonChoice) {
                 ForEach(MouseButtonChoice.allCases) { choice in
                     Text(choice.displayName).tag(choice)
                 }
@@ -213,7 +213,7 @@ struct ContentView: View {
             IntervalRow(value: $mouseClick.intervalSeconds, range: 0.1...600, step: 0.1)
 
             if mouseClick.countdownRemaining > 0 {
-                Text("Klick startet in \(mouseClick.countdownRemaining) s – Zeiger jetzt positionieren …")
+                Text("Click starts in \(mouseClick.countdownRemaining) s – position the pointer now …")
                     .font(.callout.bold())
                     .foregroundStyle(.orange)
             }
@@ -222,14 +222,14 @@ struct ContentView: View {
                 AccessibilityHint { keySimulator.openAccessibilitySettings() }
             }
         } header: {
-            Text("Mausklick simulieren")
+            Text("Simulate Mouse Click")
         } footer: {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Geklickt wird dort, wo der Zeiger gerade steht. \(MouseSafety.shortcutDescription) beendet Mausklick und Mausbewegung jederzeit sofort.")
+                Text("Clicks happen wherever the pointer is. \(MouseSafety.shortcutDescription) stops mouse click and mouse movement immediately, at any time.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 if anyMouseActive {
-                    Text("Not-Aus aktiv: \(MouseSafety.shortcutDescription)")
+                    Text("Emergency stop active: \(MouseSafety.shortcutDescription)")
                         .font(.caption.bold())
                         .foregroundStyle(.orange)
                 }
@@ -242,28 +242,28 @@ struct ContentView: View {
     // Beschriftungen kommen aus dem aktiven Tastaturlayout, gespeichert wird
     // der Keycode (Tastenposition).
     private var keyPicker: some View {
-        Picker("Taste", selection: $keySimulator.selectedKey) {
-            Section("Buchstaben") {
+        Picker("Key", selection: $keySimulator.selectedKey) {
+            Section("Letters") {
                 ForEach(SimulatedKey.letters) { key in
                     Text(key.displayName).tag(key)
                 }
             }
-            Section("Zahlen") {
+            Section("Numbers") {
                 ForEach(SimulatedKey.numbers) { key in
                     Text(key.displayName).tag(key)
                 }
             }
-            Section("Pfeiltasten") {
+            Section("Arrow Keys") {
                 ForEach(SimulatedKey.arrows) { key in
                     Text(key.displayName).tag(key)
                 }
             }
-            Section("Sondertasten") {
+            Section("Special Keys") {
                 ForEach(SimulatedKey.special) { key in
                     Text(key.displayName).tag(key)
                 }
             }
-            Section("Funktionstasten") {
+            Section("Function Keys") {
                 ForEach(SimulatedKey.functionKeys) { key in
                     Text(key.displayName).tag(key)
                 }

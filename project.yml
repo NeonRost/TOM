@@ -1,6 +1,9 @@
 name: TOM
 options:
   bundleIdPrefix: com.neonrost
+  # Basissprache des Projekts: Findet macOS keine passende Uebersetzung,
+  # faellt es auf Englisch zurueck.
+  developmentLanguage: en
   deploymentTarget:
     macOS: "13.0"
   createIntermediateGroups: true

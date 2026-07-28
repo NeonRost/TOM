@@ -69,7 +69,7 @@ private struct AboutCommand: View {
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        Button("Über TOM") {
+        Button("About TOM") {
             openWindow(id: "about")
         }
     }
@@ -151,7 +151,7 @@ struct TOMApp: App {
             }
         }
 
-        Window("Über TOM", id: "about") {
+        Window("About TOM", id: "about") {
             AboutView()
         }
         .windowResizability(.contentSize)

@@ -37,7 +37,7 @@ final class KeepAwakeManager: ObservableObject {
 
     private func enable() {
         guard !hasAssertion else { return }
-        let reason = "TOM hält den Rechner wach" as CFString
+        let reason = String(localized: "TOM is keeping the Mac awake") as CFString
         let result = IOPMAssertionCreateWithName(
             kIOPMAssertionTypePreventUserIdleDisplaySleep as CFString,
             IOPMAssertionLevel(kIOPMAssertionLevelOn),

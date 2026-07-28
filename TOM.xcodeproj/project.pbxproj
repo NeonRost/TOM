@@ -13,6 +13,7 @@
 		60F276EFF0C28917DCE66EF4 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 876169FF271D88EF87CDBF06 /* IOKit.framework */; };
 		6AF41367EEA802CC8CDEDA51 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 956130B73839F3B86085C047 /* Assets.xcassets */; };
 		72C95F41C75DAC07319CC9FB /* AboutPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF8D772A9A8535A178E6970C /* AboutPanel.swift */; };
+		731BCCA45DFC7AEE74440293 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 06BEF423E6272BB92CE69E47 /* Localizable.xcstrings */; };
 		87B17A23B079FBFB2B991AC5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4A4B0365F1C26B15C4F2CD /* ContentView.swift */; };
 		BC7CCBDE78D6F3234D1F0E26 /* KeyPressSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D7BC145A288EE86D2D007F /* KeyPressSimulator.swift */; };
 		BDAF07C4ACF64AED49B687F1 /* TOMApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9D23E61C318A4BBF96143D1 /* TOMApp.swift */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		06BEF423E6272BB92CE69E47 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		0853DED1148392513B29493F /* KeepAwakeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeepAwakeManager.swift; sourceTree = "<group>"; };
 		0C4A4B0365F1C26B15C4F2CD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7682C88C6015E0AAD5D4A427 /* LICENSE */ = {isa = PBXFileReference; path = LICENSE; sourceTree = "<group>"; };
@@ -79,6 +81,7 @@
 				0C4A4B0365F1C26B15C4F2CD /* ContentView.swift */,
 				0853DED1148392513B29493F /* KeepAwakeManager.swift */,
 				D9D7BC145A288EE86D2D007F /* KeyPressSimulator.swift */,
+				06BEF423E6272BB92CE69E47 /* Localizable.xcstrings */,
 				F2A09EEB138FEE6D7D2BCBFC /* MouseSimulators.swift */,
 				7AD62F392BECF028E23F72B7 /* SimulatedKey.swift */,
 				F9D23E61C318A4BBF96143D1 /* TOMApp.swift */,
@@ -124,6 +127,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				Base,
+				de,
 				en,
 			);
 			mainGroup = 3ECFE9686B3C3794F9B05512;
@@ -145,6 +149,7 @@
 			files = (
 				6AF41367EEA802CC8CDEDA51 /* Assets.xcassets in Resources */,
 				45CE25C7F894BAEF76F02407 /* LICENSE in Resources */,
+				731BCCA45DFC7AEE74440293 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -169,8 +169,8 @@ enum MouseButtonChoice: String, CaseIterable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .left: return "Links"
-        case .right: return "Rechts"
+        case .left: return String(localized: "Left")
+        case .right: return String(localized: "Right")
         }
     }
 }

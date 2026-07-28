@@ -59,8 +59,11 @@ struct SimulatedKey: Identifiable, Hashable {
 
     var id: CGKeyCode { keyCode }
 
+    // SwiftUI lokalisiert nur String-Literale, keine Variablen – die
+    // Uebersetzung wird deshalb hier selbst nachgeschlagen.
     var displayName: String {
-        fixedLabel ?? KeyboardLayout.label(for: keyCode)
+        guard let fixedLabel else { return KeyboardLayout.label(for: keyCode) }
+        return String(localized: String.LocalizationValue(fixedLabel))
     }
 
     private static func layoutKeys(_ codes: [CGKeyCode]) -> [SimulatedKey] {
@@ -89,22 +92,22 @@ struct SimulatedKey: Identifiable, Hashable {
     ]
 
     static let arrows: [SimulatedKey] = [
-        SimulatedKey(keyCode: 0x7B, fixedLabel: "◀ Pfeil links"),
-        SimulatedKey(keyCode: 0x7C, fixedLabel: "▶ Pfeil rechts"),
-        SimulatedKey(keyCode: 0x7D, fixedLabel: "▼ Pfeil runter"),
-        SimulatedKey(keyCode: 0x7E, fixedLabel: "▲ Pfeil hoch")
+        SimulatedKey(keyCode: 0x7B, fixedLabel: "◀ Arrow Left"),
+        SimulatedKey(keyCode: 0x7C, fixedLabel: "▶ Arrow Right"),
+        SimulatedKey(keyCode: 0x7D, fixedLabel: "▼ Arrow Down"),
+        SimulatedKey(keyCode: 0x7E, fixedLabel: "▲ Arrow Up")
     ]
 
     static let special: [SimulatedKey] = [
-        SimulatedKey(keyCode: 0x31, fixedLabel: "Leertaste"),
-        SimulatedKey(keyCode: 0x24, fixedLabel: "Enter"),
+        SimulatedKey(keyCode: 0x31, fixedLabel: "Space"),
+        SimulatedKey(keyCode: 0x24, fixedLabel: "Return"),
         SimulatedKey(keyCode: 0x30, fixedLabel: "Tab"),
         SimulatedKey(keyCode: 0x35, fixedLabel: "Esc"),
-        SimulatedKey(keyCode: 0x33, fixedLabel: "Löschen"),
-        SimulatedKey(keyCode: 0x3B, fixedLabel: "Strg"),
-        SimulatedKey(keyCode: 0x38, fixedLabel: "Umschalt"),
-        SimulatedKey(keyCode: 0x3A, fixedLabel: "Alt"),
-        SimulatedKey(keyCode: 0x37, fixedLabel: "Cmd")
+        SimulatedKey(keyCode: 0x33, fixedLabel: "Delete"),
+        SimulatedKey(keyCode: 0x3B, fixedLabel: "Control"),
+        SimulatedKey(keyCode: 0x38, fixedLabel: "Shift"),
+        SimulatedKey(keyCode: 0x3A, fixedLabel: "Option"),
+        SimulatedKey(keyCode: 0x37, fixedLabel: "Command")
     ]
 
     // "Unsichtbare" Funktionstasten ohne Standardbelegung – praktisch, wenn keine

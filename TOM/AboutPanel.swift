@@ -38,12 +38,12 @@ struct AboutView: View {
             Text("Version \(version)")
                 .font(.caption)
                 .foregroundStyle(.secondary)
-            Text("TOM wird ohne jede Gewährleistung bereitgestellt. Weitergabe und Veränderung sind unter den Bedingungen der GNU GPL v3 gestattet.")
+            Text("TOM comes with absolutely no warranty. Redistribution and modification are permitted under the terms of the GNU GPL v3.")
                 .font(.caption)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 6)
-            Button("Lizenztext anzeigen") {
+            Button("Show License") {
                 openWindow(id: "license")
             }
             .buttonStyle(.link)
@@ -62,7 +62,7 @@ struct LicenseView: View {
     private var licenseText: String {
         guard let url = Bundle.main.url(forResource: "LICENSE", withExtension: nil),
               let text = try? String(contentsOf: url, encoding: .utf8) else {
-            return "Die LICENSE-Datei wurde im App-Bundle nicht gefunden. Der Lizenztext ist unter https://www.gnu.org/licenses/gpl-3.0.txt abrufbar."
+            return String(localized: "The LICENSE file was not found in the app bundle. The license text is available at https://www.gnu.org/licenses/gpl-3.0.txt")
         }
         return text
     }
