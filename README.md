@@ -60,6 +60,10 @@ brew install xcodegen   # if not already installed
 xcodegen generate
 ```
 
+## Support
+
+TOM is free and always will be. If it saved you some hassle, you can [buy me a coffee](https://ko-fi.com/neonrost).
+
 ## License
 
 Copyright (C) 2026 NeonRost
