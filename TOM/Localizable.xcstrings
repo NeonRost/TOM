@@ -1,258 +1,775 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "▲ Arrow Up" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "▲ Pfeil hoch" } }
+  "sourceLanguage": "en",
+  "strings": {
+    "About TOM": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Über TOM"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acerca de TOM"
+          }
+        }
       }
     },
-    "▶ Arrow Right" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "▶ Pfeil rechts" } }
+    "Accessibility permission is missing.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedienungshilfen-Berechtigung fehlt."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Falta el permiso de Accesibilidad."
+          }
+        }
       }
     },
-    "◀ Arrow Left" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "◀ Pfeil links" } }
+    "Active": {
+      "comment": "Switch that turns a simulation on or off; kept very short.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktiv"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activo"
+          }
+        }
       }
     },
-    "▼ Arrow Down" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "▼ Pfeil runter" } }
+    "Appearance": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Darstellung"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apariencia"
+          }
+        }
       }
     },
-    "About TOM" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Über TOM" } }
+    "Arrow Keys": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pfeiltasten"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flechas"
+          }
+        }
       }
     },
-    "Accessibility permission is missing." : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Bedienungshilfen-Berechtigung fehlt." } }
+    "Click starts in %lld s – position the pointer now …": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klick startet in %lld s – Zeiger jetzt positionieren …"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El clic empieza en %lld s: coloca el puntero …"
+          }
+        }
       }
     },
-    "Active" : {
-      "comment" : "Switch that turns a simulation on or off; kept very short.",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Aktiv" } }
+    "Clicks happen wherever the pointer is. %@ stops mouse click and mouse movement immediately, at any time.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geklickt wird dort, wo der Zeiger gerade steht. %@ beendet Mausklick und Mausbewegung jederzeit sofort."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se hace clic donde esté el puntero. %@ detiene el clic y el movimiento al instante."
+          }
+        }
       }
     },
-    "Appearance" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Darstellung" } }
+    "Command": {
+      "comment": "Modifier key label.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cmd"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comando"
+          }
+        }
       }
     },
-    "Arrow Keys" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Pfeiltasten" } }
+    "Control": {
+      "comment": "Modifier key label.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strg"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Control"
+          }
+        }
       }
     },
-    "Click starts in %lld s – position the pointer now …" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Klick startet in %lld s – Zeiger jetzt positionieren …" } }
+    "Delete": {
+      "comment": "Key label for the backspace key.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löschen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suprimir"
+          }
+        }
       }
     },
-    "Clicks happen wherever the pointer is. %@ stops mouse click and mouse movement immediately, at any time." : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Geklickt wird dort, wo der Zeiger gerade steht. %@ beendet Mausklick und Mausbewegung jederzeit sofort." } }
+    "Emergency stop active: %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not-Aus aktiv: %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parada de emergencia: %@"
+          }
+        }
       }
     },
-    "Command" : {
-      "comment" : "Modifier key label.",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Cmd" } }
+    "Esc": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esc"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esc"
+          }
+        }
       }
     },
-    "Control" : {
-      "comment" : "Modifier key label.",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Strg" } }
+    "Function Keys": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funktionstasten"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teclas de función"
+          }
+        }
       }
     },
-    "Delete" : {
-      "comment" : "Key label for the backspace key.",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Löschen" } }
+    "GNU General Public License v3": {
+      "comment": "Window title of the license viewer.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GNU General Public License v3"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GNU General Public License v3"
+          }
+        }
       }
     },
-    "Emergency stop active: %@" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Not-Aus aktiv: %@" } }
+    "Interval": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Intervall"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Intervalo"
+          }
+        }
       }
     },
-    "Esc" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Esc" } }
+    "Keep Mac Awake": {
+      "comment": "Section header.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mac wachhalten"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mantener el Mac activo"
+          }
+        }
       }
     },
-    "Function Keys" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Funktionstasten" } }
+    "Key": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taste"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tecla"
+          }
+        }
       }
     },
-    "GNU General Public License v3" : {
-      "comment" : "Window title of the license viewer.",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "GNU General Public License v3" } }
+    "Key press starts in %lld s – bring the target window to the front now …": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tastendruck startet in %lld s – Zielfenster jetzt nach vorne holen …"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La pulsación empieza en %lld s: pon la ventana en primer plano …"
+          }
+        }
       }
     },
-    "Interval" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Intervall" } }
+    "Left": {
+      "comment": "Mouse button.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Links"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Izquierdo"
+          }
+        }
       }
     },
-    "Keep Mac Awake" : {
-      "comment" : "Section header.",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Computer wachhalten" } }
+    "Letters": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buchstaben"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Letras"
+          }
+        }
       }
     },
-    "Key" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Taste" } }
+    "Mouse Button": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maustaste"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Botón del ratón"
+          }
+        }
       }
     },
-    "Key press starts in %lld s – bring the target window to the front now …" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Tastendruck startet in %lld s – Zielfenster jetzt nach vorne holen …" } }
+    "Mouse movement starts in %lld s …": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mausbewegung startet in %lld s …"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El movimiento empieza en %lld s …"
+          }
+        }
       }
     },
-    "Left" : {
-      "comment" : "Mouse button.",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Links" } }
+    "Numbers": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zahlen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Números"
+          }
+        }
       }
     },
-    "Letters" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Buchstaben" } }
+    "Open System Settings": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Systemeinstellungen öffnen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir Ajustes del Sistema"
+          }
+        }
       }
     },
-    "Mouse Button" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Maustaste" } }
+    "Option": {
+      "comment": "Modifier key label.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alt"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opción"
+          }
+        }
       }
     },
-    "Mouse movement starts in %lld s …" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Mausbewegung startet in %lld s …" } }
+    "Prevents the system from going to sleep.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verhindert den Ruhezustand des Systems."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impide que el sistema entre en reposo."
+          }
+        }
       }
     },
-    "Numbers" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Zahlen" } }
+    "Quit": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beenden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salir"
+          }
+        }
       }
     },
-    "Open System Settings" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Systemeinstellungen öffnen" } }
+    "Return": {
+      "comment": "Key label for the return/enter key.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retorno"
+          }
+        }
       }
     },
-    "Option" : {
-      "comment" : "Modifier key label.",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alt" } }
+    "Right": {
+      "comment": "Mouse button.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechts"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Derecho"
+          }
+        }
       }
     },
-    "Prevents the system from going to sleep." : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Verhindert den Ruhezustand des Systems." } }
+    "Seconds": {
+      "comment": "Unit after the interval field.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sekunden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segundos"
+          }
+        }
       }
     },
-    "Quit" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Beenden" } }
+    "Shift": {
+      "comment": "Modifier key label.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Umschalt"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mayúsculas"
+          }
+        }
       }
     },
-    "Return" : {
-      "comment" : "Key label for the return/enter key.",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Enter" } }
+    "Show License": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lizenztext anzeigen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ver la licencia"
+          }
+        }
       }
     },
-    "Right" : {
-      "comment" : "Mouse button.",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Rechts" } }
+    "Show TOM in the menu bar": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TOM in der Menüleiste anzeigen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar TOM en la barra de menús"
+          }
+        }
       }
     },
-    "Seconds" : {
-      "comment" : "Unit after the interval field.",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Sekunden" } }
+    "Simulate Key Press": {
+      "comment": "Section header.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tastendruck simulieren"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simular pulsación de tecla"
+          }
+        }
       }
     },
-    "Shift" : {
-      "comment" : "Modifier key label.",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Umschalt" } }
+    "Simulate Mouse Click": {
+      "comment": "Section header.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mausklick simulieren"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simular clic del ratón"
+          }
+        }
       }
     },
-    "Show License" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Lizenztext anzeigen" } }
+    "Simulate Mouse Movement": {
+      "comment": "Section header.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mausbewegung simulieren"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simular movimiento del ratón"
+          }
+        }
       }
     },
-    "Show TOM in the menu bar" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "TOM in der Menüleiste anzeigen" } }
+    "Space": {
+      "comment": "Key label for the space bar.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leertaste"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Espacio"
+          }
+        }
       }
     },
-    "Simulate Key Press" : {
-      "comment" : "Section header.",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Tastendruck simulieren" } }
+    "Special Keys": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sondertasten"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teclas especiales"
+          }
+        }
       }
     },
-    "Simulate Mouse Click" : {
-      "comment" : "Section header.",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Mausklick simulieren" } }
+    "TOM comes with absolutely no warranty. Redistribution and modification are permitted under the terms of the GNU GPL v3.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TOM wird ohne jede Gewährleistung bereitgestellt. Weitergabe und Veränderung sind unter den Bedingungen der GNU GPL v3 gestattet."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TOM se ofrece sin ninguna garantía. Se permite su redistribución y modificación según los términos de la GNU GPL v3."
+          }
+        }
       }
     },
-    "Simulate Mouse Movement" : {
-      "comment" : "Section header.",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Mausbewegung simulieren" } }
+    "TOM is keeping the Mac awake": {
+      "comment": "Reason shown by the system for the power assertion (pmset -g assertions).",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TOM hält den Rechner wach"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TOM mantiene el Mac activo"
+          }
+        }
       }
     },
-    "Space" : {
-      "comment" : "Key label for the space bar.",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Leertaste" } }
+    "Tab": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tab"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tab"
+          }
+        }
       }
     },
-    "Special Keys" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Sondertasten" } }
+    "The LICENSE file was not found in the app bundle. The license text is available at https://www.gnu.org/licenses/gpl-3.0.txt": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die LICENSE-Datei wurde im App-Bundle nicht gefunden. Der Lizenztext ist unter https://www.gnu.org/licenses/gpl-3.0.txt abrufbar."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se encontró el archivo LICENSE en la app. El texto de la licencia está disponible en https://www.gnu.org/licenses/gpl-3.0.txt"
+          }
+        }
       }
     },
-    "Tab" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Tab" } }
+    "Version %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versión %@"
+          }
+        }
       }
     },
-    "The LICENSE file was not found in the app bundle. The license text is available at https://www.gnu.org/licenses/gpl-3.0.txt" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Die LICENSE-Datei wurde im App-Bundle nicht gefunden. Der Lizenztext ist unter https://www.gnu.org/licenses/gpl-3.0.txt abrufbar." } }
+    "▲ Arrow Up": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "▲ Pfeil hoch"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "▲ Flecha arriba"
+          }
+        }
       }
     },
-    "TOM comes with absolutely no warranty. Redistribution and modification are permitted under the terms of the GNU GPL v3." : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "TOM wird ohne jede Gewährleistung bereitgestellt. Weitergabe und Veränderung sind unter den Bedingungen der GNU GPL v3 gestattet." } }
+    "▶ Arrow Right": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "▶ Pfeil rechts"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "▶ Flecha derecha"
+          }
+        }
       }
     },
-    "TOM is keeping the Mac awake" : {
-      "comment" : "Reason shown by the system for the power assertion (pmset -g assertions).",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "TOM hält den Rechner wach" } }
+    "▼ Arrow Down": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "▼ Pfeil runter"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "▼ Flecha abajo"
+          }
+        }
       }
     },
-    "Version %@" : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Version %@" } }
+    "◀ Arrow Left": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "◀ Pfeil links"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "◀ Flecha izquierda"
+          }
+        }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }
