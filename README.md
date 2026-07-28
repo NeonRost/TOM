@@ -1,5 +1,7 @@
 # TOM – Tuco on Meth
 
+<img src="images/TOM_Icon.png" width="300" alt="TOM Icon">
+
 A small macOS utility with a window and an optional menu bar icon. Four independent functions:
 
 - **Keep Mac Awake** – uses an IOKit power assertion to stop the display and the system from going to sleep. No special permission required.
