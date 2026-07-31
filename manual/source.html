@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TOM Manual</title>
+<style>
+  @page { size: A4; margin: 20mm 18mm 22mm 18mm; }
+  :root{
+    --blue-900:#134a86;
+    --blue-700:#1b5da6;
+    --blue-500:#3f88cf;
+    --blue-100:#d7e8f8;
+    --ink:#2c3338;
+    --ink-soft:#5c6770;
+    --line:#e4e8ec;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    color:var(--ink);
+    font-size:10.5pt;
+    line-height:1.55;
+  }
+  h1,h2,h3{font-weight:700;letter-spacing:-.2px;margin:0}
+  p{margin:0 0 8pt}
+  .cover{
+    height:245mm;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;
+    page-break-after:always;
+  }
+  .cover img{width:96pt;height:auto;margin-bottom:18pt}
+  .cover h1{font-size:26pt;color:var(--blue-900)}
+  .cover .tagline{font-size:12pt;color:var(--ink-soft);margin-top:6pt}
+  .cover .version{margin-top:28pt;font-size:9.5pt;color:var(--ink-soft)}
+
+  section{margin-bottom:20pt}
+  .feature{page-break-inside:avoid;margin-bottom:16pt}
+  .intro-block{page-break-inside:avoid}
+  .section-num{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:20pt;height:20pt;border-radius:50%;
+    background:var(--blue-500);color:#fff;font-size:10pt;font-weight:700;
+    margin-right:8pt;
+  }
+  h2{font-size:15pt;color:var(--blue-900);display:flex;align-items:center;margin-bottom:10pt}
+  h3{font-size:11.5pt;color:var(--blue-700);margin:14pt 0 6pt}
+  .lead{color:var(--ink-soft);margin-bottom:12pt}
+
+  figure{margin:10pt 0 14pt;page-break-inside:avoid}
+  figure img{display:block;max-width:100%;border-radius:8px;border:1px solid var(--line)}
+  figure.inline-shot img{max-width:340px}
+  figcaption{font-size:8.5pt;color:var(--ink-soft);margin-top:5pt;font-style:italic}
+
+  .callout{
+    background:#f6f9fc;border:1px solid var(--line);border-left:4px solid var(--blue-500);
+    border-radius:8px;padding:10pt 14pt;margin:12pt 0;
+  }
+  .callout.warn{border-left-color:#d98a1f;background:#fdf7ee}
+  .callout p:last-child{margin-bottom:0}
+  .callout strong{color:var(--ink)}
+
+  .kbd{
+    display:inline-block;padding:1pt 6pt;border-radius:5px;
+    background:var(--blue-100);color:var(--blue-700);font-weight:700;font-size:10pt;
+  }
+
+  ol,ul{margin:0 0 10pt;padding-left:18pt}
+  li{margin-bottom:4pt}
+
+  .footer-note{
+    margin-top:24pt;padding-top:10pt;border-top:1px solid var(--line);
+    color:var(--ink-soft);font-size:8.5pt;
+  }
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12pt}
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <img src="TOM_Icon.png" alt="TOM icon">
+  <h1>TOM</h1>
+  <div class="tagline">Keep your Mac awake — and looking busy.</div>
+  <div class="version">User Manual · Version 1.0</div>
+</div>
+
+<section>
+  <div class="intro-block">
+    <h2><span class="section-num">1</span>What TOM does</h2>
+    <p class="lead">TOM is a small, free, open-source menu bar and window app for macOS with four independent functions. This manual covers the parts that are not obvious from the app itself: installing an app that is not notarized by Apple, and granting the permission the simulation features need. The app's own window explains everything else as you go.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="section-num">2</span>Installation</h2>
+  <p>Download the latest release, unzip it, and move <strong>TOM.app</strong> to your Applications folder.</p>
+
+  <h3>First launch: the security warning</h3>
+  <p>TOM is signed locally but not notarized by Apple (notarization requires a paid developer account). The first time you open it, macOS blocks it and shows a warning like this one:</p>
+  <div class="grid2">
+    <figure class="inline-shot">
+      <img src="gatekeeper_block.png" alt="macOS Gatekeeper block dialog">
+      <figcaption>Shown here in German — the wording only changes with your system language. In English it reads: "TOM" Not Opened. Apple could not verify "TOM" is free of malware that may harm your Mac or compromise your privacy.</figcaption>
+    </figure>
+    <div>
+      <p>Click <strong>Done</strong> — do not move it to the Trash. Then open <strong>System Settings → Privacy &amp; Security</strong> and scroll down to the Security section. You'll find a message about TOM there, with an <strong>Open Anyway</strong> button next to it:</p>
+    </div>
+  </div>
+  <figure>
+    <img src="open_anyway.png" alt="System Settings, Privacy and Security, showing the Open Anyway button for TOM">
+    <figcaption>System Settings → Privacy &amp; Security → Security</figcaption>
+  </figure>
+  <p>Click <strong>Open Anyway</strong>, confirm with your password or Touch ID, and TOM starts. You only need to do this once per downloaded copy of the app.</p>
+</section>
+
+<section>
+  <h2><span class="section-num">3</span>Granting the Accessibility permission</h2>
+  <p>Keeping the Mac awake needs no special permission. The other three functions — simulating a key press, mouse movement, or a mouse click — do, because they send input events at the system level. TOM asks for this the first time you switch one of them on, and links directly to the right place:</p>
+  <figure>
+    <img src="access_pane.png" alt="System Settings, Accessibility pane">
+    <figcaption>System Settings → Privacy &amp; Security → Accessibility. TOM appears in this list once it has asked for permission at least once.</figcaption>
+  </figure>
+  <p>Find <strong>TOM</strong> in the list and turn its switch on.</p>
+  <div class="callout warn">
+    <p><strong>Good to know:</strong> TOM is signed locally, not with a stable developer certificate. That means the permission can reset itself when you install a new version — if a simulation feature suddenly refuses to start after an update, open Accessibility settings, toggle TOM's switch off and back on, and try again.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="section-num">4</span>The four functions</h2>
+
+  <div class="feature">
+    <h3>Keep Mac Awake</h3>
+    <figure><img src="sec_keepawake.png" alt="Keep Mac Awake section"></figure>
+    <p>One switch. While on, the display and the system won't go to sleep due to inactivity — independent of your Energy Saver settings. No permission required.</p>
+  </div>
+
+  <div class="feature">
+    <h3>Simulate Key Press</h3>
+    <figure><img src="sec_keypress.png" alt="Simulate Key Press section"></figure>
+    <p>Sends a real key press at the interval you set (1–600 seconds). The key list follows your keyboard layout, so the letters shown match what's printed on your keys. After switching on, TOM waits 5 seconds before the first press so you can bring the target window to the front.</p>
+  </div>
+
+  <div class="feature">
+    <h3>Simulate Mouse Movement</h3>
+    <figure><img src="sec_mousemove.png" alt="Simulate Mouse Movement section"></figure>
+    <p>Nudges the pointer one pixel and immediately back, at the interval you set. No click, no visible movement — just enough for the system to register activity.</p>
+  </div>
+
+  <div class="feature">
+    <h3>Simulate Mouse Click</h3>
+    <figure><img src="sec_mouseclick.png" alt="Simulate Mouse Click section"></figure>
+    <p>Clicks the left or right mouse button wherever the pointer currently is, at an interval down to 0.1 seconds. Also starts with a 5-second countdown, and switches itself off automatically after 8 hours.</p>
+  </div>
+</section>
+
+<section>
+  <div class="feature">
+    <h2><span class="section-num">5</span>Safety</h2>
+    <div class="callout">
+      <p><strong>Emergency stop: <span class="kbd">⌃⌥⌘K</span></strong> — stops mouse click and mouse movement immediately, from any app, at any time. It's shown in TOM's window whenever one of the two is running.</p>
+    </div>
+    <ul>
+      <li>Mouse movement and mouse click cannot run at the same time — switching one on turns the other off.</li>
+      <li>Neither mouse function remembers being switched on across a restart. You always start them manually.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="feature">
+    <h2><span class="section-num">6</span>Menu bar icon</h2>
+    <figure class="inline-shot">
+      <img src="sec_appearance.png" alt="Appearance section, Show TOM in the menu bar">
+      <figcaption>Appearance section, in TOM's own window</figcaption>
+    </figure>
+    <p>TOM always has a Dock icon. The menu bar icon is optional and off by default — switch it on for one-click access to the same window from wherever you are:</p>
+    <figure class="inline-shot">
+      <img src="menubar_icon.png" alt="TOM icon in the menu bar">
+      <figcaption>TOM's icon, once switched on</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="feature">
+    <h2><span class="section-num">7</span>Uninstalling</h2>
+    <p>Quit TOM, then move TOM.app from your Applications folder to the Trash. To also remove its saved settings, run this in Terminal:</p>
+    <p><code>defaults delete com.neonrost.TOM</code></p>
+  </div>
+</section>
+
+<div class="footer-note">
+  TOM — Copyright © 2026 NeonRost. Free software under the GNU General Public License v3. See LICENSE in the source repository for details.
+</div>
+
+</body>
+</html>
