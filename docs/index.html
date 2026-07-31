@@ -150,6 +150,7 @@ section{padding:78px 0}
 
 footer{border-top:1px solid var(--line);padding:34px 0;font-size:14px;color:var(--ink-soft)}
 .foot-grid{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between}
+.trademark{margin:14px 0 0;font-size:12px;color:var(--ink-soft);opacity:.75}
 
 @media (max-width:820px){
   .hero-grid{grid-template-columns:1fr;gap:38px;text-align:center}
@@ -276,8 +277,11 @@ footer{border-top:1px solid var(--line);padding:34px 0;font-size:14px;color:var(
 
 <footer>
   <div class="wrap foot-grid">
-    <span>Copyright © 2026 NeonRost · Released under the GNU GPL v3</span>
+    <span>Copyright © <span id="copyrightYears">2026</span> NeonRost · Released under the GNU GPL v3</span>
     <span><a href="https://github.com/NeonRost/TOM">GitHub</a> · <a href="https://github.com/NeonRost/TOM/releases">Releases</a> · <a href="https://ko-fi.com/neonrost">Ko-fi</a></span>
+  </div>
+  <div class="wrap">
+    <p class="trademark">Mac® is a registered trademark of Apple Inc.</p>
   </div>
 </footer>
 
@@ -309,6 +313,15 @@ footer{border-top:1px solid var(--line);padding:34px 0;font-size:14px;color:var(
   // Ohne eigene Wahl der Systemeinstellung folgen, auch wenn sie sich ändert
   systemDark.addEventListener('change', function(){ if (!stored) apply(); });
   apply();
+
+  // Copyright-Zeitraum: zeigt nur "2026", solange es das aktuelle Jahr ist,
+  // sonst automatisch "2026–<aktuelles Jahr>" — keine jährliche Handarbeit noetig.
+  var startYear = 2026;
+  var currentYear = new Date().getFullYear();
+  var years = document.getElementById('copyrightYears');
+  if (years) {
+    years.textContent = currentYear > startYear ? (startYear + '–' + currentYear) : String(startYear);
+  }
 })();
 </script>
 
