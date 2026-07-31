@@ -14,6 +14,7 @@ playground.xcworkspace
 # Build-Artefakte
 TOM.app/
 TOM.zip
+TOM-*.zip
 *.dSYM.zip
 *.dSYM
 
