@@ -75,6 +75,21 @@
   }
 
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12pt}
+
+  .toc{height:245mm;page-break-after:always}
+  .toc h2{font-size:18pt;color:var(--blue-900);margin-bottom:22pt;display:block}
+  .toc ol{list-style:none;margin:0;padding:0}
+  .toc li{
+    display:flex;align-items:baseline;gap:8pt;
+    font-size:12pt;padding:9pt 0;border-bottom:1px solid var(--line);
+  }
+  .toc .toc-num{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:20pt;height:20pt;border-radius:50%;flex:none;
+    background:var(--blue-500);color:#fff;font-size:10pt;font-weight:700;
+  }
+  .toc .toc-title{flex:1}
+  .toc .toc-page{color:var(--ink-soft);font-size:10pt}
 </style>
 </head>
 <body>
@@ -84,6 +99,19 @@
   <h1>TOM</h1>
   <div class="tagline">Keep your Mac awake — and looking busy.</div>
   <div class="version">User Manual · Version 1.0</div>
+</div>
+
+<div class="toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><span class="toc-num">1</span><span class="toc-title">What TOM does</span><span class="toc-page">3</span></li>
+    <li><span class="toc-num">2</span><span class="toc-title">Installation</span><span class="toc-page">3</span></li>
+    <li><span class="toc-num">3</span><span class="toc-title">Granting the Accessibility permission</span><span class="toc-page">4</span></li>
+    <li><span class="toc-num">4</span><span class="toc-title">The four functions</span><span class="toc-page">4</span></li>
+    <li><span class="toc-num">5</span><span class="toc-title">Safety</span><span class="toc-page">7</span></li>
+    <li><span class="toc-num">6</span><span class="toc-title">Menu bar icon</span><span class="toc-page">7</span></li>
+    <li><span class="toc-num">7</span><span class="toc-title">Uninstalling</span><span class="toc-page">7</span></li>
+  </ol>
 </div>
 
 <section>
@@ -102,7 +130,6 @@
   <div class="grid2">
     <figure class="inline-shot">
       <img src="gatekeeper_block.png" alt="macOS Gatekeeper block dialog">
-      <figcaption>Shown here in German — the wording only changes with your system language. In English it reads: "TOM" Not Opened. Apple could not verify "TOM" is free of malware that may harm your Mac or compromise your privacy.</figcaption>
     </figure>
     <div>
       <p>Click <strong>Done</strong> — do not move it to the Trash. Then open <strong>System Settings → Privacy &amp; Security</strong> and scroll down to the Security section. You'll find a message about TOM there, with an <strong>Open Anyway</strong> button next to it:</p>
@@ -178,7 +205,7 @@
     </figure>
     <p>TOM always has a Dock icon. The menu bar icon is optional and off by default — switch it on for one-click access to the same window from wherever you are:</p>
     <figure class="inline-shot">
-      <img src="menubar_icon.png" alt="TOM icon in the menu bar">
+      <img src="TOM_Icon.png" alt="TOM icon" style="max-width:64px;border:none">
       <figcaption>TOM's icon, once switched on</figcaption>
     </figure>
   </div>
@@ -193,7 +220,8 @@
 </section>
 
 <div class="footer-note">
-  TOM — Copyright © 2026 NeonRost. Free software under the GNU General Public License v3. See LICENSE in the source repository for details.
+  <p style="margin:0 0 4pt">TOM — Copyright © 2026 NeonRost. Free software under the GNU General Public License v3. See LICENSE in the source repository for details.</p>
+  <p style="margin:0">Mac® is a registered trademark of Apple Inc.</p>
 </div>
 
 </body>
