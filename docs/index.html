@@ -86,10 +86,9 @@ a:hover{text-decoration:underline}
 .btn-ghost:hover{background:rgba(255,255,255,.12)}
 .fineprint{font-size:13px;color:rgba(255,255,255,.65)}
 .fineprint a{color:rgba(255,255,255,.85);text-decoration:underline}
-.shot{
-  width:100%;border-radius:14px;display:block;
-  box-shadow:0 24px 60px rgba(0,0,0,.35);
-}
+/* Kein eigener Rahmen oder Schatten: die Aufnahme bringt den Fensterschatten
+   bereits mit, CSS-Schatten wuerden ein Rechteck um die transparenten Raender ziehen. */
+.shot{width:100%;display:block}
 
 /* ---------- Sections ---------- */
 section{padding:78px 0}
