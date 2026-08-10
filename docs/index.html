@@ -130,6 +130,16 @@ section{padding:78px 0}
   :root:not([data-theme="light"]) .theme-toggle .icon-sun{display:block}
 }
 
+/* Sprachauswahl */
+.lang-select{
+  height:34px;margin-left:8px;padding:0 8px;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);
+  border-radius:9px;color:#fff;cursor:pointer;font-size:13px;font-weight:600;
+  -webkit-appearance:none;appearance:none;
+}
+.lang-select:hover{background:rgba(255,255,255,.22)}
+.lang-select option{color:#000}
+
 .note{
   margin-top:24px;background:var(--card);border:1px solid var(--line);
   border-left:4px solid var(--blue-500);border-radius:12px;
@@ -170,38 +180,43 @@ footer{border-top:1px solid var(--line);padding:34px 0;font-size:14px;color:var(
     <nav class="nav">
       <span class="brand"><img src="images/TOM_Icon.png" alt="">TOM</span>
       <span class="nav-links">
-        <a href="#features">Features</a>
-        <a href="#details">Details</a>
+        <a href="#features" data-i18n="nav_features">Features</a>
+        <a href="#details" data-i18n="nav_details">Details</a>
         <a href="https://github.com/NeonRost/TOM">GitHub</a>
         <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch between light and dark">
           <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
           <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
         </button>
+        <select class="lang-select" id="langSelect" aria-label="Select language">
+          <option value="en">🇬🇧 English</option>
+          <option value="de">🇩🇪 Deutsch</option>
+          <option value="es">🇪🇸 Español</option>
+        </select>
       </span>
     </nav>
 
     <div class="hero-grid">
       <div>
         <h1>TOM – Tuco on Meth</h1>
-        <p class="tagline">Keep your Mac awake — and looking busy.</p>
-        <p class="lede">
+        <p class="tagline" data-i18n="tagline">Keep your Mac awake — and looking busy.</p>
+        <p class="lede" data-i18n="lede">
           A small macOS utility that stops your Mac from falling asleep and, if you want,
           simulates key presses, mouse movement or mouse clicks at an interval you choose.
           Free, open source, no account, no tracking.
         </p>
         <div class="buttons">
-          <a class="btn btn-primary" href="https://github.com/NeonRost/TOM/releases">Download</a>
-          <a class="btn btn-ghost" href="https://github.com/NeonRost/TOM">View source</a>
+          <a class="btn btn-primary" href="https://github.com/NeonRost/TOM/releases" data-i18n="btn_download">Download</a>
+          <a class="btn btn-ghost" href="https://github.com/NeonRost/TOM" data-i18n="btn_source">View source</a>
         </div>
         <p class="fineprint">
-          macOS 13 Ventura or later · Apple Silicon ·
+          <span data-i18n="fineprint">macOS 13 Ventura or later · Apple Silicon · </span>
           <a href="https://github.com/NeonRost/TOM/blob/main/LICENSE">GPLv3</a>
         </p>
       </div>
       <div>
         <picture>
           <source id="shotDark" srcset="images/TOM_Screenshot.png" media="(prefers-color-scheme: dark)">
-          <img class="shot" src="images/TOM_Screenshot_light.png" alt="The TOM window showing its four sections">
+          <img class="shot" id="heroShot" src="images/TOM_Screenshot_light.png" alt="The TOM window showing its four sections">
         </picture>
       </div>
     </div>
@@ -212,31 +227,31 @@ footer{border-top:1px solid var(--line);padding:34px 0;font-size:14px;color:var(
   <div class="wrap">
     <div class="section-head">
       <div class="rule"></div>
-      <h2>Four switches, nothing else</h2>
-      <p>Every function works on its own. Turn on what you need and close the window — TOM keeps running in the background.</p>
+      <h2 data-i18n="features_h2">Four switches, nothing else</h2>
+      <p data-i18n="features_p">Every function works on its own. Turn on what you need and close the window — TOM keeps running in the background.</p>
     </div>
 
     <div class="cards">
       <div class="card">
-        <h3>Keep Mac Awake</h3>
-        <p>Stops the display and the system from going to sleep, regardless of your energy settings. Uses a power assertion, so it needs no permission at all.</p>
+        <h3 data-i18n="card1_h3">Keep Mac Awake</h3>
+        <p data-i18n="card1_p">Stops the display and the system from going to sleep, regardless of your energy settings. Uses a power assertion, so it needs no permission at all.</p>
       </div>
       <div class="card">
-        <h3>Simulate Key Press</h3>
-        <p>Sends a real key press every 1 to 600 seconds. Pick any letter, number, arrow or special key — labels follow your keyboard layout, so QWERTZ and AZERTY show the right characters.</p>
+        <h3 data-i18n="card2_h3">Simulate Key Press</h3>
+        <p data-i18n="card2_p">Sends a real key press every 1 to 600 seconds. Pick any letter, number, arrow or special key — labels follow your keyboard layout, so QWERTZ and AZERTY show the right characters.</p>
       </div>
       <div class="card">
-        <h3>Simulate Mouse Movement</h3>
-        <p>Nudges the pointer one pixel and immediately back. No click, no visible jump — just enough for the system to see activity.</p>
+        <h3 data-i18n="card3_h3">Simulate Mouse Movement</h3>
+        <p data-i18n="card3_p">Nudges the pointer one pixel and immediately back. No click, no visible jump — just enough for the system to see activity.</p>
       </div>
       <div class="card">
-        <h3>Simulate Mouse Click</h3>
-        <p>Clicks the left or right button wherever the pointer sits, as often as ten times per second. Stops by itself after eight hours.</p>
+        <h3 data-i18n="card4_h3">Simulate Mouse Click</h3>
+        <p data-i18n="card4_p">Clicks the left or right button wherever the pointer sits, as often as ten times per second. Stops by itself after eight hours.</p>
       </div>
     </div>
 
     <div class="note">
-      <p><strong>Built-in emergency stop.</strong> While the mouse functions run, <span class="kbd">⌃⌥⌘K</span> stops them instantly from any app — you never have to click your way back into TOM. Both mouse functions also start with a five-second countdown, and neither of them switches itself back on after a restart.</p>
+      <p><strong data-i18n="note_title">Built-in emergency stop.</strong> <span data-i18n="note_body1">While the mouse functions run, </span><span class="kbd">⌃⌥⌘K</span><span data-i18n="note_body2"> stops them instantly from any app — you never have to click your way back into TOM. Both mouse functions also start with a five-second countdown, and neither of them switches itself back on after a restart.</span></p>
     </div>
   </div>
 </section>
@@ -245,22 +260,22 @@ footer{border-top:1px solid var(--line);padding:34px 0;font-size:14px;color:var(
   <div class="wrap">
     <div class="section-head">
       <div class="rule"></div>
-      <h2>Good to know</h2>
-      <p>A few practical details before you download.</p>
+      <h2 data-i18n="details_h2">Good to know</h2>
+      <p data-i18n="details_p">A few practical details before you download.</p>
     </div>
 
     <div class="facts">
       <div class="fact">
-        <h3>Three languages</h3>
-        <p>English, German and Spanish, picked automatically from your system language.</p>
+        <h3 data-i18n="fact1_h3">Three languages</h3>
+        <p data-i18n="fact1_p">English, German and Spanish, picked automatically from your system language.</p>
       </div>
       <div class="fact">
-        <h3>Menu bar access</h3>
-        <p>Switch on the menu bar icon and every setting is one click away, whichever app is in front. Leave it off to keep your menu bar tidy.</p>
+        <h3 data-i18n="fact2_h3">Menu bar access</h3>
+        <p data-i18n="fact2_p">Switch on the menu bar icon and every setting is one click away, whichever app is in front. Leave it off to keep your menu bar tidy.</p>
       </div>
       <div class="fact">
-        <h3>Permissions</h3>
-        <p>Keeping the Mac awake needs nothing. The key and mouse functions ask once for Accessibility.</p>
+        <h3 data-i18n="fact3_h3">Permissions</h3>
+        <p data-i18n="fact3_p">Keeping the Mac awake needs nothing. The key and mouse functions ask once for Accessibility.</p>
       </div>
     </div>
   </div>
@@ -269,19 +284,19 @@ footer{border-top:1px solid var(--line);padding:34px 0;font-size:14px;color:var(
 <section class="support">
   <div class="wrap">
     <div class="rule"></div>
-    <h2 style="font-size:30px;margin:0 0 12px">Free, and staying that way</h2>
-    <p>TOM is free software under the GNU GPL v3. If it saved you some hassle, you can leave a tip.</p>
-    <a class="btn btn-kofi" href="https://ko-fi.com/neonrost">Buy me a coffee</a>
+    <h2 style="font-size:30px;margin:0 0 12px" data-i18n="support_h2">Free, and staying that way</h2>
+    <p data-i18n="support_p">TOM is free software under the GNU GPL v3. If it saved you some hassle, you can leave a tip.</p>
+    <a class="btn btn-kofi" href="https://ko-fi.com/neonrost" data-i18n="btn_kofi">Buy me a coffee</a>
   </div>
 </section>
 
 <footer>
   <div class="wrap foot-grid">
-    <span>Copyright © <span id="copyrightYears">2026</span> NeonRost · Released under the GNU GPL v3</span>
-    <span><a href="https://github.com/NeonRost/TOM">GitHub</a> · <a href="https://github.com/NeonRost/TOM/releases">Releases</a> · <a href="TOM-Manual.pdf">Manual (PDF)</a> · <a href="https://ko-fi.com/neonrost">Ko-fi</a></span>
+    <span>Copyright © <span id="copyrightYears">2026</span> NeonRost · <span data-i18n="footer_license">Released under the GNU GPL v3</span></span>
+    <span><a href="https://github.com/NeonRost/TOM">GitHub</a> · <a href="https://github.com/NeonRost/TOM/releases">Releases</a> · <a href="TOM-Manual.pdf" data-i18n="footer_manual">Manual (PDF)</a> · <a href="https://ko-fi.com/neonrost">Ko-fi</a></span>
   </div>
   <div class="wrap">
-    <p class="trademark">Mac® is a registered trademark of Apple Inc.</p>
+    <p class="trademark" data-i18n="trademark">Mac® is a registered trademark of Apple Inc.</p>
   </div>
 </footer>
 
@@ -321,6 +336,175 @@ footer{border-top:1px solid var(--line);padding:34px 0;font-size:14px;color:var(
   var years = document.getElementById('copyrightYears');
   if (years) {
     years.textContent = currentYear > startYear ? (startYear + '–' + currentYear) : String(startYear);
+  }
+})();
+
+(function(){
+  var translations = {
+    en: {
+      title: "TOM – Tuco on Meth · Keep your Mac awake",
+      metaDescription: "A small, free macOS utility that keeps your Mac awake and can simulate key presses, mouse movement and mouse clicks at a chosen interval. Open source, GPLv3.",
+      nav_features: "Features",
+      nav_details: "Details",
+      tagline: "Keep your Mac awake — and looking busy.",
+      lede: "A small macOS utility that stops your Mac from falling asleep and, if you want, simulates key presses, mouse movement or mouse clicks at an interval you choose. Free, open source, no account, no tracking.",
+      btn_download: "Download",
+      btn_source: "View source",
+      fineprint: "macOS 13 Ventura or later · Apple Silicon · ",
+      shot_alt: "The TOM window showing its four sections",
+      features_h2: "Four switches, nothing else",
+      features_p: "Every function works on its own. Turn on what you need and close the window — TOM keeps running in the background.",
+      card1_h3: "Keep Mac Awake",
+      card1_p: "Stops the display and the system from going to sleep, regardless of your energy settings. Uses a power assertion, so it needs no permission at all.",
+      card2_h3: "Simulate Key Press",
+      card2_p: "Sends a real key press every 1 to 600 seconds. Pick any letter, number, arrow or special key — labels follow your keyboard layout, so QWERTZ and AZERTY show the right characters.",
+      card3_h3: "Simulate Mouse Movement",
+      card3_p: "Nudges the pointer one pixel and immediately back. No click, no visible jump — just enough for the system to see activity.",
+      card4_h3: "Simulate Mouse Click",
+      card4_p: "Clicks the left or right button wherever the pointer sits, as often as ten times per second. Stops by itself after eight hours.",
+      note_title: "Built-in emergency stop.",
+      note_body1: "While the mouse functions run, ",
+      note_body2: " stops them instantly from any app — you never have to click your way back into TOM. Both mouse functions also start with a five-second countdown, and neither of them switches itself back on after a restart.",
+      details_h2: "Good to know",
+      details_p: "A few practical details before you download.",
+      fact1_h3: "Three languages",
+      fact1_p: "English, German and Spanish, picked automatically from your system language.",
+      fact2_h3: "Menu bar access",
+      fact2_p: "Switch on the menu bar icon and every setting is one click away, whichever app is in front. Leave it off to keep your menu bar tidy.",
+      fact3_h3: "Permissions",
+      fact3_p: "Keeping the Mac awake needs nothing. The key and mouse functions ask once for Accessibility.",
+      support_h2: "Free, and staying that way",
+      support_p: "TOM is free software under the GNU GPL v3. If it saved you some hassle, you can leave a tip.",
+      btn_kofi: "Buy me a coffee",
+      footer_license: "Released under the GNU GPL v3",
+      footer_manual: "Manual (PDF)",
+      trademark: "Mac® is a registered trademark of Apple Inc.",
+      theme_toggle_label: "Switch between light and dark",
+      lang_select_label: "Select language"
+    },
+    de: {
+      title: "TOM – Tuco on Meth · Hält deinen Mac wach",
+      metaDescription: "Ein kleines, kostenloses macOS-Dienstprogramm, das deinen Mac wach hält und Tastendrücke, Mausbewegungen und Mausklicks in einem gewählten Intervall simulieren kann. Open Source, GPLv3.",
+      nav_features: "Funktionen",
+      nav_details: "Details",
+      tagline: "Hält deinen Mac wach — und lässt ihn beschäftigt aussehen.",
+      lede: "Ein kleines macOS-Dienstprogramm, das verhindert, dass dein Mac einschläft, und auf Wunsch Tastendrücke, Mausbewegungen oder Mausklicks in einem selbst gewählten Intervall simuliert. Kostenlos, Open Source, kein Konto, kein Tracking.",
+      btn_download: "Herunterladen",
+      btn_source: "Quellcode ansehen",
+      fineprint: "macOS 13 Ventura oder neuer · Apple Silicon · ",
+      shot_alt: "Das TOM-Fenster mit seinen vier Bereichen",
+      features_h2: "Vier Schalter, mehr nicht",
+      features_p: "Jede Funktion arbeitet für sich. Schalte ein, was du brauchst, und schließe das Fenster — TOM läuft im Hintergrund weiter.",
+      card1_h3: "Mac wach halten",
+      card1_p: "Verhindert, dass Display und System einschlafen, unabhängig von deinen Energieeinstellungen. Nutzt eine Power Assertion und benötigt daher überhaupt keine Berechtigung.",
+      card2_h3: "Tastendruck simulieren",
+      card2_p: "Sendet alle 1 bis 600 Sekunden einen echten Tastendruck. Wähle einen beliebigen Buchstaben, eine Zahl, einen Pfeil oder eine Sondertaste — die Beschriftungen richten sich nach deinem Tastaturlayout, sodass QWERTZ und AZERTY die richtigen Zeichen zeigen.",
+      card3_h3: "Mausbewegung simulieren",
+      card3_p: "Bewegt den Zeiger ein Pixel und sofort wieder zurück. Kein Klick, kein sichtbarer Sprung — gerade genug, damit das System Aktivität erkennt.",
+      card4_h3: "Mausklick simulieren",
+      card4_p: "Klickt die linke oder rechte Taste dort, wo der Zeiger gerade steht, bis zu zehnmal pro Sekunde. Stoppt nach acht Stunden von selbst.",
+      note_title: "Eingebauter Notausschalter.",
+      note_body1: "Während die Mausfunktionen laufen, stoppt ",
+      note_body2: " sie sofort in jeder App — du musst dich nie erst zurück zu TOM klicken. Beide Mausfunktionen starten außerdem mit einem fünfsekündigen Countdown, und keine von beiden schaltet sich nach einem Neustart von selbst wieder ein.",
+      details_h2: "Gut zu wissen",
+      details_p: "Ein paar praktische Details vor dem Download.",
+      fact1_h3: "Drei Sprachen",
+      fact1_p: "Englisch, Deutsch und Spanisch, automatisch anhand deiner Systemsprache gewählt.",
+      fact2_h3: "Menüleisten-Zugriff",
+      fact2_p: "Schalte das Menüleisten-Symbol ein, und jede Einstellung ist nur einen Klick entfernt, egal welche App gerade aktiv ist. Lass es aus, um deine Menüleiste aufgeräumt zu halten.",
+      fact3_h3: "Berechtigungen",
+      fact3_p: "Um den Mac wach zu halten, ist nichts nötig. Die Tasten- und Mausfunktionen fragen einmalig nach Bedienungshilfen.",
+      support_h2: "Kostenlos, und das bleibt so",
+      support_p: "TOM ist freie Software unter der GNU GPL v3. Wenn es dir Ärger erspart hat, kannst du ein Trinkgeld dalassen.",
+      btn_kofi: "Spendier mir einen Kaffee",
+      footer_license: "Veröffentlicht unter der GNU GPL v3",
+      footer_manual: "Handbuch (PDF)",
+      trademark: "Mac® ist eine eingetragene Marke von Apple Inc.",
+      theme_toggle_label: "Zwischen hell und dunkel wechseln",
+      lang_select_label: "Sprache auswählen"
+    },
+    es: {
+      title: "TOM – Tuco on Meth · Mantén tu Mac despierto",
+      metaDescription: "Una pequeña utilidad gratuita para macOS que mantiene tu Mac despierto y puede simular pulsaciones de teclas, movimiento del ratón y clics a un intervalo elegido. Código abierto, GPLv3.",
+      nav_features: "Funciones",
+      nav_details: "Detalles",
+      tagline: "Mantén tu Mac despierto — y con aspecto ocupado.",
+      lede: "Una pequeña utilidad de macOS que evita que tu Mac se duerma y, si quieres, simula pulsaciones de teclas, movimiento del ratón o clics a un intervalo que tú eliges. Gratis, código abierto, sin cuenta, sin seguimiento.",
+      btn_download: "Descargar",
+      btn_source: "Ver código fuente",
+      fineprint: "macOS 13 Ventura o posterior · Apple Silicon · ",
+      shot_alt: "La ventana de TOM mostrando sus cuatro secciones",
+      features_h2: "Cuatro interruptores, nada más",
+      features_p: "Cada función funciona por su cuenta. Activa lo que necesites y cierra la ventana — TOM sigue funcionando en segundo plano.",
+      card1_h3: "Mantener el Mac despierto",
+      card1_p: "Evita que la pantalla y el sistema entren en reposo, sin importar tu configuración de energía. Usa una power assertion, por lo que no necesita ningún permiso.",
+      card2_h3: "Simular pulsación de tecla",
+      card2_p: "Envía una pulsación de tecla real cada 1 a 600 segundos. Elige cualquier letra, número, flecha o tecla especial — las etiquetas siguen la distribución de tu teclado, así que QWERTZ y AZERTY muestran los caracteres correctos.",
+      card3_h3: "Simular movimiento del ratón",
+      card3_p: "Mueve el puntero un píxel y lo devuelve enseguida. Sin clic, sin salto visible — lo justo para que el sistema detecte actividad.",
+      card4_h3: "Simular clic del ratón",
+      card4_p: "Hace clic con el botón izquierdo o derecho donde esté el puntero, hasta diez veces por segundo. Se detiene solo después de ocho horas.",
+      note_title: "Parada de emergencia integrada.",
+      note_body1: "Mientras las funciones del ratón están activas, ",
+      note_body2: " las detiene al instante desde cualquier app — nunca tienes que volver a hacer clic en TOM. Ambas funciones del ratón también comienzan con una cuenta atrás de cinco segundos, y ninguna se vuelve a activar sola tras un reinicio.",
+      details_h2: "Información útil",
+      details_p: "Algunos detalles prácticos antes de descargar.",
+      fact1_h3: "Tres idiomas",
+      fact1_p: "Inglés, alemán y español, elegidos automáticamente según el idioma de tu sistema.",
+      fact2_h3: "Acceso desde la barra de menús",
+      fact2_p: "Activa el icono de la barra de menús y cada ajuste está a un clic, sin importar qué app tengas delante. Desactívalo para mantener tu barra de menús ordenada.",
+      fact3_h3: "Permisos",
+      fact3_p: "Mantener el Mac despierto no necesita nada. Las funciones de tecla y ratón piden acceso a Accesibilidad una sola vez.",
+      support_h2: "Gratis, y seguirá siéndolo",
+      support_p: "TOM es software libre bajo la GNU GPL v3. Si te ahorró algún problema, puedes dejar una propina.",
+      btn_kofi: "Invítame a un café",
+      footer_license: "Publicado bajo la GNU GPL v3",
+      footer_manual: "Manual (PDF)",
+      trademark: "Mac® es una marca registrada de Apple Inc.",
+      theme_toggle_label: "Cambiar entre claro y oscuro",
+      lang_select_label: "Seleccionar idioma"
+    }
+  };
+
+  var root = document.documentElement;
+  var select = document.getElementById('langSelect');
+  var themeToggle = document.getElementById('themeToggle');
+  var shot = document.getElementById('heroShot');
+  var metaDesc = document.querySelector('meta[name="description"]');
+
+  function detectLang(){
+    try {
+      var stored = localStorage.getItem('tom-lang');
+      if (stored && translations[stored]) return stored;
+    } catch(e){}
+    var sys = (navigator.language || 'en').slice(0,2).toLowerCase();
+    return translations[sys] ? sys : 'en';
+  }
+
+  function applyLang(lang){
+    var dict = translations[lang] || translations.en;
+    root.setAttribute('lang', lang);
+    document.title = dict.title;
+    if (metaDesc) metaDesc.setAttribute('content', dict.metaDescription);
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if (dict[key] != null) el.textContent = dict[key];
+    });
+    if (shot) shot.setAttribute('alt', dict.shot_alt);
+    if (themeToggle) themeToggle.setAttribute('aria-label', dict.theme_toggle_label);
+    if (select) select.setAttribute('aria-label', dict.lang_select_label);
+    if (select) select.value = lang;
+  }
+
+  var currentLang = detectLang();
+  applyLang(currentLang);
+
+  if (select) {
+    select.addEventListener('change', function(){
+      var lang = select.value;
+      try { localStorage.setItem('tom-lang', lang); } catch(e){}
+      applyLang(lang);
+    });
   }
 })();
 </script>
