@@ -149,7 +149,7 @@ section{padding:78px 0}
 .note p{margin:0;color:var(--ink-soft);font-size:15px}
 
 .alt{background:linear-gradient(180deg,transparent,rgba(63,136,207,.06))}
-.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;text-align:center}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:34px 22px;text-align:center}
 .fact h3{margin:0 0 6px;font-size:16px}
 .fact p{margin:0;color:var(--ink-soft);font-size:15px}
 
@@ -238,7 +238,7 @@ footer{border-top:1px solid var(--line);padding:34px 0;font-size:14px;color:var(
       </div>
       <div class="card">
         <h3 data-i18n="card2_h3">Simulate Key Press</h3>
-        <p data-i18n="card2_p">Sends a real key press every 1 to 600 seconds. Pick any letter, number, arrow or special key — labels follow your keyboard layout, so QWERTZ and AZERTY show the right characters.</p>
+        <p data-i18n="card2_p">Sends a real key press every 1 to 600 seconds — or holds the key down, permanently or alternating with pauses. Pick any letter, number, arrow or special key — labels follow your keyboard layout, so QWERTZ and AZERTY show the right characters.</p>
       </div>
       <div class="card">
         <h3 data-i18n="card3_h3">Simulate Mouse Movement</h3>
@@ -246,12 +246,12 @@ footer{border-top:1px solid var(--line);padding:34px 0;font-size:14px;color:var(
       </div>
       <div class="card">
         <h3 data-i18n="card4_h3">Simulate Mouse Click</h3>
-        <p data-i18n="card4_p">Clicks the left or right button wherever the pointer sits, as often as ten times per second. Stops by itself after eight hours.</p>
+        <p data-i18n="card4_p">Clicks the left or right button wherever the pointer sits, as often as ten times per second — or holds it down. Runs as long as you like; an optional limit stops it after eight hours.</p>
       </div>
     </div>
 
     <div class="note">
-      <p><strong data-i18n="note_title">Built-in emergency stop.</strong> <span data-i18n="note_body1">While the mouse functions run, </span><span class="kbd">⌃⌥⌘K</span><span data-i18n="note_body2"> stops them instantly from any app — you never have to click your way back into TOM. Both mouse functions also start with a five-second countdown, and neither of them switches itself back on after a restart.</span></p>
+      <p><strong data-i18n="note_title">Built-in emergency stop.</strong> <span data-i18n="note_body1">While a simulation runs, </span><span class="kbd">⌃⌥⌘K</span><span data-i18n="note_body2"> stops all of them instantly from any app and releases any key or button TOM is holding — you never have to click your way back into TOM. Every simulation starts with a five-second countdown, and the mouse functions never switch themselves back on after a restart.</span></p>
     </div>
   </div>
 </section>
@@ -271,11 +271,23 @@ footer{border-top:1px solid var(--line);padding:34px 0;font-size:14px;color:var(
       </div>
       <div class="fact">
         <h3 data-i18n="fact2_h3">Menu bar access</h3>
-        <p data-i18n="fact2_p">Switch on the menu bar icon and every setting is one click away, whichever app is in front. Leave it off to keep your menu bar tidy.</p>
+        <p data-i18n="fact2_p">Switch on the menu bar icon and every setting is one click away; a green dot shows when TOM is active. You can even hide TOM from the Dock.</p>
       </div>
       <div class="fact">
         <h3 data-i18n="fact3_h3">Permissions</h3>
         <p data-i18n="fact3_p">Keeping the Mac awake needs nothing. The key and mouse functions ask once for Accessibility.</p>
+      </div>
+      <div class="fact">
+        <h3 data-i18n="fact4_h3">Timers</h3>
+        <p data-i18n="fact4_p">Every function runs continuously, for a set duration or until a time of day — then it switches itself off.</p>
+      </div>
+      <div class="fact">
+        <h3 data-i18n="fact5_h3">Battery protection</h3>
+        <p data-i18n="fact5_p">Optional: on battery power, TOM switches everything off once the charge drops to a level you choose.</p>
+      </div>
+      <div class="fact">
+        <h3 data-i18n="fact6_h3">Launch at login</h3>
+        <p data-i18n="fact6_p">One switch in Setup and TOM starts with your Mac — with the settings you left it with.</p>
       </div>
     </div>
   </div>
@@ -357,22 +369,28 @@ footer{border-top:1px solid var(--line);padding:34px 0;font-size:14px;color:var(
       card1_h3: "Keep Mac Awake",
       card1_p: "Stops the display and the system from going to sleep, regardless of your energy settings. Uses a power assertion, so it needs no permission at all.",
       card2_h3: "Simulate Key Press",
-      card2_p: "Sends a real key press every 1 to 600 seconds. Pick any letter, number, arrow or special key — labels follow your keyboard layout, so QWERTZ and AZERTY show the right characters.",
+      card2_p: "Sends a real key press every 1 to 600 seconds — or holds the key down, permanently or alternating with pauses. Pick any letter, number, arrow or special key — labels follow your keyboard layout, so QWERTZ and AZERTY show the right characters.",
       card3_h3: "Simulate Mouse Movement",
       card3_p: "Nudges the pointer one pixel and immediately back. No click, no visible jump — just enough for the system to see activity.",
       card4_h3: "Simulate Mouse Click",
-      card4_p: "Clicks the left or right button wherever the pointer sits, as often as ten times per second. Stops by itself after eight hours.",
+      card4_p: "Clicks the left or right button wherever the pointer sits, as often as ten times per second — or holds it down. Runs as long as you like; an optional limit stops it after eight hours.",
       note_title: "Built-in emergency stop.",
-      note_body1: "While the mouse functions run, ",
-      note_body2: " stops them instantly from any app — you never have to click your way back into TOM. Both mouse functions also start with a five-second countdown, and neither of them switches itself back on after a restart.",
+      note_body1: "While a simulation runs, ",
+      note_body2: " stops all of them instantly from any app and releases any key or button TOM is holding — you never have to click your way back into TOM. Every simulation starts with a five-second countdown, and the mouse functions never switch themselves back on after a restart.",
       details_h2: "Good to know",
       details_p: "A few practical details before you download.",
       fact1_h3: "Three languages",
       fact1_p: "English, German and Spanish, picked automatically from your system language.",
       fact2_h3: "Menu bar access",
-      fact2_p: "Switch on the menu bar icon and every setting is one click away, whichever app is in front. Leave it off to keep your menu bar tidy.",
+      fact2_p: "Switch on the menu bar icon and every setting is one click away; a green dot shows when TOM is active. You can even hide TOM from the Dock.",
       fact3_h3: "Permissions",
       fact3_p: "Keeping the Mac awake needs nothing. The key and mouse functions ask once for Accessibility.",
+      fact4_h3: "Timers",
+      fact4_p: "Every function runs continuously, for a set duration or until a time of day — then it switches itself off.",
+      fact5_h3: "Battery protection",
+      fact5_p: "Optional: on battery power, TOM switches everything off once the charge drops to a level you choose.",
+      fact6_h3: "Launch at login",
+      fact6_p: "One switch in Setup and TOM starts with your Mac — with the settings you left it with.",
       support_h2: "Free, and staying that way",
       support_p: "TOM is free software under the GNU GPL v3. If it saved you some hassle, you can leave a tip.",
       btn_kofi: "Buy me a coffee",
@@ -398,22 +416,28 @@ footer{border-top:1px solid var(--line);padding:34px 0;font-size:14px;color:var(
       card1_h3: "Mac wach halten",
       card1_p: "Hindert Display und System am Einschlafen, unabhängig von deinen Energieeinstellungen. Nutzt eine Power Assertion und benötigt daher überhaupt keine Berechtigung.",
       card2_h3: "Tastendruck simulieren",
-      card2_p: "Sendet alle 1 bis 600 Sekunden einen echten Tastendruck. Wähle einen beliebigen Buchstaben, eine Zahl, einen Pfeil oder eine Sondertaste — die Beschriftungen richten sich nach deinem Tastaturlayout, sodass QWERTZ und AZERTY die richtigen Zeichen zeigen.",
+      card2_p: "Sendet alle 1 bis 600 Sekunden einen echten Tastendruck — oder hält die Taste gedrückt, dauerhaft oder im Wechsel mit Pausen. Wähle einen beliebigen Buchstaben, eine Zahl, einen Pfeil oder eine Sondertaste — die Beschriftungen richten sich nach deinem Tastaturlayout, sodass QWERTZ und AZERTY die richtigen Zeichen zeigen.",
       card3_h3: "Mausbewegung simulieren",
       card3_p: "Bewegt den Zeiger ein Pixel und sofort wieder zurück. Kein Klick, kein sichtbarer Sprung — gerade genug, damit das System Aktivität erkennt.",
       card4_h3: "Mausklick simulieren",
-      card4_p: "Klickt die linke oder rechte Taste dort, wo der Zeiger gerade steht, bis zu zehnmal pro Sekunde. Stoppt nach acht Stunden von selbst.",
+      card4_p: "Klickt die linke oder rechte Taste dort, wo der Zeiger gerade steht, bis zu zehnmal pro Sekunde — oder hält sie gedrückt. Läuft so lange du willst; auf Wunsch stoppt es nach acht Stunden.",
       note_title: "Eingebauter Notausschalter.",
-      note_body1: "Während die Mausfunktionen laufen, stoppt ",
-      note_body2: " sie sofort in jeder App — du musst dich nie erst zurück zu TOM klicken. Beide Mausfunktionen starten außerdem mit einem fünfsekündigen Countdown und schalten sich nach einem Neustart nicht von selbst wieder ein.",
+      note_body1: "Während eine Simulation läuft, stoppt ",
+      note_body2: " alle sofort in jeder App und lässt gehaltene Tasten los — du musst dich nie erst zurück zu TOM klicken. Jede Simulation startet mit einem fünfsekündigen Countdown, und die Mausfunktionen schalten sich nach einem Neustart nie von selbst wieder ein.",
       details_h2: "Gut zu wissen",
       details_p: "Ein paar praktische Details vor dem Download.",
       fact1_h3: "Drei Sprachen",
       fact1_p: "Englisch, Deutsch und Spanisch, automatisch anhand deiner Systemsprache gewählt.",
       fact2_h3: "Menüleisten-Zugriff",
-      fact2_p: "Schalte das Menüleisten-Symbol ein und jede Einstellung ist nur einen Klick entfernt, egal welche App gerade aktiv ist. Lass es aus, um deine Menüleiste aufgeräumt zu halten.",
+      fact2_p: "Schalte das Menüleisten-Symbol ein und jede Einstellung ist nur einen Klick entfernt; ein grüner Punkt zeigt, wenn TOM aktiv ist. Auf Wunsch verschwindet TOM sogar aus dem Dock.",
       fact3_h3: "Berechtigungen",
       fact3_p: "Um den Mac wach zu halten, ist nichts nötig. Die Tasten- und Mausfunktionen fragen einmalig nach Bedienungshilfen.",
+      fact4_h3: "Timer",
+      fact4_p: "Jede Funktion läuft durchgehend, für eine bestimmte Dauer oder bis zu einer Uhrzeit — dann schaltet sie sich selbst ab.",
+      fact5_h3: "Akkuschutz",
+      fact5_p: "Optional: Im Akkubetrieb schaltet TOM alles ab, sobald der Ladestand auf einen Wert deiner Wahl fällt.",
+      fact6_h3: "Mit dem Mac starten",
+      fact6_p: "Ein Schalter im Setup und TOM startet mit deinem Mac — mit den Einstellungen, die du zuletzt hattest.",
       support_h2: "Kostenlos, und das bleibt so",
       support_p: "TOM ist freie Software unter der GNU GPL v3. Wenn dir TOM nützlich war, freue ich mich über ein Trinkgeld.",
       btn_kofi: "Spendier mir einen Kaffee",
@@ -439,22 +463,28 @@ footer{border-top:1px solid var(--line);padding:34px 0;font-size:14px;color:var(
       card1_h3: "Mantener el Mac despierto",
       card1_p: "Evita que la pantalla y el sistema entren en reposo, sin importar tu configuración de energía. Usa una power assertion, por lo que no necesita ningún permiso.",
       card2_h3: "Simular pulsación de tecla",
-      card2_p: "Envía una pulsación de tecla real cada 1 a 600 segundos. Elige cualquier letra, número, flecha o tecla especial — las etiquetas siguen la distribución de tu teclado, así que QWERTZ y AZERTY muestran los caracteres correctos.",
+      card2_p: "Envía una pulsación de tecla real cada 1 a 600 segundos — o mantiene la tecla pulsada, de forma continua o alternando con pausas. Elige cualquier letra, número, flecha o tecla especial — las etiquetas siguen la distribución de tu teclado, así que QWERTZ y AZERTY muestran los caracteres correctos.",
       card3_h3: "Simular movimiento del ratón",
       card3_p: "Mueve el puntero un píxel y lo devuelve enseguida. Sin clic, sin salto visible — lo justo para que el sistema detecte actividad.",
       card4_h3: "Simular clic del ratón",
-      card4_p: "Hace clic con el botón izquierdo o derecho donde esté el puntero, hasta diez veces por segundo. Se detiene solo después de ocho horas.",
+      card4_p: "Hace clic con el botón izquierdo o derecho donde esté el puntero, hasta diez veces por segundo — o lo mantiene pulsado. Funciona todo el tiempo que quieras; si lo deseas, se detiene tras ocho horas.",
       note_title: "Parada de emergencia integrada.",
-      note_body1: "Mientras las funciones del ratón están activas, ",
-      note_body2: " las detiene al instante desde cualquier app — nunca tienes que volver a hacer clic en TOM. Ambas funciones del ratón también comienzan con una cuenta atrás de cinco segundos, y ninguna se vuelve a activar sola tras un reinicio.",
+      note_body1: "Mientras una simulación está activa, ",
+      note_body2: " las detiene todas al instante desde cualquier app y suelta cualquier tecla o botón pulsado — nunca tienes que volver a hacer clic en TOM. Cada simulación comienza con una cuenta atrás de cinco segundos, y las funciones del ratón nunca se vuelven a activar solas tras un reinicio.",
       details_h2: "Información útil",
       details_p: "Algunos detalles prácticos antes de descargar.",
       fact1_h3: "Tres idiomas",
       fact1_p: "Inglés, alemán y español, elegidos automáticamente según el idioma de tu sistema.",
       fact2_h3: "Acceso desde la barra de menús",
-      fact2_p: "Activa el icono de la barra de menús y cada ajuste está a un clic, sin importar qué app tengas delante. Desactívalo para mantener tu barra de menús ordenada.",
+      fact2_p: "Activa el icono de la barra de menús y cada ajuste está a un clic; un punto verde indica cuando TOM está activo. Incluso puedes ocultar TOM del Dock.",
       fact3_h3: "Permisos",
       fact3_p: "Mantener el Mac despierto no necesita nada. Las funciones de tecla y ratón piden acceso a Accesibilidad una sola vez.",
+      fact4_h3: "Temporizadores",
+      fact4_p: "Cada función se ejecuta de forma continua, durante un tiempo fijo o hasta una hora — y luego se desactiva sola.",
+      fact5_h3: "Protección de batería",
+      fact5_p: "Opcional: con batería, TOM lo desactiva todo cuando la carga baja al nivel que elijas.",
+      fact6_h3: "Inicio con el Mac",
+      fact6_p: "Un interruptor en Configuración y TOM se abre con tu Mac — con los ajustes que dejaste.",
       support_h2: "Gratis, y seguirá siéndolo",
       support_p: "TOM es software libre bajo la GNU GPL v3. Si te ahorró algún problema, puedes dejar una propina.",
       btn_kofi: "Invítame a un café",

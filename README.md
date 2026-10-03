@@ -5,13 +5,17 @@
 A small macOS utility with a window and an optional menu bar icon. Four independent functions:
 
 - **Keep Mac Awake** – uses an IOKit power assertion to stop the display and the system from going to sleep. No special permission required.
-- **Simulate Key Press** – sends a real key press via `CGEvent` at a chosen interval (1–600 seconds). Pick the key from a list (letters, numbers, arrow keys, special keys such as Space/Return/Control, and F13–F19); the labels follow the active keyboard layout (QWERTZ, AZERTY, …). Starts after a 5-second countdown so you can bring the target window to the front. Handy for staying "active" in games, for example.
+- **Simulate Key Press** – sends a real key via `CGEvent`. Pick the key from a list (letters, numbers, arrow keys, special keys such as Space/Return/Control, and F13–F19); the labels follow the active keyboard layout (QWERTZ, AZERTY, …). Three modes: **Press** (a short press every 1–600 seconds), **Hold** (held down until you switch it off) or **Hold & Pause** (held for a set time, released for a set time, repeating). Starts after a 5-second countdown so you can bring the target window to the front. Handy for staying "active" in games, for example.
 - **Simulate Mouse Movement** – moves the pointer one pixel and immediately back at the chosen interval. No click, no visible movement.
-- **Simulate Mouse Click** – clicks with the left or right mouse button at the current pointer position at the chosen interval (0.1 s or slower). Starts after a 5-second countdown and shuts itself off automatically after 8 hours.
+- **Simulate Mouse Click** – presses the left or right mouse button at the current pointer position, with the same three modes as the key press (clicks down to every 0.1 s). Starts after a 5-second countdown.
 
-Safety: **⌃⌥⌘K** stops mouse click and mouse movement immediately, no matter which app is in the foreground. Mouse movement and mouse click are mutually exclusive, and their on/off states are deliberately not restored on launch — an app that starts clicking by itself after a restart would be dangerous.
+Every function has a **timer**: run continuously (the default), for a set duration, or until a time of day. A running function shows its end time, and the menu bar icon gets a green dot while anything is switched on.
 
-The functions run independently of each other; settings are preserved across restarts.
+Safety: **⌃⌥⌘K** stops key press, mouse click and mouse movement immediately, no matter which app is in the foreground, and releases any key or button TOM is holding. Mouse movement and mouse click are mutually exclusive, and their on/off states are deliberately not restored on launch — an app that starts clicking by itself after a restart would be dangerous.
+
+The **Setup** page (bottom left of the window) holds the app-wide options: show TOM in the menu bar, hide it from the Dock, launch at login, stop mouse click after 8 hours, and **battery protection** — on battery power, TOM switches everything off once the charge drops to a level you choose. All of these are off by default.
+
+Sections can be collapsed; settings and the collapsed state are preserved across restarts.
 
 <img src="images/TOM_Screenshot.png" width="400" alt="TOM Screenshot">
 
@@ -22,7 +26,7 @@ The functions run independently of each other; settings are preserved across res
 
 ## Download
 
-Grab the latest build from the [Releases](../../releases) page, unzip it and move `TOM.app` to your Applications folder.
+Grab the latest build from the [Releases](../../releases) page — either the installer (`.dmg`: open it and drag TOM onto the Applications folder) or the `.zip` (unzip it and move `TOM.app` to your Applications folder).
 
 The app is not notarized, so macOS will refuse to open it on first launch. Go to **System Settings → Privacy & Security**, scroll down to the message about TOM and click **Open Anyway**.
 
