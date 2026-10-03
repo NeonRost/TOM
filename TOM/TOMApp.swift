@@ -28,6 +28,19 @@ enum SettingsKeys {
     static let mouseMoveInterval = "mouseMoveInterval"
     static let mouseClickInterval = "mouseClickInterval"
     static let mouseClickButton = "mouseClickButton"
+    static let keyPressMode = "keyPressMode"
+    static let keyHoldSeconds = "keyHoldSeconds"
+    static let keyPauseSeconds = "keyPauseSeconds"
+    static let mouseClickMode = "mouseClickMode"
+    static let mouseHoldSeconds = "mouseHoldSeconds"
+    static let mousePauseSeconds = "mousePauseSeconds"
+    static let hideFromDock = "hideFromDock"
+    static let mouseClickAutoOff = "mouseClickAutoOff"
+    static let batteryProtectionEnabled = "batteryProtectionEnabled"
+    static let batteryProtectionThreshold = "batteryProtectionThreshold"
+    static let keyPressSectionExpanded = "keyPressSectionExpanded"
+    static let mouseMoveSectionExpanded = "mouseMoveSectionExpanded"
+    static let mouseClickSectionExpanded = "mouseClickSectionExpanded"
 }
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -36,6 +49,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // werden kann.
     var openMainWindow: (() -> Void)?
 
+    private var defaultsObserver: NSObjectProtocol?
+
+    private var mainWindow: NSWindow? {
+        NSApp.windows.first { $0.identifier?.rawValue.hasPrefix("main") == true }
+    }
+
+    // Ohne Dock-Symbol nur, solange das Menüleistensymbol sichtbar ist –
+    // sonst wäre TOM nirgends mehr erreichbar.
+    private var menuBarOnly: Bool {
+        let defaults = UserDefaults.standard
+        return defaults.bool(forKey: SettingsKeys.hideFromDock) && defaults.bool(forKey: SettingsKeys.showMenuBarIcon)
+    }
+
     // Ohne dies beendet SwiftUI die App beim Schließen des letzten Fensters —
     // fatal, wenn das Menüleistensymbol ausgeblendet ist und Wachhalten oder
     // der Tastendruck-Timer weiterlaufen sollen.
@@ -43,22 +69,62 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         false
     }
 
-    // Das Fenster ist hoch; ohne Zentrierung platziert macOS es gern so tief,
-    // dass der untere Teil hinter dem Dock verschwindet.
-    func applicationDidFinishLaunching(_ notification: Notification) {
-        DispatchQueue.main.async {
-            NSApp.windows.first { $0.identifier?.rawValue.hasPrefix("main") == true }?.center()
+    // Vor dem Start gesetzt, damit das Dock-Symbol gar nicht erst kurz auftaucht.
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        if menuBarOnly {
+            NSApp.setActivationPolicy(.accessory)
         }
     }
 
-    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        guard !flag else { return true }
-        if let window = sender.windows.first(where: { $0.identifier?.rawValue.hasPrefix("main") == true }) {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        let startsInMenuBarOnly = menuBarOnly
+        DispatchQueue.main.async {
+            if startsInMenuBarOnly {
+                self.mainWindow?.close()
+            } else {
+                // Das Fenster ist hoch; ohne Zentrierung platziert macOS es gern
+                // so tief, dass der untere Teil hinter dem Dock verschwindet.
+                self.mainWindow?.center()
+            }
+            self.clearInitialFocus()
+        }
+        defaultsObserver = NotificationCenter.default.addObserver(
+            forName: UserDefaults.didChangeNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            self?.applyDockVisibility()
+        }
+    }
+
+    private func applyDockVisibility() {
+        let desired: NSApplication.ActivationPolicy = menuBarOnly ? .accessory : .regular
+        guard NSApp.activationPolicy() != desired else { return }
+        NSApp.setActivationPolicy(desired)
+        // Zurück ins Dock (etwa weil das Menüleistensymbol abgeschaltet wurde):
+        // Fenster zeigen, sonst bliebe nichts Sichtbares von TOM übrig.
+        if desired == .regular {
+            showMainWindow()
+        }
+    }
+
+    private func showMainWindow() {
+        if let window = mainWindow {
             window.makeKeyAndOrderFront(nil)
         } else {
             openMainWindow?()
         }
-        sender.activate(ignoringOtherApps: true)
+        NSApp.activate(ignoringOtherApps: true)
+        DispatchQueue.main.async { self.clearInitialFocus() }
+    }
+
+    // macOS legt den Fokus sonst automatisch ins erste Zahlenfeld – blau
+    // umrandet, und ein versehentlicher Tastendruck ändert das Intervall.
+    private func clearInitialFocus() {
+        mainWindow?.makeFirstResponder(nil)
+    }
+
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        guard !flag else { return true }
+        showMainWindow()
         return false
     }
 }
@@ -91,6 +157,47 @@ private struct MainWindowContent: View {
     }
 }
 
+// Grüner Punkt unten rechts, sobald irgendeine Funktion eingeschaltet ist.
+// Als fertig gezeichnetes Bild, weil MenuBarExtra-Labels nur Text und Bild
+// zuverlässig darstellen, keine zusammengesetzten Views.
+private struct MenuBarLabel: View {
+    @ObservedObject var keepAwake: KeepAwakeManager
+    @ObservedObject var keySimulator: KeyPressSimulator
+    @ObservedObject var mouseMove: MouseMoveSimulator
+    @ObservedObject var mouseClick: MouseClickSimulator
+
+    private var isAnythingActive: Bool {
+        keepAwake.isEnabled || keySimulator.isEnabled || mouseMove.isEnabled || mouseClick.isEnabled
+    }
+
+    var body: some View {
+        Image(nsImage: Self.icon(active: isAnythingActive))
+    }
+
+    private static func icon(active: Bool) -> NSImage {
+        let image = NSImage(size: NSSize(width: 16, height: 16), flipped: false) { rect in
+            if let base = NSImage(named: "MenuBarIcon") {
+                let scale = min(rect.width / base.size.width, rect.height / base.size.height)
+                let size = NSSize(width: base.size.width * scale, height: base.size.height * scale)
+                base.draw(in: NSRect(x: rect.midX - size.width / 2, y: rect.midY - size.height / 2,
+                                     width: size.width, height: size.height))
+            }
+            guard active else { return true }
+            let diameter: CGFloat = 6.5
+            let dot = NSRect(x: rect.maxX - diameter, y: rect.minY, width: diameter, height: diameter)
+            // Ausgesparter Rand trennt den Punkt vom Glas, wie bei Badges üblich.
+            NSGraphicsContext.current?.compositingOperation = .clear
+            NSBezierPath(ovalIn: dot.insetBy(dx: -1.2, dy: -1.2)).fill()
+            NSGraphicsContext.current?.compositingOperation = .sourceOver
+            NSColor.systemGreen.setFill()
+            NSBezierPath(ovalIn: dot).fill()
+            return true
+        }
+        image.isTemplate = false
+        return image
+    }
+}
+
 @main
 struct TOMApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
@@ -113,29 +220,63 @@ struct TOMApp: App {
         let storedButton = defaults.string(forKey: SettingsKeys.mouseClickButton)
             .flatMap(MouseButtonChoice.init(rawValue:)) ?? .left
 
-        _keepAwake = StateObject(wrappedValue: KeepAwakeManager(initiallyEnabled: keepAwakeEnabled))
-        _keySimulator = StateObject(wrappedValue: KeyPressSimulator(
+        func storedMode(_ key: String) -> PressMode {
+            defaults.string(forKey: key).flatMap(PressMode.init(rawValue:)) ?? .press
+        }
+        func storedDuration(_ key: String, default fallback: Double) -> Double {
+            let value = defaults.double(forKey: key)
+            return value == 0 ? fallback : PressTiming.clamp(value)
+        }
+
+        let awake = KeepAwakeManager(initiallyEnabled: keepAwakeEnabled)
+        _keepAwake = StateObject(wrappedValue: awake)
+        let keySim = KeyPressSimulator(
             initiallyEnabled: keySimEnabled,
             selectedKey: selectedKey,
-            intervalSeconds: interval
-        ))
+            mode: storedMode(SettingsKeys.keyPressMode),
+            intervalSeconds: interval,
+            holdSeconds: storedDuration(SettingsKeys.keyHoldSeconds, default: PressTiming.defaultHoldSeconds),
+            pauseSeconds: storedDuration(SettingsKeys.keyPauseSeconds, default: PressTiming.defaultPauseSeconds)
+        )
+        _keySimulator = StateObject(wrappedValue: keySim)
 
         // Die Ein-Zustaende der Mausfunktionen werden bewusst NICHT gespeichert:
         // eine App, die nach dem Start unaufgefordert klickt, waere gefaehrlich.
         let move = MouseMoveSimulator(intervalSeconds: storedMoveInterval == 0 ? 30 : storedMoveInterval)
         let click = MouseClickSimulator(
             buttonChoice: storedButton,
-            intervalSeconds: storedClickInterval == 0 ? 30 : storedClickInterval
+            mode: storedMode(SettingsKeys.mouseClickMode),
+            intervalSeconds: storedClickInterval == 0 ? 30 : storedClickInterval,
+            holdSeconds: storedDuration(SettingsKeys.mouseHoldSeconds, default: PressTiming.defaultHoldSeconds),
+            pauseSeconds: storedDuration(SettingsKeys.mousePauseSeconds, default: PressTiming.defaultPauseSeconds)
         )
         move.counterpart = click
         click.counterpart = move
-        MouseSafety.shared.isAnyActive = { [weak move, weak click] in
-            (move?.isEnabled ?? false) || (click?.isEnabled ?? false)
+        let emergencyStop = EmergencyStop.shared
+        emergencyStop.isAnyActive = { [weak keySim, weak move, weak click] in
+            (keySim?.isEnabled ?? false) || (move?.isEnabled ?? false) || (click?.isEnabled ?? false)
         }
-        MouseSafety.shared.stopAll = { [weak move, weak click] in
+        emergencyStop.stopAll = { [weak keySim, weak move, weak click] in
+            keySim?.isEnabled = false
             move?.isEnabled = false
             click?.isEnabled = false
         }
+        emergencyStop.heldModifiers = { [weak keySim] in keySim?.heldModifierFlags ?? [] }
+        // Ein beim Start automatisch fortgesetzter Tastendruck lief schon vor
+        // dieser Verdrahtung an – den Not-Aus jetzt nachziehen.
+        emergencyStop.activeStateChanged()
+
+        BatteryGuard.shared.stopAll = { [weak awake, weak keySim, weak move, weak click] in
+            awake?.isEnabled = false
+            keySim?.isEnabled = false
+            move?.isEnabled = false
+            click?.isEnabled = false
+            // Wird sonst nur über die Oberfläche gespeichert, die bei
+            // geschlossenem Fenster nicht mitläuft.
+            UserDefaults.standard.set(false, forKey: SettingsKeys.keepAwakeEnabled)
+            UserDefaults.standard.set(false, forKey: SettingsKeys.keySimEnabled)
+        }
+        BatteryGuard.shared.start()
         _mouseMove = StateObject(wrappedValue: move)
         _mouseClick = StateObject(wrappedValue: click)
     }
@@ -163,11 +304,7 @@ struct TOMApp: App {
         MenuBarExtra(isInserted: $showMenuBarIcon) {
             ContentView(keepAwake: keepAwake, keySimulator: keySimulator, mouseMove: mouseMove, mouseClick: mouseClick)
         } label: {
-            Image("MenuBarIcon")
-                .resizable()
-                .renderingMode(.original)
-                .scaledToFit()
-                .frame(width: 16, height: 16)
+            MenuBarLabel(keepAwake: keepAwake, keySimulator: keySimulator, mouseMove: mouseMove, mouseClick: mouseClick)
         }
         .menuBarExtraStyle(.window)
     }

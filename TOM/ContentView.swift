@@ -18,21 +18,241 @@ import AppKit
 import SwiftUI
 
 private struct IntervalRow: View {
+    var title: LocalizedStringKey = "Interval"
     @Binding var value: Double
     let range: ClosedRange<Double>
     let step: Double
 
     var body: some View {
-        LabeledContent("Interval") {
+        LabeledContent(title) {
             HStack(spacing: 6) {
                 TextField("", value: $value, format: .number)
                     .frame(width: 50)
                     .multilineTextAlignment(.trailing)
                     .textFieldStyle(.roundedBorder)
-                Stepper("Interval", value: $value, in: range, step: step)
+                Stepper(title, value: $value, in: range, step: step)
                     .labelsHidden()
                 Text("Seconds")
             }
+        }
+    }
+}
+
+// Ein Ende am Folgetag mit Datum, sonst nur die Uhrzeit.
+private func formattedTimerEnd(_ date: Date) -> String {
+    Calendar.current.isDateInToday(date)
+        ? date.formatted(date: .omitted, time: .shortened)
+        : date.formatted(date: .abbreviated, time: .shortened)
+}
+
+private struct ActiveBadge: View {
+    var until: Date?
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Circle()
+                .fill(.green)
+                .frame(width: 7, height: 7)
+            if let until {
+                Text("Active until \(formattedTimerEnd(until))")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } else {
+                Text("Active")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+}
+
+// Section(isExpanded:) gibt es erst ab macOS 14 – deshalb eine DisclosureGroup
+// als erste Zeile des Abschnitts. Läuft eine Funktion im zugeklappten
+// Zustand, zeigt die Titelzeile das an.
+private struct CollapsibleSection<Content: View, Footer: View>: View {
+    let title: LocalizedStringKey
+    @Binding var isExpanded: Bool
+    var isActive = false
+    var activeUntil: Date?
+    @ViewBuilder let content: () -> Content
+    @ViewBuilder let footer: () -> Footer
+
+    var body: some View {
+        Section {
+            DisclosureGroup(isExpanded: $isExpanded) {
+                content()
+            } label: {
+                HStack(spacing: 8) {
+                    Text(title)
+                        .font(.headline)
+                    Spacer()
+                    if isActive && !isExpanded {
+                        ActiveBadge(until: activeUntil)
+                    }
+                }
+                .contentShape(Rectangle())
+                .onTapGesture { isExpanded.toggle() }
+            }
+        } footer: {
+            footer()
+        }
+    }
+}
+
+// Luft zwischen Titel und erster Zeile. Sitzt an der ersten Zeile statt an der
+// Titelzeile, sonst rutscht der Aufklapp-Pfeil aus der Titelmitte.
+enum CollapsibleSectionMetrics {
+    static let titleSpacing: CGFloat = 10
+}
+
+extension CollapsibleSection where Footer == EmptyView {
+    init(
+        title: LocalizedStringKey,
+        isExpanded: Binding<Bool>,
+        isActive: Bool = false,
+        activeUntil: Date? = nil,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.init(
+            title: title,
+            isExpanded: isExpanded,
+            isActive: isActive,
+            activeUntil: activeUntil,
+            content: content,
+            footer: { EmptyView() }
+        )
+    }
+}
+
+private struct DurationRow: View {
+    @Binding var totalMinutes: Int
+
+    private var hours: Binding<Int> {
+        Binding(
+            get: { totalMinutes / 60 },
+            set: { totalMinutes = min(max($0, 0), 99) * 60 + totalMinutes % 60 }
+        )
+    }
+
+    private var minutes: Binding<Int> {
+        Binding(
+            get: { totalMinutes % 60 },
+            set: { totalMinutes = (totalMinutes / 60) * 60 + min(max($0, 0), 59) }
+        )
+    }
+
+    var body: some View {
+        LabeledContent("Ends after") {
+            HStack(spacing: 6) {
+                numberField(hours)
+                Text("h")
+                numberField(minutes)
+                    .padding(.leading, 6)
+                Text("min")
+            }
+        }
+    }
+
+    private func numberField(_ value: Binding<Int>) -> some View {
+        TextField("", value: value, format: .number)
+            .frame(width: 40)
+            .multilineTextAlignment(.trailing)
+            .textFieldStyle(.roundedBorder)
+    }
+}
+
+private struct UntilRow: View {
+    @Binding var minutesSinceMidnight: Int
+
+    private var time: Binding<Date> {
+        Binding(
+            get: {
+                Calendar.current.date(
+                    bySettingHour: minutesSinceMidnight / 60,
+                    minute: minutesSinceMidnight % 60,
+                    second: 0,
+                    of: Date()
+                ) ?? Date()
+            },
+            set: { date in
+                let parts = Calendar.current.dateComponents([.hour, .minute], from: date)
+                minutesSinceMidnight = (parts.hour ?? 0) * 60 + (parts.minute ?? 0)
+            }
+        )
+    }
+
+    var body: some View {
+        DatePicker("Ends at", selection: time, displayedComponents: .hourAndMinute)
+    }
+}
+
+// Timer-Auswahl und je nach Modus Dauer oder Uhrzeit; optional das Ende als Zeile.
+private struct TimerRows: View {
+    @ObservedObject var timer: RunTimer
+    var showsEnd = false
+
+    var body: some View {
+        Picker("Timer", selection: $timer.mode) {
+            ForEach(TimerMode.allCases) { mode in
+                Text(mode.displayName).tag(mode)
+            }
+        }
+
+        switch timer.mode {
+        case .continuous:
+            EmptyView()
+        case .duration:
+            DurationRow(totalMinutes: $timer.durationMinutes)
+        case .until:
+            UntilRow(minutesSinceMidnight: $timer.untilMinutes)
+        }
+
+        if showsEnd, let endDate = timer.endDate {
+            Text("Active until \(formattedTimerEnd(endDate))")
+                .font(.caption.bold())
+                .foregroundStyle(.green)
+        }
+    }
+}
+
+private struct ModePicker: View {
+    @Binding var mode: PressMode
+
+    var body: some View {
+        Picker("Mode", selection: $mode) {
+            ForEach(PressMode.allCases) { choice in
+                Text(choice.displayName).tag(choice)
+            }
+        }
+    }
+}
+
+// Je nach Modus: Intervall, nichts (dauerhaft gehalten) oder Halte- und Pausenzeit.
+private struct ModeTimingRows: View {
+    let mode: PressMode
+    @Binding var interval: Double
+    let intervalRange: ClosedRange<Double>
+    let intervalStep: Double
+    @Binding var hold: Double
+    @Binding var pause: Double
+
+    var body: some View {
+        switch mode {
+        case .press:
+            IntervalRow(value: $interval, range: intervalRange, step: intervalStep)
+        case .hold:
+            EmptyView()
+        case .cycle:
+            IntervalRow(title: "Hold Time", value: $hold, range: PressTiming.range, step: PressTiming.step)
+            IntervalRow(title: "Pause", value: $pause, range: PressTiming.range, step: PressTiming.step)
+        }
+    }
+
+    static func rowCount(for mode: PressMode) -> Int {
+        switch mode {
+        case .press: return 1
+        case .hold: return 0
+        case .cycle: return 2
         }
     }
 }
@@ -85,31 +305,192 @@ private struct PersistenceModifier: ViewModifier {
     }
 }
 
+private struct PressModePersistenceModifier: ViewModifier {
+    @ObservedObject var keySimulator: KeyPressSimulator
+    @ObservedObject var mouseClick: MouseClickSimulator
+
+    func body(content: Content) -> some View {
+        content
+            .onChange(of: keySimulator.mode) { (newValue: PressMode) in
+                UserDefaults.standard.set(newValue.rawValue, forKey: SettingsKeys.keyPressMode)
+            }
+            .onChange(of: keySimulator.holdSeconds) { (newValue: Double) in
+                UserDefaults.standard.set(newValue, forKey: SettingsKeys.keyHoldSeconds)
+            }
+            .onChange(of: keySimulator.pauseSeconds) { (newValue: Double) in
+                UserDefaults.standard.set(newValue, forKey: SettingsKeys.keyPauseSeconds)
+            }
+            .onChange(of: mouseClick.mode) { (newValue: PressMode) in
+                UserDefaults.standard.set(newValue.rawValue, forKey: SettingsKeys.mouseClickMode)
+            }
+            .onChange(of: mouseClick.holdSeconds) { (newValue: Double) in
+                UserDefaults.standard.set(newValue, forKey: SettingsKeys.mouseHoldSeconds)
+            }
+            .onChange(of: mouseClick.pauseSeconds) { (newValue: Double) in
+                UserDefaults.standard.set(newValue, forKey: SettingsKeys.mousePauseSeconds)
+            }
+    }
+}
+
+// Ersetzt den Fensterinhalt statt eines Sheets – Sheets funktionieren im
+// Menüleisten-Fenster nicht zuverlässig. Änderungen greifen erst mit
+// "Übernehmen".
+private struct SetupView: View {
+    let onClose: () -> Void
+
+    @AppStorage(SettingsKeys.showMenuBarIcon) private var showMenuBarIcon = false
+    @AppStorage(SettingsKeys.hideFromDock) private var hideFromDock = false
+    @AppStorage(SettingsKeys.mouseClickAutoOff) private var mouseClickAutoOff = false
+    @AppStorage(SettingsKeys.batteryProtectionEnabled) private var batteryProtection = false
+    @AppStorage(SettingsKeys.batteryProtectionThreshold) private var batteryThreshold = BatteryGuard.defaultThreshold
+    @ObservedObject private var launchAtLogin = LaunchAtLogin.shared
+
+    @State private var draftShowMenuBarIcon = false
+    @State private var draftHideFromDock = false
+    @State private var draftLaunchAtLogin = false
+    @State private var draftMouseClickAutoOff = false
+    @State private var draftBatteryProtection = false
+    @State private var draftBatteryThreshold = BatteryGuard.defaultThreshold
+
+    private let hasBattery = BatteryGuard.hasBattery
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Form {
+                Section("Setup") {
+                    Toggle("Show TOM in the menu bar", isOn: $draftShowMenuBarIcon)
+                        .toggleStyle(.switch)
+                    // Ohne Menüleistensymbol wäre TOM ohne Dock-Symbol unerreichbar.
+                    Toggle("Hide TOM from the Dock", isOn: $draftHideFromDock)
+                        .toggleStyle(.switch)
+                        .disabled(!draftShowMenuBarIcon)
+                    Toggle("Launch TOM at login", isOn: $draftLaunchAtLogin)
+                        .toggleStyle(.switch)
+                    if launchAtLogin.needsApproval {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Allow TOM under Login Items in System Settings.")
+                                .font(.caption)
+                                .foregroundStyle(.orange)
+                            Button("Open System Settings") { launchAtLogin.openLoginItemsSettings() }
+                                .font(.caption)
+                        }
+                    }
+                    Toggle("Stop mouse click after 8 hours", isOn: $draftMouseClickAutoOff)
+                        .toggleStyle(.switch)
+                }
+
+                // Macs ohne Akku brauchen den Abschnitt nicht.
+                if hasBattery {
+                    batterySection
+                }
+            }
+            .formStyle(.grouped)
+
+            HStack {
+                Spacer()
+                Button("Cancel", action: onClose)
+                    .keyboardShortcut(.cancelAction)
+                Button("Apply", action: apply)
+                    .keyboardShortcut(.defaultAction)
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 20)
+            .padding(.bottom, 14)
+        }
+        .frame(width: 380, height: height)
+        .onAppear {
+            draftShowMenuBarIcon = showMenuBarIcon
+            draftHideFromDock = hideFromDock
+            draftLaunchAtLogin = launchAtLogin.isEnabled
+            draftMouseClickAutoOff = mouseClickAutoOff
+            draftBatteryProtection = batteryProtection
+            draftBatteryThreshold = BatteryGuard.thresholdChoices.contains(batteryThreshold)
+                ? batteryThreshold
+                : BatteryGuard.defaultThreshold
+        }
+    }
+
+    private var batterySection: some View {
+        Section {
+            Toggle("Battery protection", isOn: $draftBatteryProtection)
+                .toggleStyle(.switch)
+            if draftBatteryProtection {
+                Picker("Switch off at", selection: $draftBatteryThreshold) {
+                    ForEach(BatteryGuard.thresholdChoices, id: \.self) { percent in
+                        Text(verbatim: (Double(percent) / 100).formatted(.percent)).tag(percent)
+                    }
+                }
+            }
+        } footer: {
+            Text("On battery power, TOM switches off everything it is doing once the charge drops to this level. Nothing happens while the Mac is charging.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    // Gemessen: Setup-Kasten mit vier Schaltern und Knopfzeile, dazu der
+    // Akku-Abschnitt (Schalter, ggf. Auswahl, zweizeilige Erklärung).
+    private var height: CGFloat {
+        var height: CGFloat = 272
+        if launchAtLogin.needsApproval { height += 50 }
+        if hasBattery {
+            height += 100
+            if draftBatteryProtection { height += 37 }
+        }
+        return height
+    }
+
+    private func apply() {
+        showMenuBarIcon = draftShowMenuBarIcon
+        hideFromDock = draftHideFromDock
+        mouseClickAutoOff = draftMouseClickAutoOff
+        batteryThreshold = draftBatteryThreshold
+        batteryProtection = draftBatteryProtection
+        if draftLaunchAtLogin != launchAtLogin.isEnabled {
+            launchAtLogin.setEnabled(draftLaunchAtLogin)
+        }
+        // Verlangt macOS eine Freigabe, bleibt die Seite offen, damit der
+        // Hinweis dazu sichtbar ist.
+        if draftLaunchAtLogin && launchAtLogin.needsApproval { return }
+        onClose()
+    }
+}
+
 struct ContentView: View {
     @ObservedObject var keepAwake: KeepAwakeManager
     @ObservedObject var keySimulator: KeyPressSimulator
     @ObservedObject var mouseMove: MouseMoveSimulator
     @ObservedObject var mouseClick: MouseClickSimulator
-    @AppStorage(SettingsKeys.showMenuBarIcon) private var showMenuBarIcon = false
+    @AppStorage(SettingsKeys.keyPressSectionExpanded) private var keyPressExpanded = false
+    @AppStorage(SettingsKeys.mouseMoveSectionExpanded) private var mouseMoveExpanded = false
+    @AppStorage(SettingsKeys.mouseClickSectionExpanded) private var mouseClickExpanded = false
+    @State private var showingSetup = false
 
-    private var anyMouseActive: Bool {
-        mouseMove.isEnabled || mouseClick.isEnabled
+    private var anySimulationActive: Bool {
+        keySimulator.isEnabled || mouseMove.isEnabled || mouseClick.isEnabled
     }
 
     var body: some View {
-        mainStack
+        Group {
+            if showingSetup {
+                SetupView { showingSetup = false }
+            } else {
+                mainStack
+            }
+        }
             .modifier(PersistenceModifier(
                 keepAwake: keepAwake,
                 keySimulator: keySimulator,
                 mouseMove: mouseMove,
                 mouseClick: mouseClick
             ))
+            .modifier(PressModePersistenceModifier(keySimulator: keySimulator, mouseClick: mouseClick))
     }
 
     private var mainStack: some View {
         VStack(spacing: 0) {
             settingsForm
-            quitRow
+            bottomRow
         }
         .frame(width: 380, height: contentHeight)
     }
@@ -120,17 +501,23 @@ struct ContentView: View {
             keyPressSection
             mouseMoveSection
             mouseClickSection
-
-            Section("Appearance") {
-                Toggle("Show TOM in the menu bar", isOn: $showMenuBarIcon)
-                    .toggleStyle(.switch)
-            }
         }
         .formStyle(.grouped)
     }
 
-    private var quitRow: some View {
+    private var bottomRow: some View {
         HStack {
+            Button {
+                showingSetup = true
+            } label: {
+                Label {
+                    Text("Setup")
+                } icon: {
+                    Image(systemName: "wrench.and.screwdriver")
+                        .foregroundStyle(Color.accentColor)
+                }
+            }
+            .buttonStyle(.plain)
             Spacer()
             Button("Quit") {
                 NSApplication.shared.terminate(nil)
@@ -149,28 +536,52 @@ struct ContentView: View {
         Section {
             Toggle("Active", isOn: $keepAwake.isEnabled)
                 .toggleStyle(.switch)
+
+            TimerRows(timer: keepAwake.runTimer)
         } header: {
             Text("Keep Mac Awake")
         } footer: {
-            Text("Prevents the system from going to sleep.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Prevents the system from going to sleep.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                if let endDate = keepAwake.runTimer.endDate {
+                    Text("Active until \(formattedTimerEnd(endDate))")
+                        .font(.caption.bold())
+                        .foregroundStyle(.green)
+                }
+            }
         }
     }
 
     private var keyPressSection: some View {
-        Section("Simulate Key Press") {
+        CollapsibleSection(
+            title: "Simulate Key Press",
+            isExpanded: $keyPressExpanded,
+            isActive: keySimulator.isEnabled,
+            activeUntil: keySimulator.runTimer.endDate
+        ) {
             Toggle("Active", isOn: $keySimulator.isEnabled)
                 .toggleStyle(.switch)
+                .padding(.top, CollapsibleSectionMetrics.titleSpacing)
 
             keyPicker
 
-            IntervalRow(value: $keySimulator.intervalSeconds, range: 1...600, step: 1)
+            ModePicker(mode: $keySimulator.mode)
+
+            ModeTimingRows(
+                mode: keySimulator.mode,
+                interval: $keySimulator.intervalSeconds,
+                intervalRange: 1...600,
+                intervalStep: 1,
+                hold: $keySimulator.holdSeconds,
+                pause: $keySimulator.pauseSeconds
+            )
+
+            TimerRows(timer: keySimulator.runTimer, showsEnd: true)
 
             if keySimulator.countdownRemaining > 0 {
-                Text("Key press starts in \(keySimulator.countdownRemaining) s – bring the target window to the front now …")
-                    .font(.callout.bold())
-                    .foregroundStyle(.orange)
+                keyCountdownText
             }
 
             if keySimulator.accessibilityDenied {
@@ -180,16 +591,22 @@ struct ContentView: View {
     }
 
     private var mouseMoveSection: some View {
-        Section("Simulate Mouse Movement") {
+        CollapsibleSection(
+            title: "Simulate Mouse Movement",
+            isExpanded: $mouseMoveExpanded,
+            isActive: mouseMove.isEnabled,
+            activeUntil: mouseMove.runTimer.endDate
+        ) {
             Toggle("Active", isOn: $mouseMove.isEnabled)
                 .toggleStyle(.switch)
+                .padding(.top, CollapsibleSectionMetrics.titleSpacing)
 
             IntervalRow(value: $mouseMove.intervalSeconds, range: 1...600, step: 1)
 
+            TimerRows(timer: mouseMove.runTimer, showsEnd: true)
+
             if mouseMove.countdownRemaining > 0 {
-                Text("Mouse movement starts in \(mouseMove.countdownRemaining) s …")
-                    .font(.callout.bold())
-                    .foregroundStyle(.orange)
+                mouseMoveCountdownText
             }
 
             if mouseMove.accessibilityDenied {
@@ -199,9 +616,15 @@ struct ContentView: View {
     }
 
     private var mouseClickSection: some View {
-        Section {
+        CollapsibleSection(
+            title: "Simulate Mouse Click",
+            isExpanded: $mouseClickExpanded,
+            isActive: mouseClick.isEnabled,
+            activeUntil: mouseClick.runTimer.endDate
+        ) {
             Toggle("Active", isOn: $mouseClick.isEnabled)
                 .toggleStyle(.switch)
+                .padding(.top, CollapsibleSectionMetrics.titleSpacing)
 
             Picker("Mouse Button", selection: $mouseClick.buttonChoice) {
                 ForEach(MouseButtonChoice.allCases) { choice in
@@ -210,31 +633,67 @@ struct ContentView: View {
             }
             .pickerStyle(.segmented)
 
-            IntervalRow(value: $mouseClick.intervalSeconds, range: 0.1...600, step: 0.1)
+            ModePicker(mode: $mouseClick.mode)
+
+            ModeTimingRows(
+                mode: mouseClick.mode,
+                interval: $mouseClick.intervalSeconds,
+                intervalRange: 0.1...600,
+                intervalStep: 0.1,
+                hold: $mouseClick.holdSeconds,
+                pause: $mouseClick.pauseSeconds
+            )
+
+            TimerRows(timer: mouseClick.runTimer, showsEnd: true)
 
             if mouseClick.countdownRemaining > 0 {
-                Text("Click starts in \(mouseClick.countdownRemaining) s – position the pointer now …")
-                    .font(.callout.bold())
-                    .foregroundStyle(.orange)
+                mouseClickCountdownText
             }
 
             if mouseClick.accessibilityDenied {
                 AccessibilityHint { keySimulator.openAccessibilitySettings() }
             }
-        } header: {
-            Text("Simulate Mouse Click")
         } footer: {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Clicks happen wherever the pointer is. \(MouseSafety.shortcutDescription) stops mouse click and mouse movement immediately, at any time.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                if anyMouseActive {
-                    Text("Emergency stop active: \(MouseSafety.shortcutDescription)")
-                        .font(.caption.bold())
-                        .foregroundStyle(.orange)
+            // Der Not-Aus-Hinweis bleibt auch zugeklappt sichtbar; ein leerer
+            // Fußbereich würde dagegen Abstand kosten.
+            if mouseClickExpanded || anySimulationActive {
+                VStack(alignment: .leading, spacing: 4) {
+                    if mouseClickExpanded {
+                        Text("Clicks happen wherever the pointer is. \(EmergencyStop.shortcutDescription) stops all simulations immediately, at any time.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    if anySimulationActive {
+                        Text("Emergency stop active: \(EmergencyStop.shortcutDescription)")
+                            .font(.caption.bold())
+                            .foregroundStyle(.orange)
+                    }
                 }
             }
         }
+    }
+
+    // MARK: - Countdown-Hinweise
+
+    // Bewusst außerhalb der generischen Abschnitts-Closures: dort wird die
+    // Int-Interpolation sonst als %@ statt %lld extrahiert, und die vorhandenen
+    // Übersetzungen greifen nicht mehr.
+    private var keyCountdownText: some View {
+        Text("Key press starts in \(keySimulator.countdownRemaining) s – bring the target window to the front now …")
+            .font(.callout.bold())
+            .foregroundStyle(.orange)
+    }
+
+    private var mouseMoveCountdownText: some View {
+        Text("Mouse movement starts in \(mouseMove.countdownRemaining) s …")
+            .font(.callout.bold())
+            .foregroundStyle(.orange)
+    }
+
+    private var mouseClickCountdownText: some View {
+        Text("Click starts in \(mouseClick.countdownRemaining) s – position the pointer now …")
+            .font(.callout.bold())
+            .foregroundStyle(.orange)
     }
 
     // MARK: - Tastenauswahl
@@ -272,16 +731,74 @@ struct ContentView: View {
     }
 
     // Eine gruppierte Form meldet keine Eigenhöhe; die Fensterhöhe wird deshalb
-    // aus dem sichtbaren Inhalt berechnet.
+    // aus dem sichtbaren Inhalt berechnet. Werte in Punkt, am Layout gemessen.
     private var contentHeight: CGFloat {
-        var height: CGFloat = 818
-        if keySimulator.accessibilityDenied { height += 72 }
-        if mouseMove.accessibilityDenied { height += 72 }
-        if mouseClick.accessibilityDenied { height += 72 }
-        if keySimulator.countdownRemaining > 0 { height += 40 }
-        if mouseMove.countdownRemaining > 0 { height += 40 }
-        if mouseClick.countdownRemaining > 0 { height += 40 }
-        if anyMouseActive { height += 22 }
+        let switchRow: CGFloat = 22
+        let pickerRow: CGFloat = 24
+        let timingRow: CGFloat = 32
+        let timerDurationRow: CGFloat = 36
+        let timerUntilRow: CGFloat = 26
+        let timerEndRow: CGFloat = 20
+        let collapsedBox: CGFloat = 44
+        let gap: CGFloat = 10
+
+        func timingRows(_ mode: PressMode) -> CGFloat {
+            CGFloat(ModeTimingRows.rowCount(for: mode)) * timingRow
+        }
+
+        // Timer-Zeilen in den aufklappbaren Abschnitten.
+        func timerRows(_ timer: RunTimer) -> CGFloat {
+            var height = pickerRow
+            switch timer.mode {
+            case .continuous: break
+            case .duration: height += timerDurationRow
+            case .until: height += timerUntilRow
+            }
+            if timer.endDate != nil { height += timerEndRow }
+            return height
+        }
+
+        var keyBox = collapsedBox
+        if keyPressExpanded {
+            keyBox += CollapsibleSectionMetrics.titleSpacing + switchRow + 2 * pickerRow + timingRows(keySimulator.mode)
+                + timerRows(keySimulator.runTimer)
+            if keySimulator.countdownRemaining > 0 { keyBox += 40 }
+            if keySimulator.accessibilityDenied { keyBox += 72 }
+        }
+
+        var moveBox = collapsedBox
+        if mouseMoveExpanded {
+            moveBox += CollapsibleSectionMetrics.titleSpacing + switchRow + timingRow + timerRows(mouseMove.runTimer)
+            if mouseMove.countdownRemaining > 0 { moveBox += 40 }
+            if mouseMove.accessibilityDenied { moveBox += 72 }
+        }
+
+        var clickBox = collapsedBox
+        if mouseClickExpanded {
+            clickBox += CollapsibleSectionMetrics.titleSpacing + switchRow + 2 * pickerRow + timingRows(mouseClick.mode)
+                + timerRows(mouseClick.runTimer)
+            if mouseClick.countdownRemaining > 0 { clickBox += 40 }
+            if mouseClick.accessibilityDenied { clickBox += 72 }
+        }
+
+        // Fußbereich unter "Mausklick": Erklärung (zwei Zeilen) und/oder Not-Aus-Hinweis.
+        var clickFooterGap = gap
+        if mouseClickExpanded { clickFooterGap = 67 }
+        if anySimulationActive { clickFooterGap = mouseClickExpanded ? clickFooterGap + 20 : 53 }
+
+        // 135.5 = Fensteroberkante bis erster Kasten (inkl. "Mac wachhalten"),
+        // 78 = letzter Kasten bis Fensterunterkante (inkl. Setup/Beenden-Zeile).
+        // Der Fußbereich zählt nur ohne den Abschnittsabstand, da kein Kasten folgt.
+        // "Mac wachhalten": Timer-Auswahl, ggf. Dauer/Uhrzeit, ggf. "Aktiv bis …".
+        var keepAwakeExtra: CGFloat = 39
+        switch keepAwake.runTimer.mode {
+        case .continuous: break
+        case .duration: keepAwakeExtra += 47.5
+        case .until: keepAwakeExtra += 39.5
+        }
+        if keepAwake.runTimer.endDate != nil { keepAwakeExtra += 17 }
+
+        let height = 135.5 + keepAwakeExtra + keyBox + gap + moveBox + gap + clickBox + (clickFooterGap - gap) + 78
         // Nicht hoeher als der sichtbare Bildschirm – dann scrollt die Form,
         // statt hinter Dock/Menueleiste abgeschnitten zu werden.
         let maxHeight = (NSScreen.main?.visibleFrame.height ?? 900) - 60

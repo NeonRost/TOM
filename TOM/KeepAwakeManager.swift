@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import Combine
 import Foundation
 import IOKit.pwr_mgt
 
@@ -21,16 +22,33 @@ final class KeepAwakeManager: ObservableObject {
     @Published var isEnabled: Bool {
         didSet {
             guard isEnabled != oldValue else { return }
-            isEnabled ? enable() : disable()
+            if isEnabled {
+                enable()
+                runTimer.start()
+            } else {
+                disable()
+                runTimer.stop()
+            }
         }
     }
 
+    let runTimer = RunTimer(keyPrefix: "keepAwake")
+
     private var assertionID: IOPMAssertionID = 0
     private var hasAssertion = false
+    private var timerChange: AnyCancellable?
 
     init(initiallyEnabled: Bool) {
-        self.isEnabled = initiallyEnabled
-        if initiallyEnabled {
+        self.isEnabled = false
+        timerChange = runTimer.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }
+        runTimer.onExpire = { [weak self] in
+            self?.isEnabled = false
+            // Der Schalter wird sonst nur über die Oberfläche gespeichert, die bei
+            // geschlossenem Fenster nicht mitläuft.
+            UserDefaults.standard.set(false, forKey: SettingsKeys.keepAwakeEnabled)
+        }
+        if initiallyEnabled && runTimer.resume() {
+            self.isEnabled = true
             enable()
         }
     }

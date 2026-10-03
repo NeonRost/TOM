@@ -50,18 +50,53 @@
         }
       }
     },
-    "Appearance": {
+    "Active until %@": {
+      "comment": "Footer under Keep Mac Awake; %@ is a time, or date and time.",
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Darstellung"
+            "value": "Aktiv bis %@"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Apariencia"
+            "value": "Activo hasta %@"
+          }
+        }
+      }
+    },
+    "Allow TOM under Login Items in System Settings.": {
+      "comment": "Shown when macOS requires the user to approve the login item.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In den Systemeinstellungen unter „Anmeldeobjekte“ erlauben."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permítelo en Ajustes del Sistema, en «Ítems de inicio»."
+          }
+        }
+      }
+    },
+    "Apply": {
+      "comment": "Button on the Setup page that saves the changes and returns.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übernehmen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aplicar"
           }
         }
       }
@@ -82,6 +117,40 @@
         }
       }
     },
+    "Battery protection": {
+      "comment": "Setup switch; off by default.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Akkuschutz"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Protección de batería"
+          }
+        }
+      }
+    },
+    "Cancel": {
+      "comment": "Button on the Setup page that discards the changes and returns.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abbrechen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancelar"
+          }
+        }
+      }
+    },
     "Click starts in %lld s – position the pointer now …": {
       "localizations": {
         "de": {
@@ -98,18 +167,18 @@
         }
       }
     },
-    "Clicks happen wherever the pointer is. %@ stops mouse click and mouse movement immediately, at any time.": {
+    "Clicks happen wherever the pointer is. %@ stops all simulations immediately, at any time.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Geklickt wird dort, wo der Zeiger gerade steht. %@ beendet Mausklick und Mausbewegung jederzeit sofort."
+            "value": "Geklickt wird dort, wo der Zeiger gerade steht. %@ beendet alle Simulationen jederzeit sofort."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Se hace clic donde esté el puntero. %@ detiene el clic y el movimiento al instante."
+            "value": "Se hace clic donde esté el puntero. %@ detiene todas las simulaciones al instante."
           }
         }
       }
@@ -165,6 +234,23 @@
         }
       }
     },
+    "Duration": {
+      "comment": "Timer option: stays on for a number of hours and minutes.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dauer"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duración"
+          }
+        }
+      }
+    },
     "Emergency stop active: %@": {
       "localizations": {
         "de": {
@@ -177,6 +263,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Parada de emergencia: %@"
+          }
+        }
+      }
+    },
+    "Ends after": {
+      "comment": "Row label before the hours and minutes fields.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Endet nach"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Termina tras"
+          }
+        }
+      }
+    },
+    "Ends at": {
+      "comment": "Row label before the time-of-day field.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Endet um"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Termina a las"
           }
         }
       }
@@ -226,6 +346,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "GNU General Public License v3"
+          }
+        }
+      }
+    },
+    "Hide TOM from the Dock": {
+      "comment": "Switch; only available while the menu bar icon is shown.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TOM im Dock ausblenden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ocultar TOM del Dock"
+          }
+        }
+      }
+    },
+    "Hold": {
+      "comment": "Mode: key or mouse button stays pressed until switched off; kept short.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gedrückt halten"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mantener pulsado"
+          }
+        }
+      }
+    },
+    "Hold & Pause": {
+      "comment": "Mode: alternately hold for a set time, then release for a set time.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Halten & Pause"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mantener y pausa"
+          }
+        }
+      }
+    },
+    "Hold Time": {
+      "comment": "Row label: how many seconds the key or button stays pressed per cycle.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Haltedauer"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiempo pulsado"
           }
         }
       }
@@ -295,6 +483,23 @@
         }
       }
     },
+    "Launch TOM at login": {
+      "comment": "Switch: start TOM automatically when the user logs in.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TOM beim Anmelden starten"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir TOM al iniciar sesión"
+          }
+        }
+      }
+    },
     "Left": {
       "comment": "Mouse button.",
       "localizations": {
@@ -324,6 +529,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Letras"
+          }
+        }
+      }
+    },
+    "Mode": {
+      "comment": "Picker label for how a key or mouse button is pressed.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modus"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modo"
           }
         }
       }
@@ -376,6 +598,22 @@
         }
       }
     },
+    "On battery power, TOM switches off everything it is doing once the charge drops to this level. Nothing happens while the Mac is charging.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Im Akkubetrieb schaltet TOM alles ab, was es gerade tut, sobald der Ladestand auf diesen Wert fällt. Während der Mac lädt, passiert nichts."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con batería, TOM desactiva todo lo que esté haciendo cuando la carga baje a este nivel. Mientras el Mac se carga, no ocurre nada."
+          }
+        }
+      }
+    },
     "Open System Settings": {
       "localizations": {
         "de": {
@@ -405,6 +643,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Opción"
+          }
+        }
+      }
+    },
+    "Pause": {
+      "comment": "Row label: how many seconds the key or button stays released per cycle.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pausa"
+          }
+        }
+      }
+    },
+    "Press": {
+      "comment": "Mode: short press at a fixed interval; kept very short.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drücken"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pulsar"
           }
         }
       }
@@ -488,6 +760,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Segundos"
+          }
+        }
+      }
+    },
+    "Setup": {
+      "comment": "Button and page title for the app's settings (menu bar, Dock, login).",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setup"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configuración"
           }
         }
       }
@@ -625,6 +914,40 @@
         }
       }
     },
+    "Stop mouse click after 8 hours": {
+      "comment": "Setup switch; off by default. When on, mouse click stops by itself after eight hours.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mausklick nach 8 Stunden beenden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detener el clic tras 8 horas"
+          }
+        }
+      }
+    },
+    "Switch off at": {
+      "comment": "Picker label before a battery percentage.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abschalten bei"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apagar al"
+          }
+        }
+      }
+    },
     "TOM comes with absolutely no warranty. Redistribution and modification are permitted under the terms of the GNU GPL v3.": {
       "localizations": {
         "de": {
@@ -690,6 +1013,40 @@
         }
       }
     },
+    "Timer": {
+      "comment": "Picker label: how long Keep Mac Awake stays on.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timer"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temporizador"
+          }
+        }
+      }
+    },
+    "Until": {
+      "comment": "Timer option: stays on until a time of day.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bis"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hasta"
+          }
+        }
+      }
+    },
     "Version %@": {
       "localizations": {
         "de": {
@@ -702,6 +1059,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "Versión %@"
+          }
+        }
+      }
+    },
+    "h": {
+      "comment": "Abbreviation for hours, after a number field.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Std."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "h"
+          }
+        }
+      }
+    },
+    "min": {
+      "comment": "Abbreviation for minutes, after a number field.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Min."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "min"
+          }
+        }
+      }
+    },
+    "∞ Continuous": {
+      "comment": "Timer option: stays on until switched off.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "∞ Durchgehend"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "∞ Continuo"
           }
         }
       }

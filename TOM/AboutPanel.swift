@@ -33,7 +33,7 @@ struct AboutView: View {
             Image(nsImage: NSApp.applicationIconImage)
                 .resizable()
                 .frame(width: 64, height: 64)
-            Text("TOM – Tuco on Meth")
+            Text(verbatim: "TOM – Tuco on Meth")
                 .font(.title3.bold())
             Text("Version \(version)")
                 .font(.caption)

@@ -16,7 +16,35 @@
 
 import AppKit
 import ApplicationServices
+import Combine
 import CoreGraphics
+
+// Wie Taste bzw. Maustaste betaetigt wird: kurz im Intervall, dauerhaft
+// gehalten oder abwechselnd gehalten und losgelassen.
+enum PressMode: String, CaseIterable, Identifiable {
+    case press, hold, cycle
+
+    var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .press: return String(localized: "Press")
+        case .hold: return String(localized: "Hold")
+        case .cycle: return String(localized: "Hold & Pause")
+        }
+    }
+}
+
+enum PressTiming {
+    static let range: ClosedRange<Double> = 0.1...600
+    static let step = 0.1
+    static let defaultHoldSeconds = 2.0
+    static let defaultPauseSeconds = 5.0
+
+    static func clamp(_ value: Double) -> Double {
+        min(max(value, range.lowerBound), range.upperBound)
+    }
+}
 
 final class KeyPressSimulator: ObservableObject {
     @Published var isEnabled: Bool {
@@ -26,7 +54,10 @@ final class KeyPressSimulator: ObservableObject {
         }
     }
     @Published var selectedKey: SimulatedKey {
-        didSet { rescheduleIfRunning() }
+        didSet { restartIfRunning() }
+    }
+    @Published var mode: PressMode {
+        didSet { if mode != oldValue { restartIfRunning() } }
     }
     @Published var intervalSeconds: Double {
         didSet {
@@ -35,7 +66,27 @@ final class KeyPressSimulator: ObservableObject {
                 intervalSeconds = clamped
                 return
             }
-            rescheduleIfRunning()
+            if mode == .press { restartIfRunning() }
+        }
+    }
+    @Published var holdSeconds: Double {
+        didSet {
+            let clamped = PressTiming.clamp(holdSeconds)
+            if clamped != holdSeconds {
+                holdSeconds = clamped
+                return
+            }
+            if mode == .cycle { restartIfRunning() }
+        }
+    }
+    @Published var pauseSeconds: Double {
+        didSet {
+            let clamped = PressTiming.clamp(pauseSeconds)
+            if clamped != pauseSeconds {
+                pauseSeconds = clamped
+                return
+            }
+            if mode == .cycle { restartIfRunning() }
         }
     }
     @Published private(set) var accessibilityDenied = false
@@ -45,18 +96,46 @@ final class KeyPressSimulator: ObservableObject {
 
     private var timer: Timer?
     private var countdownTimer: Timer?
+    private var isRunning = false
+    private var heldKeyCode: CGKeyCode?
+    private var terminateObserver: NSObjectProtocol?
+    private var timerChange: AnyCancellable?
 
-    init(initiallyEnabled: Bool, selectedKey: SimulatedKey, intervalSeconds: Double) {
+    let runTimer = RunTimer(keyPrefix: "keySim")
+
+    init(
+        initiallyEnabled: Bool,
+        selectedKey: SimulatedKey,
+        mode: PressMode,
+        intervalSeconds: Double,
+        holdSeconds: Double,
+        pauseSeconds: Double
+    ) {
         self.isEnabled = false
         self.selectedKey = selectedKey
+        self.mode = mode
         self.intervalSeconds = intervalSeconds
-        if initiallyEnabled {
+        self.holdSeconds = holdSeconds
+        self.pauseSeconds = pauseSeconds
+        // Eine beim Beenden noch gehaltene Taste bliebe sonst systemweit "gedrueckt".
+        terminateObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.willTerminateNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            self?.releaseHeldKey()
+        }
+        timerChange = runTimer.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }
+        runTimer.onExpire = { [weak self] in
+            self?.isEnabled = false
+            // Wird sonst nur über die Oberfläche gespeichert.
+            UserDefaults.standard.set(false, forKey: SettingsKeys.keySimEnabled)
+        }
+        if initiallyEnabled && runTimer.resume() {
             self.isEnabled = true
-            start()
+            start(timerAlreadyRunning: true)
         }
     }
 
-    private func start() {
+    private func start(timerAlreadyRunning: Bool = false) {
         let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue(): true] as CFDictionary
         guard AXIsProcessTrustedWithOptions(options) else {
             accessibilityDenied = true
@@ -64,7 +143,9 @@ final class KeyPressSimulator: ObservableObject {
             return
         }
         accessibilityDenied = false
+        if !timerAlreadyRunning { runTimer.start() }
         beginCountdown()
+        EmergencyStop.shared.activeStateChanged()
     }
 
     // Startverzoegerung, damit das Zielfenster in Ruhe nach vorne geholt
@@ -77,7 +158,7 @@ final class KeyPressSimulator: ObservableObject {
             if self.countdownRemaining <= 0 {
                 self.countdownTimer?.invalidate()
                 self.countdownTimer = nil
-                self.scheduleTimer()
+                self.run()
             }
         }
     }
@@ -86,20 +167,74 @@ final class KeyPressSimulator: ObservableObject {
         countdownTimer?.invalidate()
         countdownTimer = nil
         countdownRemaining = 0
+        haltActivity()
+        isRunning = false
+        runTimer.stop()
+        EmergencyStop.shared.activeStateChanged()
+    }
+
+    private func run() {
+        isRunning = true
+        switch mode {
+        case .press:
+            timer = Timer.scheduledTimer(withTimeInterval: intervalSeconds, repeats: true) { [weak self] _ in
+                self?.sendKeyPress()
+            }
+        case .hold:
+            pressKeyDown()
+        case .cycle:
+            beginHoldPhase()
+        }
+    }
+
+    private func beginHoldPhase() {
+        pressKeyDown()
+        timer = Timer.scheduledTimer(withTimeInterval: holdSeconds, repeats: false) { [weak self] _ in
+            guard let self else { return }
+            self.releaseHeldKey()
+            self.timer = Timer.scheduledTimer(withTimeInterval: self.pauseSeconds, repeats: false) { [weak self] _ in
+                self?.beginHoldPhase()
+            }
+        }
+    }
+
+    private func haltActivity() {
         timer?.invalidate()
         timer = nil
+        releaseHeldKey()
     }
 
-    private func rescheduleIfRunning() {
-        guard timer != nil else { return }
-        scheduleTimer()
+    // Laufende Aktivitaet mit neuen Einstellungen fortsetzen; vor der ersten
+    // Ausfuehrung (Countdown) gibt es nichts neu zu starten.
+    private func restartIfRunning() {
+        guard isRunning else { return }
+        haltActivity()
+        run()
     }
 
-    private func scheduleTimer() {
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: intervalSeconds, repeats: true) { [weak self] _ in
-            self?.sendKeyPress()
+    var heldModifierFlags: NSEvent.ModifierFlags {
+        switch heldKeyCode {
+        case 0x38, 0x3C: return .shift
+        case 0x3B, 0x3E: return .control
+        case 0x3A, 0x3D: return .option
+        case 0x37, 0x36: return .command
+        default: return []
         }
+    }
+
+    private func pressKeyDown() {
+        releaseHeldKey()
+        let keyCode = selectedKey.keyCode
+        guard let source = CGEventSource(stateID: .hidSystemState) else { return }
+        CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: true)?.post(tap: .cghidEventTap)
+        heldKeyCode = keyCode
+    }
+
+    private func releaseHeldKey() {
+        guard let keyCode = heldKeyCode else { return }
+        heldKeyCode = nil
+        guard let source = CGEventSource(stateID: .hidSystemState) else { return }
+        CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: false)?.post(tap: .cghidEventTap)
     }
 
     // Ein Frame-genaues Loslassen (keyDown und keyUp im selben Tick) übersehen manche
@@ -124,5 +259,7 @@ final class KeyPressSimulator: ObservableObject {
     deinit {
         timer?.invalidate()
         countdownTimer?.invalidate()
+        releaseHeldKey()
+        if let terminateObserver { NotificationCenter.default.removeObserver(terminateObserver) }
     }
 }

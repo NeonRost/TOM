@@ -8,28 +8,34 @@
 
 /* Begin PBXBuildFile section */
 		29DBE3F45BECD1A1B5F360E2 /* MouseSimulators.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2A09EEB138FEE6D7D2BCBFC /* MouseSimulators.swift */; };
+		2ED4BF7CB7874C596A21BD56 /* RunTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7814FEC15F5B268109009C6 /* RunTimer.swift */; };
 		45CE25C7F894BAEF76F02407 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 7682C88C6015E0AAD5D4A427 /* LICENSE */; };
 		608D071D5BB89B2EA438A483 /* SimulatedKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AD62F392BECF028E23F72B7 /* SimulatedKey.swift */; };
 		60F276EFF0C28917DCE66EF4 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 876169FF271D88EF87CDBF06 /* IOKit.framework */; };
 		6AF41367EEA802CC8CDEDA51 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 956130B73839F3B86085C047 /* Assets.xcassets */; };
 		72C95F41C75DAC07319CC9FB /* AboutPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF8D772A9A8535A178E6970C /* AboutPanel.swift */; };
 		731BCCA45DFC7AEE74440293 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 06BEF423E6272BB92CE69E47 /* Localizable.xcstrings */; };
+		745315FE8F4B19165A9884AF /* LaunchAtLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DBBAA8AE0B67CF956DB19A5 /* LaunchAtLogin.swift */; };
 		87B17A23B079FBFB2B991AC5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4A4B0365F1C26B15C4F2CD /* ContentView.swift */; };
 		BC7CCBDE78D6F3234D1F0E26 /* KeyPressSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D7BC145A288EE86D2D007F /* KeyPressSimulator.swift */; };
 		BDAF07C4ACF64AED49B687F1 /* TOMApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9D23E61C318A4BBF96143D1 /* TOMApp.swift */; };
 		C821D94B7D8F1D41A1E1775E /* KeepAwakeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0853DED1148392513B29493F /* KeepAwakeManager.swift */; };
+		DFCC464A9BB1690886170DCA /* BatteryGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08D4AF30BB7161E59FCA659 /* BatteryGuard.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		06BEF423E6272BB92CE69E47 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		0853DED1148392513B29493F /* KeepAwakeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeepAwakeManager.swift; sourceTree = "<group>"; };
 		0C4A4B0365F1C26B15C4F2CD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		5DBBAA8AE0B67CF956DB19A5 /* LaunchAtLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLogin.swift; sourceTree = "<group>"; };
 		7682C88C6015E0AAD5D4A427 /* LICENSE */ = {isa = PBXFileReference; path = LICENSE; sourceTree = "<group>"; };
 		7AD62F392BECF028E23F72B7 /* SimulatedKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatedKey.swift; sourceTree = "<group>"; };
 		876169FF271D88EF87CDBF06 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		956130B73839F3B86085C047 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AF8D772A9A8535A178E6970C /* AboutPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutPanel.swift; sourceTree = "<group>"; };
+		C7814FEC15F5B268109009C6 /* RunTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunTimer.swift; sourceTree = "<group>"; };
 		D9D7BC145A288EE86D2D007F /* KeyPressSimulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPressSimulator.swift; sourceTree = "<group>"; };
+		F08D4AF30BB7161E59FCA659 /* BatteryGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryGuard.swift; sourceTree = "<group>"; };
 		F1ED7E215F0EF2D6EC65F25C /* TOM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TOM.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2A09EEB138FEE6D7D2BCBFC /* MouseSimulators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MouseSimulators.swift; sourceTree = "<group>"; };
 		F9D23E61C318A4BBF96143D1 /* TOMApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TOMApp.swift; sourceTree = "<group>"; };
@@ -78,11 +84,14 @@
 			children = (
 				AF8D772A9A8535A178E6970C /* AboutPanel.swift */,
 				956130B73839F3B86085C047 /* Assets.xcassets */,
+				F08D4AF30BB7161E59FCA659 /* BatteryGuard.swift */,
 				0C4A4B0365F1C26B15C4F2CD /* ContentView.swift */,
 				0853DED1148392513B29493F /* KeepAwakeManager.swift */,
 				D9D7BC145A288EE86D2D007F /* KeyPressSimulator.swift */,
+				5DBBAA8AE0B67CF956DB19A5 /* LaunchAtLogin.swift */,
 				06BEF423E6272BB92CE69E47 /* Localizable.xcstrings */,
 				F2A09EEB138FEE6D7D2BCBFC /* MouseSimulators.swift */,
+				C7814FEC15F5B268109009C6 /* RunTimer.swift */,
 				7AD62F392BECF028E23F72B7 /* SimulatedKey.swift */,
 				F9D23E61C318A4BBF96143D1 /* TOMApp.swift */,
 			);
@@ -129,6 +138,7 @@
 				Base,
 				de,
 				en,
+				es,
 			);
 			mainGroup = 3ECFE9686B3C3794F9B05512;
 			minimizedProjectReferenceProxies = 1;
@@ -161,10 +171,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				72C95F41C75DAC07319CC9FB /* AboutPanel.swift in Sources */,
+				DFCC464A9BB1690886170DCA /* BatteryGuard.swift in Sources */,
 				87B17A23B079FBFB2B991AC5 /* ContentView.swift in Sources */,
 				C821D94B7D8F1D41A1E1775E /* KeepAwakeManager.swift in Sources */,
 				BC7CCBDE78D6F3234D1F0E26 /* KeyPressSimulator.swift in Sources */,
+				745315FE8F4B19165A9884AF /* LaunchAtLogin.swift in Sources */,
 				29DBE3F45BECD1A1B5F360E2 /* MouseSimulators.swift in Sources */,
+				2ED4BF7CB7874C596A21BD56 /* RunTimer.swift in Sources */,
 				608D071D5BB89B2EA438A483 /* SimulatedKey.swift in Sources */,
 				BDAF07C4ACF64AED49B687F1 /* TOMApp.swift in Sources */,
 			);
@@ -209,7 +222,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -223,7 +236,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -304,7 +317,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -324,7 +337,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
