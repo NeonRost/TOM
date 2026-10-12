@@ -4,12 +4,16 @@ macOS menu bar and window app (SwiftUI, macOS 13+). The Xcode project is generat
 
 ## README
 
-`README.md` is written in English and contains parts that **must be preserved unchanged**, even when the file is otherwise rewritten:
+`README.md` is written in English. Its layout follows the PhotoCraft style: a centered header (icon, tagline, badges, buttons, link row), a four-column table of advantages, and a two-column grid of feature cells, each with a screenshot, a one-line caption, a heading and text.
 
-- the repository image embeds (`<img src="images/TOM_Icon.png" …>` and `<img src="images/TOM_Screenshot.png" …>`) including their position, size and `alt` text
+Parts that **must be preserved unchanged**, even when the file is otherwise rewritten:
+
+- the two repository image embeds, `<img src="images/TOM_Icon.png" width="200" alt="TOM Icon">` and `<img src="images/TOM_Screenshot.png" width="400" alt="TOM Screenshot">`: the tags themselves (file, size, alt text) stay as they are; each sits in its own centered paragraph near the top, the icon first, the screenshot below the link row
 - the **Support** section with the Ko-fi link (https://ko-fi.com/neonrost)
 
-Before editing the file, check that these parts are present, and make sure they are still there afterwards, unchanged. The images live in the `images/` folder.
+Before editing the file, check that these parts are present, and make sure they are still there afterwards, unchanged. All images live in the `images/` folder.
+
+The feature grid uses `images/TOM_<Section>_dark.png` / `_light.png`, switched with a `<picture>` element. They are crops of the running app (English, one section each) and need to be retaken when a section's layout changes. GitHub does not render custom CSS: only tables, centered paragraphs and badges are available.
 
 ## Localization
 
