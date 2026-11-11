@@ -46,14 +46,6 @@ final class BatteryGuard {
     }
 
     func start() {
-        let context = Unmanaged.passUnretained(self).toOpaque()
-        if let source = IOPSNotificationCreateRunLoopSource({ context in
-            guard let context else { return }
-            Unmanaged<BatteryGuard>.fromOpaque(context).takeUnretainedValue().evaluate()
-        }, context)?.takeRetainedValue() {
-            CFRunLoopAddSource(CFRunLoopGetMain(), source, .defaultMode)
-            runLoopSource = source
-        }
         defaultsObserver = NotificationCenter.default.addObserver(
             forName: UserDefaults.didChangeNotification, object: nil, queue: .main
         ) { [weak self] _ in
@@ -63,15 +55,39 @@ final class BatteryGuard {
     }
 
     // Neu eingeschaltet oder Grenze geändert: sofort prüfen, auch wenn der
-    // Ladestand schon darunter liegt.
+    // Ladestand schon darunter liegt. Ausgeschaltet oder ohne Akku wird gar
+    // nicht erst auf Änderungen der Stromversorgung gelauscht.
     private func settingsMaybeChanged() {
-        let enabled = isEnabled
+        let enabled = isEnabled && Self.hasBattery
         let threshold = Self.threshold
         guard enabled != lastEnabled || threshold != lastThreshold else { return }
         lastEnabled = enabled
         lastThreshold = threshold
         wasLow = false
-        evaluate()
+        if enabled {
+            installSource()
+            evaluate()
+        } else {
+            removeSource()
+        }
+    }
+
+    private func installSource() {
+        guard runLoopSource == nil else { return }
+        let context = Unmanaged.passUnretained(self).toOpaque()
+        if let source = IOPSNotificationCreateRunLoopSource({ context in
+            guard let context else { return }
+            Unmanaged<BatteryGuard>.fromOpaque(context).takeUnretainedValue().evaluate()
+        }, context)?.takeRetainedValue() {
+            CFRunLoopAddSource(CFRunLoopGetMain(), source, .defaultMode)
+            runLoopSource = source
+        }
+    }
+
+    private func removeSource() {
+        guard let source = runLoopSource else { return }
+        CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .defaultMode)
+        runLoopSource = nil
     }
 
     private func evaluate() {

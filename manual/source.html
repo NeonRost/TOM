@@ -104,7 +104,7 @@
   <img src="TOM_Icon.png" alt="TOM icon">
   <h1>TOM</h1>
   <div class="tagline">Keep your Mac awake — and looking busy.</div>
-  <div class="version">User Manual · Version 1.1</div>
+  <div class="version">User Manual · Version 1.2</div>
 </div>
 
 <div class="toc">
@@ -175,6 +175,7 @@
     <figure><img src="sec_keepawake.png" alt="Keep Mac Awake section with a timer"></figure>
     <div class="feature-text">
       <p>While switched on, the display and the system won't go to sleep due to inactivity — independent of your Energy Saver settings. No permission required.</p>
+      <p><strong>Let the display sleep</strong> keeps only the Mac awake: downloads, renders and backups keep running while the screen still turns off as usual.</p>
     </div>
   </div>
 
@@ -182,7 +183,7 @@
     <h3>Simulate Key Press</h3>
     <figure><img src="sec_keypress.png" alt="Simulate Key Press section in Hold &amp; Pause mode"></figure>
     <div class="feature-text">
-      <p>Sends a real key press. The key list follows your keyboard layout, so the letters shown match what's printed on your keys. Choose a <strong>Mode</strong>:</p>
+      <p>Sends a real key press. The key list follows your keyboard layout, so the letters shown match what's printed on your keys. Keys that can trigger something in the app in front or in macOS, such as Return, Tab or Esc, show a warning; the default F18 does nothing on its own. Choose a <strong>Mode</strong>:</p>
       <ul>
         <li><strong>Press</strong> — a short press at the interval you set (1–600 seconds).</li>
         <li><strong>Hold</strong> — the key stays down until you switch it off.</li>
@@ -217,8 +218,9 @@
     </div>
     <ul>
       <li>Mouse movement and mouse click cannot run at the same time — switching one on turns the other off.</li>
-      <li>Neither mouse function remembers being switched on across a restart. You always start them manually.</li>
+      <li>No simulation remembers being switched on across a restart. You always start them manually.</li>
       <li>Quitting TOM releases anything it is holding down.</li>
+      <li>If the Accessibility permission is withdrawn while a simulation runs, it switches off and TOM shows the permission hint again.</li>
     </ul>
   </div>
 </section>
@@ -233,7 +235,7 @@
     <div class="feature-text">
       <p>The Setup page holds the options that apply to the whole app. Changes take effect when you click <strong>Apply</strong>; <strong>Cancel</strong> discards them. Everything here is off by default.</p>
       <ul>
-        <li><strong>Show TOM in the menu bar</strong> — one-click access to the same controls from wherever you are. While anything is switched on, the icon shows a small green dot.</li>
+        <li><strong>Show TOM in the menu bar</strong> — one-click access to the same controls from wherever you are. While anything is switched on, the icon shows a small green dot; while a timer runs, the time left appears next to it.</li>
         <li><strong>Hide TOM from the Dock</strong> — TOM then lives in the menu bar only. Available while the menu bar icon is on, so TOM can always be reached.</li>
         <li><strong>Launch TOM at login</strong> — starts TOM with your Mac. If macOS asks you to approve it, TOM links to the Login Items settings.</li>
         <li><strong>Stop mouse click after 8 hours</strong> — a safety limit for a mouse click you might forget.</li>

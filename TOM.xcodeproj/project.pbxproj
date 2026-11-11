@@ -7,9 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1811E77070A9B8B83A36DEE0 /* SimulationSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B385EE6D72501EAE5AF5AD5B /* SimulationSupport.swift */; };
+		1CC1360CBE0AFD092963E250 /* FormHeightReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CEEFE7D6EFF2DEA6CBE0970 /* FormHeightReader.swift */; };
 		29DBE3F45BECD1A1B5F360E2 /* MouseSimulators.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2A09EEB138FEE6D7D2BCBFC /* MouseSimulators.swift */; };
 		2ED4BF7CB7874C596A21BD56 /* RunTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7814FEC15F5B268109009C6 /* RunTimer.swift */; };
+		44717EF355AE07EFFF950C1D /* EmergencyStop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E859812A57373F62D787C3 /* EmergencyStop.swift */; };
 		45CE25C7F894BAEF76F02407 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 7682C88C6015E0AAD5D4A427 /* LICENSE */; };
+		564F69DF60580E012E90F4DC /* TOMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEBE32320177F2FDF94ADA2F /* TOMTests.swift */; };
 		608D071D5BB89B2EA438A483 /* SimulatedKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AD62F392BECF028E23F72B7 /* SimulatedKey.swift */; };
 		60F276EFF0C28917DCE66EF4 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 876169FF271D88EF87CDBF06 /* IOKit.framework */; };
 		6AF41367EEA802CC8CDEDA51 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 956130B73839F3B86085C047 /* Assets.xcassets */; };
@@ -17,9 +21,11 @@
 		731BCCA45DFC7AEE74440293 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 06BEF423E6272BB92CE69E47 /* Localizable.xcstrings */; };
 		745315FE8F4B19165A9884AF /* LaunchAtLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DBBAA8AE0B67CF956DB19A5 /* LaunchAtLogin.swift */; };
 		87B17A23B079FBFB2B991AC5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4A4B0365F1C26B15C4F2CD /* ContentView.swift */; };
+		99EFB30763849D44346CE07E /* SimulationSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B385EE6D72501EAE5AF5AD5B /* SimulationSupport.swift */; };
 		BC7CCBDE78D6F3234D1F0E26 /* KeyPressSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D7BC145A288EE86D2D007F /* KeyPressSimulator.swift */; };
 		BDAF07C4ACF64AED49B687F1 /* TOMApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9D23E61C318A4BBF96143D1 /* TOMApp.swift */; };
 		C821D94B7D8F1D41A1E1775E /* KeepAwakeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0853DED1148392513B29493F /* KeepAwakeManager.swift */; };
+		DD6EB757C97FAB8008091456 /* RunTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7814FEC15F5B268109009C6 /* RunTimer.swift */; };
 		DFCC464A9BB1690886170DCA /* BatteryGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08D4AF30BB7161E59FCA659 /* BatteryGuard.swift */; };
 /* End PBXBuildFile section */
 
@@ -27,18 +33,23 @@
 		06BEF423E6272BB92CE69E47 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		0853DED1148392513B29493F /* KeepAwakeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeepAwakeManager.swift; sourceTree = "<group>"; };
 		0C4A4B0365F1C26B15C4F2CD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		2CEEFE7D6EFF2DEA6CBE0970 /* FormHeightReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormHeightReader.swift; sourceTree = "<group>"; };
 		5DBBAA8AE0B67CF956DB19A5 /* LaunchAtLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLogin.swift; sourceTree = "<group>"; };
+		61E859812A57373F62D787C3 /* EmergencyStop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmergencyStop.swift; sourceTree = "<group>"; };
 		7682C88C6015E0AAD5D4A427 /* LICENSE */ = {isa = PBXFileReference; path = LICENSE; sourceTree = "<group>"; };
 		7AD62F392BECF028E23F72B7 /* SimulatedKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatedKey.swift; sourceTree = "<group>"; };
 		876169FF271D88EF87CDBF06 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		956130B73839F3B86085C047 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9CE02C50B530D0518454A639 /* TOMTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TOMTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF8D772A9A8535A178E6970C /* AboutPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutPanel.swift; sourceTree = "<group>"; };
+		B385EE6D72501EAE5AF5AD5B /* SimulationSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulationSupport.swift; sourceTree = "<group>"; };
 		C7814FEC15F5B268109009C6 /* RunTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunTimer.swift; sourceTree = "<group>"; };
 		D9D7BC145A288EE86D2D007F /* KeyPressSimulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPressSimulator.swift; sourceTree = "<group>"; };
 		F08D4AF30BB7161E59FCA659 /* BatteryGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryGuard.swift; sourceTree = "<group>"; };
 		F1ED7E215F0EF2D6EC65F25C /* TOM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TOM.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2A09EEB138FEE6D7D2BCBFC /* MouseSimulators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MouseSimulators.swift; sourceTree = "<group>"; };
 		F9D23E61C318A4BBF96143D1 /* TOMApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TOMApp.swift; sourceTree = "<group>"; };
+		FEBE32320177F2FDF94ADA2F /* TOMTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TOMTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +64,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		18DE902F883ABB13EE3F5D1B /* TOMTests */ = {
+			isa = PBXGroup;
+			children = (
+				FEBE32320177F2FDF94ADA2F /* TOMTests.swift */,
+			);
+			path = TOMTests;
+			sourceTree = "<group>";
+		};
 		23C47B21995A530EB2E76203 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -65,6 +84,7 @@
 			isa = PBXGroup;
 			children = (
 				F1ED7E215F0EF2D6EC65F25C /* TOM.app */,
+				9CE02C50B530D0518454A639 /* TOMTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -74,6 +94,7 @@
 			children = (
 				7682C88C6015E0AAD5D4A427 /* LICENSE */,
 				71AF84146B81000D33FD2A6D /* TOM */,
+				18DE902F883ABB13EE3F5D1B /* TOMTests */,
 				23C47B21995A530EB2E76203 /* Frameworks */,
 				39C0B100CCF4E6842FBC0DE1 /* Products */,
 			);
@@ -86,6 +107,8 @@
 				956130B73839F3B86085C047 /* Assets.xcassets */,
 				F08D4AF30BB7161E59FCA659 /* BatteryGuard.swift */,
 				0C4A4B0365F1C26B15C4F2CD /* ContentView.swift */,
+				61E859812A57373F62D787C3 /* EmergencyStop.swift */,
+				2CEEFE7D6EFF2DEA6CBE0970 /* FormHeightReader.swift */,
 				0853DED1148392513B29493F /* KeepAwakeManager.swift */,
 				D9D7BC145A288EE86D2D007F /* KeyPressSimulator.swift */,
 				5DBBAA8AE0B67CF956DB19A5 /* LaunchAtLogin.swift */,
@@ -93,6 +116,7 @@
 				F2A09EEB138FEE6D7D2BCBFC /* MouseSimulators.swift */,
 				C7814FEC15F5B268109009C6 /* RunTimer.swift */,
 				7AD62F392BECF028E23F72B7 /* SimulatedKey.swift */,
+				B385EE6D72501EAE5AF5AD5B /* SimulationSupport.swift */,
 				F9D23E61C318A4BBF96143D1 /* TOMApp.swift */,
 			);
 			path = TOM;
@@ -119,6 +143,23 @@
 			productName = TOM;
 			productReference = F1ED7E215F0EF2D6EC65F25C /* TOM.app */;
 			productType = "com.apple.product-type.application";
+		};
+		6504853B7C20A49E7578D0FB /* TOMTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 990A6B86DDDC0B0062DF2EFA /* Build configuration list for PBXNativeTarget "TOMTests" */;
+			buildPhases = (
+				405892A50C82E45137FA2D33 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TOMTests;
+			packageProductDependencies = (
+			);
+			productName = TOMTests;
+			productReference = 9CE02C50B530D0518454A639 /* TOMTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -148,6 +189,7 @@
 			projectRoot = "";
 			targets = (
 				308411068564E150051D6FAD /* TOM */,
+				6504853B7C20A49E7578D0FB /* TOMTests */,
 			);
 		};
 /* End PBXProject section */
@@ -166,6 +208,16 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		405892A50C82E45137FA2D33 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DD6EB757C97FAB8008091456 /* RunTimer.swift in Sources */,
+				99EFB30763849D44346CE07E /* SimulationSupport.swift in Sources */,
+				564F69DF60580E012E90F4DC /* TOMTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BB836ACF7C6FE7C4ED5DCB72 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -173,12 +225,15 @@
 				72C95F41C75DAC07319CC9FB /* AboutPanel.swift in Sources */,
 				DFCC464A9BB1690886170DCA /* BatteryGuard.swift in Sources */,
 				87B17A23B079FBFB2B991AC5 /* ContentView.swift in Sources */,
+				44717EF355AE07EFFF950C1D /* EmergencyStop.swift in Sources */,
+				1CC1360CBE0AFD092963E250 /* FormHeightReader.swift in Sources */,
 				C821D94B7D8F1D41A1E1775E /* KeepAwakeManager.swift in Sources */,
 				BC7CCBDE78D6F3234D1F0E26 /* KeyPressSimulator.swift in Sources */,
 				745315FE8F4B19165A9884AF /* LaunchAtLogin.swift in Sources */,
 				29DBE3F45BECD1A1B5F360E2 /* MouseSimulators.swift in Sources */,
 				2ED4BF7CB7874C596A21BD56 /* RunTimer.swift in Sources */,
 				608D071D5BB89B2EA438A483 /* SimulatedKey.swift in Sources */,
+				1811E77070A9B8B83A36DEE0 /* SimulationSupport.swift in Sources */,
 				BDAF07C4ACF64AED49B687F1 /* TOMApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -222,7 +277,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -236,7 +291,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -260,6 +315,40 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.neonrost.TOM;
 				PRODUCT_NAME = TOM;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		3F9D9739FD62461A50AF856B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.neonrost.TOMTests;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		6973D2F42328830E7E978237 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.neonrost.TOMTests;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -317,7 +406,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -337,7 +426,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -366,6 +455,15 @@
 			buildConfigurations = (
 				D6481B282F7FC77433F1B27A /* Debug */,
 				317AAA68AF87032AF1379AE7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		990A6B86DDDC0B0062DF2EFA /* Build configuration list for PBXNativeTarget "TOMTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3F9D9739FD62461A50AF856B /* Debug */,
+				6973D2F42328830E7E978237 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

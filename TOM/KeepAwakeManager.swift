@@ -18,19 +18,38 @@ import Combine
 import Foundation
 import IOKit.pwr_mgt
 
+// Haelt den Mac per IOKit-Assertion wach. Beim Beenden oder Absturz gibt
+// macOS die Assertion mit dem Prozess frei; sie kann also nicht haengen bleiben.
 final class KeepAwakeManager: ObservableObject {
-    @Published var isEnabled: Bool {
+    @Published var isEnabled = false {
         didSet {
             guard isEnabled != oldValue else { return }
             if isEnabled {
-                enable()
+                guard createAssertion() else {
+                    isEnabled = false
+                    return
+                }
                 runTimer.start()
             } else {
-                disable()
+                releaseAssertion()
                 runTimer.stop()
+            }
+            UserDefaults.standard.set(isEnabled, forKey: SettingsKeys.keepAwakeEnabled)
+        }
+    }
+    // Nur den Ruhezustand des Macs verhindern; der Bildschirm darf ausgehen.
+    @Published var allowDisplaySleep: Bool {
+        didSet {
+            guard allowDisplaySleep != oldValue else { return }
+            UserDefaults.standard.set(allowDisplaySleep, forKey: SettingsKeys.keepAwakeAllowDisplaySleep)
+            // Laufende Assertion durch eine der neuen Art ersetzen.
+            if hasAssertion {
+                releaseAssertion()
+                if !createAssertion() { isEnabled = false }
             }
         }
     }
+    @Published private(set) var assertionFailed = false
 
     let runTimer = RunTimer(keyPrefix: "keepAwake")
 
@@ -39,33 +58,31 @@ final class KeepAwakeManager: ObservableObject {
     private var timerChange: AnyCancellable?
 
     init(initiallyEnabled: Bool) {
-        self.isEnabled = false
+        allowDisplaySleep = UserDefaults.standard.bool(forKey: SettingsKeys.keepAwakeAllowDisplaySleep)
         timerChange = runTimer.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }
-        runTimer.onExpire = { [weak self] in
-            self?.isEnabled = false
-            // Der Schalter wird sonst nur über die Oberfläche gespeichert, die bei
-            // geschlossenem Fenster nicht mitläuft.
+        runTimer.onExpire = { [weak self] in self?.isEnabled = false }
+        guard initiallyEnabled else { return }
+        // Mit Timer nur fortsetzen, solange das gespeicherte Ende noch nicht
+        // erreicht ist; sonst den gespeicherten Zustand berichtigen.
+        if runTimer.resume(), createAssertion() {
+            isEnabled = true
+        } else {
+            runTimer.stop()
             UserDefaults.standard.set(false, forKey: SettingsKeys.keepAwakeEnabled)
         }
-        if initiallyEnabled && runTimer.resume() {
-            self.isEnabled = true
-            enable()
-        }
     }
 
-    private func enable() {
-        guard !hasAssertion else { return }
+    private func createAssertion() -> Bool {
+        guard !hasAssertion else { return true }
+        let type = allowDisplaySleep ? kIOPMAssertionTypePreventUserIdleSystemSleep : kIOPMAssertionTypePreventUserIdleDisplaySleep
         let reason = String(localized: "TOM is keeping the Mac awake") as CFString
-        let result = IOPMAssertionCreateWithName(
-            kIOPMAssertionTypePreventUserIdleDisplaySleep as CFString,
-            IOPMAssertionLevel(kIOPMAssertionLevelOn),
-            reason,
-            &assertionID
-        )
+        let result = IOPMAssertionCreateWithName(type as CFString, IOPMAssertionLevel(kIOPMAssertionLevelOn), reason, &assertionID)
         hasAssertion = (result == kIOReturnSuccess)
+        assertionFailed = !hasAssertion
+        return hasAssertion
     }
 
-    private func disable() {
+    private func releaseAssertion() {
         guard hasAssertion else { return }
         IOPMAssertionRelease(assertionID)
         hasAssertion = false

@@ -10,8 +10,8 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.0"
-    MARKETING_VERSION: "1.1"
-    CURRENT_PROJECT_VERSION: "2"
+    MARKETING_VERSION: "1.2"
+    CURRENT_PROJECT_VERSION: "3"
     GENERATE_INFOPLIST_FILE: NO
     COMBINE_HIDPI_IMAGES: YES
     ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: NO
@@ -34,3 +34,20 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     dependencies:
       - sdk: IOKit.framework
+    scheme:
+      testTargets:
+        - TOMTests
+  # Prueft die reine Logik ohne die App zu starten: Die getesteten Dateien
+  # werden direkt mitkompiliert, statt die App als Test-Host zu laden.
+  TOMTests:
+    type: bundle.unit-test
+    platform: macOS
+    deploymentTarget: "13.0"
+    sources:
+      - path: TOMTests
+      - path: TOM/RunTimer.swift
+      - path: TOM/SimulationSupport.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.neonrost.TOMTests
+        GENERATE_INFOPLIST_FILE: YES

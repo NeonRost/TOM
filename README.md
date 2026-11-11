@@ -43,7 +43,7 @@
   <tr>
     <td width="25%" valign="top">
       <h3>🌙 Keeps it awake</h3>
-      An IOKit power assertion stops the display and the system from sleeping. No permission needed.
+      An IOKit power assertion keeps the system awake, with or without the display. No permission needed.
     </td>
     <td width="25%" valign="top">
       <h3>⌨️ Press, hold, pause</h3>
@@ -55,7 +55,7 @@
     </td>
     <td width="25%" valign="top">
       <h3>🛡️ Safe by design</h3>
-      <b>⌃⌥⌘K</b> stops everything instantly. Optional battery protection. Mouse functions never restart by themselves.
+      <b>⌃⌥⌘K</b> stops everything instantly. Optional battery protection. Simulations never restart by themselves.
     </td>
   </tr>
 </table>
@@ -78,7 +78,7 @@ Four independent functions, each in its own section you can fold in and out. Eve
       <h3>Keep Mac Awake</h3>
       One switch stops the display and the system from going to sleep, regardless of your energy settings. It uses a power assertion, so it needs <b>no permission at all</b>.
       <br><br>
-      Give it a timer and it switches itself off, after a set time or at a time of day.
+      Turn on <b>Let the display sleep</b> to keep only the Mac awake (for downloads or renders) while the screen still turns off. Give it a timer and it switches itself off, after a set time or at a time of day.
     </td>
     <td width="50%" valign="top">
       <picture>
@@ -88,7 +88,7 @@ Four independent functions, each in its own section you can fold in and out. Eve
       <br>
       <sub>Hold &amp; Pause: the key is held for 2 seconds, released for 5, and so on.</sub>
       <h3>Simulate Key Press</h3>
-      Sends a real key press via <code>CGEvent</code>. Pick any letter, number, arrow key, special key (Space, Return, Control …) or F13–F19; the labels follow your keyboard layout, QWERTZ and AZERTY included.
+      Sends a real key press via <code>CGEvent</code>. Pick any letter, number, arrow key, special key (Space, Return, Control …) or F13–F19; the labels follow your keyboard layout, QWERTZ and AZERTY included. Keys that can trigger an action, such as Return or Esc, get a warning.
       <br><br>
       <b>Press</b> every 1–600 seconds, <b>Hold</b> until you switch it off, or <b>Hold &amp; Pause</b> in a loop. Starts after a 5-second countdown so you can bring the target window to the front.
     </td>
@@ -124,15 +124,15 @@ Four independent functions, each in its own section you can fold in and out. Eve
       <br>
       <sub>The Setup page, opened from the bottom left of the window.</sub>
       <h3>Setup</h3>
-      Show TOM in the <b>menu bar</b> (its icon gets a green dot while anything is on), hide it from the <b>Dock</b>, <b>launch at login</b>, and an optional 8-hour mouse click limit.
+      Show TOM in the <b>menu bar</b> (its icon gets a green dot while anything is on and shows the time left when a timer runs), hide it from the <b>Dock</b>, <b>launch at login</b>, and an optional 8-hour mouse click limit.
       <br><br>
       <b>Battery protection:</b> on battery power, TOM switches everything off once the charge drops to a level you choose. Everything is off by default; changes apply with <i>Apply</i>.
     </td>
     <td width="50%" valign="top">
       <h3>Safe by design</h3>
-      <b>⌃⌥⌘K</b> stops key press, mouse click and mouse movement immediately, from any app, and releases any key or button TOM is holding.
+      <b>⌃⌥⌘K</b> stops key press, mouse click and mouse movement immediately, from any app, and releases any key or button TOM is holding. While a simulation runs, the window reminds you of the shortcut.
       <br><br>
-      Mouse movement and mouse click are mutually exclusive, and their on/off states are deliberately <b>not restored on launch</b>: an app that starts clicking by itself after a restart would be dangerous. Quitting TOM releases anything it is holding down.
+      Mouse movement and mouse click are mutually exclusive, and the on/off states of all three simulations are deliberately <b>not restored on launch</b>: an app that starts pressing or clicking by itself after a restart would be dangerous. Quitting TOM releases anything it is holding down, and if the Accessibility permission is withdrawn, the simulations switch off visibly.
       <br><br>
       Settings and the folded state of each section are preserved across restarts.
     </td>

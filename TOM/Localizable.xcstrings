@@ -184,6 +184,7 @@
       }
     },
     "Command": {
+      "extractionState": "manual",
       "comment": "Modifier key label.",
       "localizations": {
         "de": {
@@ -201,6 +202,7 @@
       }
     },
     "Control": {
+      "extractionState": "manual",
       "comment": "Modifier key label.",
       "localizations": {
         "de": {
@@ -218,6 +220,7 @@
       }
     },
     "Delete": {
+      "extractionState": "manual",
       "comment": "Key label for the backspace key.",
       "localizations": {
         "de": {
@@ -302,6 +305,7 @@
       }
     },
     "Esc": {
+      "extractionState": "manual",
       "localizations": {
         "de": {
           "stringUnit": {
@@ -451,6 +455,40 @@
         }
       }
     },
+    "Keeps the Mac awake; the display may still turn off.": {
+      "comment": "Footer under Keep Mac Awake when the display may sleep.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hält den Mac wach; der Bildschirm darf ausgehen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mantiene el Mac despierto; la pantalla puede apagarse."
+          }
+        }
+      }
+    },
+    "Keeps the display and the Mac awake.": {
+      "comment": "Footer under Keep Mac Awake.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hält Bildschirm und Mac wach."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mantiene despiertos la pantalla y el Mac."
+          }
+        }
+      }
+    },
     "Key": {
       "localizations": {
         "de": {
@@ -513,6 +551,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Izquierdo"
+          }
+        }
+      }
+    },
+    "Let the display sleep": {
+      "comment": "Switch under Keep Mac Awake: only system sleep is prevented, the display may turn off.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bildschirm darf ausgehen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La pantalla puede apagarse"
           }
         }
       }
@@ -631,6 +686,7 @@
       }
     },
     "Option": {
+      "extractionState": "manual",
       "comment": "Modifier key label.",
       "localizations": {
         "de": {
@@ -681,22 +737,6 @@
         }
       }
     },
-    "Prevents the system from going to sleep.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verhindert den Ruhezustand des Systems."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Impide que el sistema entre en reposo."
-          }
-        }
-      }
-    },
     "Quit": {
       "localizations": {
         "de": {
@@ -714,6 +754,7 @@
       }
     },
     "Return": {
+      "extractionState": "manual",
       "comment": "Key label for the return/enter key.",
       "localizations": {
         "de": {
@@ -782,6 +823,7 @@
       }
     },
     "Shift": {
+      "extractionState": "manual",
       "comment": "Modifier key label.",
       "localizations": {
         "de": {
@@ -882,6 +924,7 @@
       }
     },
     "Space": {
+      "extractionState": "manual",
       "comment": "Key label for the space bar.",
       "localizations": {
         "de": {
@@ -948,6 +991,40 @@
         }
       }
     },
+    "Switching this on stops Simulate Mouse Click.": {
+      "comment": "Shown under Simulate Mouse Movement while mouse click is running.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einschalten beendet „Mausklick simulieren“."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Al activarlo se detiene «Simular clic del ratón»."
+          }
+        }
+      }
+    },
+    "Switching this on stops Simulate Mouse Movement.": {
+      "comment": "Shown under Simulate Mouse Click while mouse movement is running.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einschalten beendet „Mausbewegung simulieren“."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Al activarlo se detiene «Simular movimiento del ratón»."
+          }
+        }
+      }
+    },
     "TOM comes with absolutely no warranty. Redistribution and modification are permitted under the terms of the GNU GPL v3.": {
       "localizations": {
         "de": {
@@ -982,6 +1059,7 @@
       }
     },
     "Tab": {
+      "extractionState": "manual",
       "localizations": {
         "de": {
           "stringUnit": {
@@ -1009,6 +1087,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "No se encontró el archivo LICENSE en la app. El texto de la licencia está disponible en https://www.gnu.org/licenses/gpl-3.0.txt"
+          }
+        }
+      }
+    },
+    "This key can trigger an action in the app in front or in macOS.": {
+      "comment": "Warning under the key picker for Return, Tab, Esc, Delete, F14 and F15.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Taste kann in der vorderen App oder in macOS etwas auslösen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta tecla puede activar algo en la app activa o en macOS."
           }
         }
       }
@@ -1080,6 +1175,23 @@
         }
       }
     },
+    "macOS refused to keep the Mac awake.": {
+      "comment": "Shown when the power assertion could not be created.",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS hat das Wachhalten abgelehnt."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS rechazó mantener el Mac despierto."
+          }
+        }
+      }
+    },
     "min": {
       "comment": "Abbreviation for minutes, after a number field.",
       "localizations": {
@@ -1115,6 +1227,7 @@
       }
     },
     "▲ Arrow Up": {
+      "extractionState": "manual",
       "localizations": {
         "de": {
           "stringUnit": {
@@ -1131,6 +1244,7 @@
       }
     },
     "▶ Arrow Right": {
+      "extractionState": "manual",
       "localizations": {
         "de": {
           "stringUnit": {
@@ -1147,6 +1261,7 @@
       }
     },
     "▼ Arrow Down": {
+      "extractionState": "manual",
       "localizations": {
         "de": {
           "stringUnit": {
@@ -1163,6 +1278,7 @@
       }
     },
     "◀ Arrow Left": {
+      "extractionState": "manual",
       "localizations": {
         "de": {
           "stringUnit": {

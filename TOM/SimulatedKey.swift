@@ -136,6 +136,13 @@ struct SimulatedKey: Identifiable, Hashable {
         all.first { $0.keyCode == code }
     }
 
-    // Position der Taste "T" – auf QWERTZ, QWERTY und AZERTY dieselbe Stelle.
-    static let `default` = SimulatedKey(keyCode: 0x11, fixedLabel: nil)
+    // F18 hat unter macOS keine Standardbelegung – anders als etwa F14/F15
+    // (Bildschirmhelligkeit) oder Buchstaben, die in Textfeldern landen.
+    static let `default` = SimulatedKey(keyCode: 0x4F, fixedLabel: "F18")
+
+    // Tasten, die in der vorderen App oder in macOS etwas ausloesen koennen:
+    // Return, Tab, Esc, Delete sowie F14/F15 (Bildschirmhelligkeit).
+    var mayTriggerActions: Bool {
+        [0x24, 0x30, 0x35, 0x33, 0x6B, 0x71].contains(keyCode)
+    }
 }

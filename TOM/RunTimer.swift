@@ -66,7 +66,7 @@ final class RunTimer: ObservableObject {
 
     var onExpire: (() -> Void)?
 
-    private let defaults = UserDefaults.standard
+    private let defaults: UserDefaults
     private let modeKey: String
     private let durationKey: String
     private let untilKey: String
@@ -76,13 +76,13 @@ final class RunTimer: ObservableObject {
     private var endTimer: Timer?
     private var wakeObserver: NSObjectProtocol?
 
-    init(keyPrefix: String) {
+    init(keyPrefix: String, defaults: UserDefaults = .standard) {
+        self.defaults = defaults
         modeKey = keyPrefix + "TimerMode"
         durationKey = keyPrefix + "DurationMinutes"
         untilKey = keyPrefix + "UntilMinutes"
         endDateKey = keyPrefix + "EndDate"
 
-        let defaults = UserDefaults.standard
         mode = defaults.string(forKey: modeKey).flatMap(TimerMode.init(rawValue:)) ?? .continuous
         let storedDuration = defaults.integer(forKey: durationKey)
         durationMinutes = storedDuration == 0 ? 60 : min(max(storedDuration, 1), Self.maxDurationMinutes)

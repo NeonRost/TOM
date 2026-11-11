@@ -26,7 +26,7 @@ private struct IntervalRow: View {
     var body: some View {
         LabeledContent(title) {
             HStack(spacing: 6) {
-                TextField("", value: $value, format: .number)
+                TextField(value: $value, format: .number) { EmptyView() }
                     .frame(width: 50)
                     .multilineTextAlignment(.trailing)
                     .textFieldStyle(.roundedBorder)
@@ -154,7 +154,7 @@ private struct DurationRow: View {
     }
 
     private func numberField(_ value: Binding<Int>) -> some View {
-        TextField("", value: value, format: .number)
+        TextField(value: value, format: .number) { EmptyView() }
             .frame(width: 40)
             .multilineTextAlignment(.trailing)
             .textFieldStyle(.roundedBorder)
@@ -271,67 +271,6 @@ private struct AccessibilityHint: View {
     }
 }
 
-// Schreibt Einstellungsaenderungen nach UserDefaults; als eigener Modifier,
-// damit der View-Body fuer den Type-Checker klein bleibt.
-private struct PersistenceModifier: ViewModifier {
-    @ObservedObject var keepAwake: KeepAwakeManager
-    @ObservedObject var keySimulator: KeyPressSimulator
-    @ObservedObject var mouseMove: MouseMoveSimulator
-    @ObservedObject var mouseClick: MouseClickSimulator
-
-    func body(content: Content) -> some View {
-        content
-            .onChange(of: keepAwake.isEnabled) { (newValue: Bool) in
-                UserDefaults.standard.set(newValue, forKey: SettingsKeys.keepAwakeEnabled)
-            }
-            .onChange(of: keySimulator.isEnabled) { (newValue: Bool) in
-                UserDefaults.standard.set(newValue, forKey: SettingsKeys.keySimEnabled)
-            }
-            .onChange(of: keySimulator.selectedKey) { (newValue: SimulatedKey) in
-                UserDefaults.standard.set(Int(newValue.keyCode), forKey: SettingsKeys.selectedKeyCode)
-            }
-            .onChange(of: keySimulator.intervalSeconds) { (newValue: Double) in
-                UserDefaults.standard.set(newValue, forKey: SettingsKeys.intervalSeconds)
-            }
-            .onChange(of: mouseMove.intervalSeconds) { (newValue: Double) in
-                UserDefaults.standard.set(newValue, forKey: SettingsKeys.mouseMoveInterval)
-            }
-            .onChange(of: mouseClick.intervalSeconds) { (newValue: Double) in
-                UserDefaults.standard.set(newValue, forKey: SettingsKeys.mouseClickInterval)
-            }
-            .onChange(of: mouseClick.buttonChoice) { (newValue: MouseButtonChoice) in
-                UserDefaults.standard.set(newValue.rawValue, forKey: SettingsKeys.mouseClickButton)
-            }
-    }
-}
-
-private struct PressModePersistenceModifier: ViewModifier {
-    @ObservedObject var keySimulator: KeyPressSimulator
-    @ObservedObject var mouseClick: MouseClickSimulator
-
-    func body(content: Content) -> some View {
-        content
-            .onChange(of: keySimulator.mode) { (newValue: PressMode) in
-                UserDefaults.standard.set(newValue.rawValue, forKey: SettingsKeys.keyPressMode)
-            }
-            .onChange(of: keySimulator.holdSeconds) { (newValue: Double) in
-                UserDefaults.standard.set(newValue, forKey: SettingsKeys.keyHoldSeconds)
-            }
-            .onChange(of: keySimulator.pauseSeconds) { (newValue: Double) in
-                UserDefaults.standard.set(newValue, forKey: SettingsKeys.keyPauseSeconds)
-            }
-            .onChange(of: mouseClick.mode) { (newValue: PressMode) in
-                UserDefaults.standard.set(newValue.rawValue, forKey: SettingsKeys.mouseClickMode)
-            }
-            .onChange(of: mouseClick.holdSeconds) { (newValue: Double) in
-                UserDefaults.standard.set(newValue, forKey: SettingsKeys.mouseHoldSeconds)
-            }
-            .onChange(of: mouseClick.pauseSeconds) { (newValue: Double) in
-                UserDefaults.standard.set(newValue, forKey: SettingsKeys.mousePauseSeconds)
-            }
-    }
-}
-
 // Ersetzt den Fensterinhalt statt eines Sheets – Sheets funktionieren im
 // Menüleisten-Fenster nicht zuverlässig. Änderungen greifen erst mit
 // "Übernehmen".
@@ -344,7 +283,9 @@ private struct SetupView: View {
     @AppStorage(SettingsKeys.batteryProtectionEnabled) private var batteryProtection = false
     @AppStorage(SettingsKeys.batteryProtectionThreshold) private var batteryThreshold = BatteryGuard.defaultThreshold
     @ObservedObject private var launchAtLogin = LaunchAtLogin.shared
+    @Environment(\.openWindow) private var openWindow
 
+    @State private var formHeight: CGFloat = 300
     @State private var draftShowMenuBarIcon = false
     @State private var draftHideFromDock = false
     @State private var draftLaunchAtLogin = false
@@ -385,8 +326,16 @@ private struct SetupView: View {
                 }
             }
             .formStyle(.grouped)
+            .background(FormHeightReader(height: $formHeight))
+            .frame(height: formHeight)
 
             HStack {
+                // Im Nur-Menüleisten-Modus gibt es kein App-Menü mit "Über TOM".
+                Button("About TOM") {
+                    openWindow(id: "about")
+                    NSApp.activate(ignoringOtherApps: true)
+                }
+                .buttonStyle(.link)
                 Spacer()
                 Button("Cancel", action: onClose)
                     .keyboardShortcut(.cancelAction)
@@ -397,7 +346,7 @@ private struct SetupView: View {
             .padding(.top, 20)
             .padding(.bottom, 14)
         }
-        .frame(width: 380, height: height)
+        .frame(width: 380)
         .onAppear {
             draftShowMenuBarIcon = showMenuBarIcon
             draftHideFromDock = hideFromDock
@@ -428,18 +377,6 @@ private struct SetupView: View {
         }
     }
 
-    // Gemessen: Setup-Kasten mit vier Schaltern und Knopfzeile, dazu der
-    // Akku-Abschnitt (Schalter, ggf. Auswahl, zweizeilige Erklärung).
-    private var height: CGFloat {
-        var height: CGFloat = 272
-        if launchAtLogin.needsApproval { height += 50 }
-        if hasBattery {
-            height += 100
-            if draftBatteryProtection { height += 37 }
-        }
-        return height
-    }
-
     private func apply() {
         showMenuBarIcon = draftShowMenuBarIcon
         hideFromDock = draftHideFromDock
@@ -465,34 +402,43 @@ struct ContentView: View {
     @AppStorage(SettingsKeys.mouseMoveSectionExpanded) private var mouseMoveExpanded = false
     @AppStorage(SettingsKeys.mouseClickSectionExpanded) private var mouseClickExpanded = false
     @State private var showingSetup = false
+    @State private var formHeight: CGFloat = 400
 
     private var anySimulationActive: Bool {
         keySimulator.isEnabled || mouseMove.isEnabled || mouseClick.isEnabled
     }
 
     var body: some View {
-        Group {
-            if showingSetup {
-                SetupView { showingSetup = false }
-            } else {
-                mainStack
-            }
+        if showingSetup {
+            SetupView { showingSetup = false }
+        } else {
+            mainStack
         }
-            .modifier(PersistenceModifier(
-                keepAwake: keepAwake,
-                keySimulator: keySimulator,
-                mouseMove: mouseMove,
-                mouseClick: mouseClick
-            ))
-            .modifier(PressModePersistenceModifier(keySimulator: keySimulator, mouseClick: mouseClick))
     }
 
     private var mainStack: some View {
         VStack(spacing: 0) {
             settingsForm
+                .frame(height: min(formHeight, maxFormHeight))
+            if anySimulationActive {
+                Text("Emergency stop active: \(EmergencyStop.shortcutDescription)")
+                    .font(.caption.bold())
+                    .foregroundStyle(.orange)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 30)
+            }
             bottomRow
         }
-        .frame(width: 380, height: contentHeight)
+        .frame(width: 380)
+    }
+
+    // Nicht hoeher als der sichtbare Bildschirm – dann scrollt die Form,
+    // statt hinter Dock/Menueleiste abgeschnitten zu werden. Abgezogen werden
+    // Titelleiste (32), Buttonzeile (58), etwas Luft und, solange er zu sehen
+    // ist, der Notstopp-Hinweis.
+    private var maxFormHeight: CGFloat {
+        let reserve: CGFloat = anySimulationActive ? 114 : 94
+        return (NSScreen.main?.visibleFrame.height ?? 900) - reserve
     }
 
     private var settingsForm: some View {
@@ -503,6 +449,7 @@ struct ContentView: View {
             mouseClickSection
         }
         .formStyle(.grouped)
+        .background(FormHeightReader(height: $formHeight))
     }
 
     private var bottomRow: some View {
@@ -537,14 +484,28 @@ struct ContentView: View {
             Toggle("Active", isOn: $keepAwake.isEnabled)
                 .toggleStyle(.switch)
 
+            Toggle("Let the display sleep", isOn: $keepAwake.allowDisplaySleep)
+                .toggleStyle(.switch)
+
             TimerRows(timer: keepAwake.runTimer)
         } header: {
             Text("Keep Mac Awake")
         } footer: {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Prevents the system from going to sleep.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                Group {
+                    if keepAwake.allowDisplaySleep {
+                        Text("Keeps the Mac awake; the display may still turn off.")
+                    } else {
+                        Text("Keeps the display and the Mac awake.")
+                    }
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                if keepAwake.assertionFailed {
+                    Text("macOS refused to keep the Mac awake.")
+                        .font(.caption.bold())
+                        .foregroundStyle(.red)
+                }
                 if let endDate = keepAwake.runTimer.endDate {
                     Text("Active until \(formattedTimerEnd(endDate))")
                         .font(.caption.bold())
@@ -567,6 +528,12 @@ struct ContentView: View {
 
             keyPicker
 
+            if keySimulator.selectedKey.mayTriggerActions {
+                Text("This key can trigger an action in the app in front or in macOS.")
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+            }
+
             ModePicker(mode: $keySimulator.mode)
 
             ModeTimingRows(
@@ -585,7 +552,7 @@ struct ContentView: View {
             }
 
             if keySimulator.accessibilityDenied {
-                AccessibilityHint { keySimulator.openAccessibilitySettings() }
+                AccessibilityHint { AccessibilityAccess.shared.openSettings() }
             }
         }
     }
@@ -601,6 +568,12 @@ struct ContentView: View {
                 .toggleStyle(.switch)
                 .padding(.top, CollapsibleSectionMetrics.titleSpacing)
 
+            if mouseClick.isEnabled {
+                Text("Switching this on stops Simulate Mouse Click.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
             IntervalRow(value: $mouseMove.intervalSeconds, range: 1...600, step: 1)
 
             TimerRows(timer: mouseMove.runTimer, showsEnd: true)
@@ -610,7 +583,7 @@ struct ContentView: View {
             }
 
             if mouseMove.accessibilityDenied {
-                AccessibilityHint { keySimulator.openAccessibilitySettings() }
+                AccessibilityHint { AccessibilityAccess.shared.openSettings() }
             }
         }
     }
@@ -625,6 +598,12 @@ struct ContentView: View {
             Toggle("Active", isOn: $mouseClick.isEnabled)
                 .toggleStyle(.switch)
                 .padding(.top, CollapsibleSectionMetrics.titleSpacing)
+
+            if mouseMove.isEnabled {
+                Text("Switching this on stops Simulate Mouse Movement.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
 
             Picker("Mouse Button", selection: $mouseClick.buttonChoice) {
                 ForEach(MouseButtonChoice.allCases) { choice in
@@ -651,24 +630,13 @@ struct ContentView: View {
             }
 
             if mouseClick.accessibilityDenied {
-                AccessibilityHint { keySimulator.openAccessibilitySettings() }
+                AccessibilityHint { AccessibilityAccess.shared.openSettings() }
             }
         } footer: {
-            // Der Not-Aus-Hinweis bleibt auch zugeklappt sichtbar; ein leerer
-            // Fußbereich würde dagegen Abstand kosten.
-            if mouseClickExpanded || anySimulationActive {
-                VStack(alignment: .leading, spacing: 4) {
-                    if mouseClickExpanded {
-                        Text("Clicks happen wherever the pointer is. \(EmergencyStop.shortcutDescription) stops all simulations immediately, at any time.")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    if anySimulationActive {
-                        Text("Emergency stop active: \(EmergencyStop.shortcutDescription)")
-                            .font(.caption.bold())
-                            .foregroundStyle(.orange)
-                    }
-                }
+            if mouseClickExpanded {
+                Text("Clicks happen wherever the pointer is. \(EmergencyStop.shortcutDescription) stops all simulations immediately, at any time.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
     }
@@ -730,78 +698,4 @@ struct ContentView: View {
         }
     }
 
-    // Eine gruppierte Form meldet keine Eigenhöhe; die Fensterhöhe wird deshalb
-    // aus dem sichtbaren Inhalt berechnet. Werte in Punkt, am Layout gemessen.
-    private var contentHeight: CGFloat {
-        let switchRow: CGFloat = 22
-        let pickerRow: CGFloat = 24
-        let timingRow: CGFloat = 32
-        let timerDurationRow: CGFloat = 36
-        let timerUntilRow: CGFloat = 26
-        let timerEndRow: CGFloat = 20
-        let collapsedBox: CGFloat = 44
-        let gap: CGFloat = 10
-
-        func timingRows(_ mode: PressMode) -> CGFloat {
-            CGFloat(ModeTimingRows.rowCount(for: mode)) * timingRow
-        }
-
-        // Timer-Zeilen in den aufklappbaren Abschnitten.
-        func timerRows(_ timer: RunTimer) -> CGFloat {
-            var height = pickerRow
-            switch timer.mode {
-            case .continuous: break
-            case .duration: height += timerDurationRow
-            case .until: height += timerUntilRow
-            }
-            if timer.endDate != nil { height += timerEndRow }
-            return height
-        }
-
-        var keyBox = collapsedBox
-        if keyPressExpanded {
-            keyBox += CollapsibleSectionMetrics.titleSpacing + switchRow + 2 * pickerRow + timingRows(keySimulator.mode)
-                + timerRows(keySimulator.runTimer)
-            if keySimulator.countdownRemaining > 0 { keyBox += 40 }
-            if keySimulator.accessibilityDenied { keyBox += 72 }
-        }
-
-        var moveBox = collapsedBox
-        if mouseMoveExpanded {
-            moveBox += CollapsibleSectionMetrics.titleSpacing + switchRow + timingRow + timerRows(mouseMove.runTimer)
-            if mouseMove.countdownRemaining > 0 { moveBox += 40 }
-            if mouseMove.accessibilityDenied { moveBox += 72 }
-        }
-
-        var clickBox = collapsedBox
-        if mouseClickExpanded {
-            clickBox += CollapsibleSectionMetrics.titleSpacing + switchRow + 2 * pickerRow + timingRows(mouseClick.mode)
-                + timerRows(mouseClick.runTimer)
-            if mouseClick.countdownRemaining > 0 { clickBox += 40 }
-            if mouseClick.accessibilityDenied { clickBox += 72 }
-        }
-
-        // Fußbereich unter "Mausklick": Erklärung (zwei Zeilen) und/oder Not-Aus-Hinweis.
-        var clickFooterGap = gap
-        if mouseClickExpanded { clickFooterGap = 67 }
-        if anySimulationActive { clickFooterGap = mouseClickExpanded ? clickFooterGap + 20 : 53 }
-
-        // 135.5 = Fensteroberkante bis erster Kasten (inkl. "Mac wachhalten"),
-        // 78 = letzter Kasten bis Fensterunterkante (inkl. Setup/Beenden-Zeile).
-        // Der Fußbereich zählt nur ohne den Abschnittsabstand, da kein Kasten folgt.
-        // "Mac wachhalten": Timer-Auswahl, ggf. Dauer/Uhrzeit, ggf. "Aktiv bis …".
-        var keepAwakeExtra: CGFloat = 39
-        switch keepAwake.runTimer.mode {
-        case .continuous: break
-        case .duration: keepAwakeExtra += 47.5
-        case .until: keepAwakeExtra += 39.5
-        }
-        if keepAwake.runTimer.endDate != nil { keepAwakeExtra += 17 }
-
-        let height = 135.5 + keepAwakeExtra + keyBox + gap + moveBox + gap + clickBox + (clickFooterGap - gap) + 78
-        // Nicht hoeher als der sichtbare Bildschirm – dann scrollt die Form,
-        // statt hinter Dock/Menueleiste abgeschnitten zu werden.
-        let maxHeight = (NSScreen.main?.visibleFrame.height ?? 900) - 60
-        return min(height, maxHeight)
-    }
 }

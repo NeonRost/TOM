@@ -15,11 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import AppKit
+import Combine
 import SwiftUI
 
 enum SettingsKeys {
     static let keepAwakeEnabled = "keepAwakeEnabled"
-    static let keySimEnabled = "keySimEnabled"
+    static let keepAwakeAllowDisplaySleep = "keepAwakeAllowDisplaySleep"
     // Speichert den Keycode (Tastenposition) als Zahl, nicht das Zeichen —
     // das Zeichen haengt vom aktiven Tastaturlayout ab.
     static let selectedKeyCode = "selectedKeyCode"
@@ -157,44 +158,115 @@ private struct MainWindowContent: View {
     }
 }
 
+// Naechstes Timer-Ende fuer die Menueleiste. Tickt nur, solange ein Timer
+// laeuft, und dann nur alle 30 Sekunden – minutengenau reicht.
+// Kein TimelineView: im Label eines MenuBarExtra loest er eine endlose
+// Neuberechnung aus (100 % CPU).
+final class MenuBarClock: ObservableObject {
+    @Published private(set) var nearestEnd: Date?
+    @Published private(set) var now = Date()
+
+    private var timer: Timer?
+    private var cancellable: AnyCancellable?
+
+    init(timers: [RunTimer]) {
+        // @Published meldet vor dem Setzen; erst im naechsten Durchlauf
+        // stehen die neuen Werte in den Timern.
+        cancellable = Publishers.MergeMany(timers.map { $0.$endDate.map { _ in () } })
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.update(timers.compactMap(\.endDate).min())
+            }
+    }
+
+    private func update(_ end: Date?) {
+        now = Date()
+        guard end != nearestEnd else { return }
+        nearestEnd = end
+        if end == nil {
+            timer?.invalidate()
+            timer = nil
+        } else if timer == nil {
+            timer = scheduleTimer(after: 30, repeats: true, tolerance: 5) { [weak self] in
+                self?.now = Date()
+            }
+        }
+    }
+
+    deinit {
+        timer?.invalidate()
+    }
+}
+
 // Grüner Punkt unten rechts, sobald irgendeine Funktion eingeschaltet ist.
-// Als fertig gezeichnetes Bild, weil MenuBarExtra-Labels nur Text und Bild
-// zuverlässig darstellen, keine zusammengesetzten Views.
+// Läuft ein Timer, steht die kürzeste Restzeit daneben. Symbol und Zeit
+// sind ein einziges, fertig gezeichnetes Bild, weil MenuBarExtra-Labels
+// zusammengesetzte Views nicht zuverlässig darstellen.
 private struct MenuBarLabel: View {
     @ObservedObject var keepAwake: KeepAwakeManager
     @ObservedObject var keySimulator: KeyPressSimulator
     @ObservedObject var mouseMove: MouseMoveSimulator
     @ObservedObject var mouseClick: MouseClickSimulator
+    @ObservedObject var clock: MenuBarClock
 
     private var isAnythingActive: Bool {
         keepAwake.isEnabled || keySimulator.isEnabled || mouseMove.isEnabled || mouseClick.isEnabled
     }
 
     var body: some View {
-        Image(nsImage: Self.icon(active: isAnythingActive))
+        let time = clock.nearestEnd.map { Self.remaining(until: $0, now: clock.now) }
+        Image(nsImage: Self.image(active: isAnythingActive, time: time))
     }
 
-    private static func icon(active: Bool) -> NSImage {
-        let image = NSImage(size: NSSize(width: 16, height: 16), flipped: false) { rect in
-            if let base = NSImage(named: "MenuBarIcon") {
-                let scale = min(rect.width / base.size.width, rect.height / base.size.height)
-                let size = NSSize(width: base.size.width * scale, height: base.size.height * scale)
-                base.draw(in: NSRect(x: rect.midX - size.width / 2, y: rect.midY - size.height / 2,
-                                     width: size.width, height: size.height))
+    // Restzeit als h:mm, aufgerundet auf die angefangene Minute.
+    private static func remaining(until end: Date, now: Date) -> String {
+        let minutes = max(Int((end.timeIntervalSince(now) / 60).rounded(.up)), 0)
+        return String(format: "%d:%02d", minutes / 60, minutes % 60)
+    }
+
+    private static let iconSize: CGFloat = 16
+    private static let gap: CGFloat = 4
+
+    private static func image(active: Bool, time: String?) -> NSImage {
+        // Ziffern gleicher Breite: sonst zuckt das Symbol jede Minute ein wenig.
+        let font = NSFont.monospacedDigitSystemFont(ofSize: NSFont.menuBarFont(ofSize: 0).pointSize, weight: .regular)
+        let textWidth = time.map { ceil(($0 as NSString).size(withAttributes: [.font: font]).width) } ?? 0
+        let width = iconSize + (time == nil ? 0 : gap + textWidth)
+        let image = NSImage(size: NSSize(width: width, height: iconSize), flipped: false) { rect in
+            let iconRect = NSRect(x: 0, y: 0, width: iconSize, height: iconSize)
+            drawIcon(in: iconRect, active: active)
+            if let time {
+                // Beim Zeichnen gilt das Erscheinungsbild der Menueleiste, labelColor
+                // passt sich also hellem und dunklem Hintergrund an.
+                let attributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: NSColor.labelColor]
+                let size = (time as NSString).size(withAttributes: attributes)
+                (time as NSString).draw(
+                    at: NSPoint(x: iconSize + gap, y: rect.midY - size.height / 2),
+                    withAttributes: attributes
+                )
             }
-            guard active else { return true }
-            let diameter: CGFloat = 6.5
-            let dot = NSRect(x: rect.maxX - diameter, y: rect.minY, width: diameter, height: diameter)
-            // Ausgesparter Rand trennt den Punkt vom Glas, wie bei Badges üblich.
-            NSGraphicsContext.current?.compositingOperation = .clear
-            NSBezierPath(ovalIn: dot.insetBy(dx: -1.2, dy: -1.2)).fill()
-            NSGraphicsContext.current?.compositingOperation = .sourceOver
-            NSColor.systemGreen.setFill()
-            NSBezierPath(ovalIn: dot).fill()
             return true
         }
         image.isTemplate = false
         return image
+    }
+
+    private static func drawIcon(in rect: NSRect, active: Bool) {
+        if let base = NSImage(named: "MenuBarIcon") {
+            let scale = min(rect.width / base.size.width, rect.height / base.size.height)
+            let size = NSSize(width: base.size.width * scale, height: base.size.height * scale)
+            base.draw(in: NSRect(x: rect.midX - size.width / 2, y: rect.midY - size.height / 2,
+                                 width: size.width, height: size.height))
+        }
+        guard active else { return }
+        let diameter: CGFloat = 6.5
+        let dot = NSRect(x: rect.maxX - diameter, y: rect.minY, width: diameter, height: diameter)
+        // Ausgesparter Rand trennt den Punkt vom Glas, wie bei Badges üblich.
+        NSGraphicsContext.current?.compositingOperation = .clear
+        NSBezierPath(ovalIn: dot.insetBy(dx: -1.2, dy: -1.2)).fill()
+        NSGraphicsContext.current?.compositingOperation = .sourceOver
+        NSColor.systemGreen.setFill()
+        NSBezierPath(ovalIn: dot).fill()
     }
 }
 
@@ -205,12 +277,22 @@ struct TOMApp: App {
     @StateObject private var keySimulator: KeyPressSimulator
     @StateObject private var mouseMove: MouseMoveSimulator
     @StateObject private var mouseClick: MouseClickSimulator
+    @StateObject private var menuBarClock: MenuBarClock
     @AppStorage(SettingsKeys.showMenuBarIcon) private var showMenuBarIcon = false
 
     init() {
+        // Zwei laufende TOMs würden sich Einstellungen und Not-Aus teilen und
+        // doppelt Ereignisse senden: die vorhandene Instanz nach vorne holen.
+        if let other = NSRunningApplication.runningApplications(withBundleIdentifier: Bundle.main.bundleIdentifier ?? "")
+            .first(where: { $0 != NSRunningApplication.current }) {
+            other.activate(options: [])
+            exit(0)
+        }
+
         let defaults = UserDefaults.standard
         let keepAwakeEnabled = defaults.bool(forKey: SettingsKeys.keepAwakeEnabled)
-        let keySimEnabled = defaults.bool(forKey: SettingsKeys.keySimEnabled)
+        // Bis Version 1.1 wurde der Ein-Zustand des Tastendrucks gespeichert.
+        defaults.removeObject(forKey: "keySimEnabled")
         let storedKeyCode = defaults.object(forKey: SettingsKeys.selectedKeyCode) as? Int
         let selectedKey = storedKeyCode.flatMap { SimulatedKey.byCode(CGKeyCode($0)) } ?? .default
         let storedInterval = defaults.double(forKey: SettingsKeys.intervalSeconds)
@@ -231,7 +313,6 @@ struct TOMApp: App {
         let awake = KeepAwakeManager(initiallyEnabled: keepAwakeEnabled)
         _keepAwake = StateObject(wrappedValue: awake)
         let keySim = KeyPressSimulator(
-            initiallyEnabled: keySimEnabled,
             selectedKey: selectedKey,
             mode: storedMode(SettingsKeys.keyPressMode),
             intervalSeconds: interval,
@@ -240,8 +321,8 @@ struct TOMApp: App {
         )
         _keySimulator = StateObject(wrappedValue: keySim)
 
-        // Die Ein-Zustaende der Mausfunktionen werden bewusst NICHT gespeichert:
-        // eine App, die nach dem Start unaufgefordert klickt, waere gefaehrlich.
+        // Die Ein-Zustaende der Simulationen werden bewusst NICHT gespeichert:
+        // eine App, die nach dem Start unaufgefordert tippt oder klickt, waere gefaehrlich.
         let move = MouseMoveSimulator(intervalSeconds: storedMoveInterval == 0 ? 30 : storedMoveInterval)
         let click = MouseClickSimulator(
             buttonChoice: storedButton,
@@ -261,28 +342,23 @@ struct TOMApp: App {
             move?.isEnabled = false
             click?.isEnabled = false
         }
-        emergencyStop.heldModifiers = { [weak keySim] in keySim?.heldModifierFlags ?? [] }
-        // Ein beim Start automatisch fortgesetzter Tastendruck lief schon vor
-        // dieser Verdrahtung an – den Not-Aus jetzt nachziehen.
-        emergencyStop.activeStateChanged()
 
         BatteryGuard.shared.stopAll = { [weak awake, weak keySim, weak move, weak click] in
             awake?.isEnabled = false
             keySim?.isEnabled = false
             move?.isEnabled = false
             click?.isEnabled = false
-            // Wird sonst nur über die Oberfläche gespeichert, die bei
-            // geschlossenem Fenster nicht mitläuft.
-            UserDefaults.standard.set(false, forKey: SettingsKeys.keepAwakeEnabled)
-            UserDefaults.standard.set(false, forKey: SettingsKeys.keySimEnabled)
         }
         BatteryGuard.shared.start()
         _mouseMove = StateObject(wrappedValue: move)
         _mouseClick = StateObject(wrappedValue: click)
+        _menuBarClock = StateObject(wrappedValue: MenuBarClock(
+            timers: [awake.runTimer, keySim.runTimer, move.runTimer, click.runTimer]
+        ))
     }
 
     var body: some Scene {
-        Window("TOM", id: "main") {
+        Window(Text(verbatim: "TOM"), id: "main") {
             MainWindowContent(keepAwake: keepAwake, keySimulator: keySimulator, mouseMove: mouseMove, mouseClick: mouseClick, appDelegate: appDelegate)
         }
         .windowResizability(.contentSize)
@@ -304,7 +380,7 @@ struct TOMApp: App {
         MenuBarExtra(isInserted: $showMenuBarIcon) {
             ContentView(keepAwake: keepAwake, keySimulator: keySimulator, mouseMove: mouseMove, mouseClick: mouseClick)
         } label: {
-            MenuBarLabel(keepAwake: keepAwake, keySimulator: keySimulator, mouseMove: mouseMove, mouseClick: mouseClick)
+            MenuBarLabel(keepAwake: keepAwake, keySimulator: keySimulator, mouseMove: mouseMove, mouseClick: mouseClick, clock: menuBarClock)
         }
         .menuBarExtraStyle(.window)
     }

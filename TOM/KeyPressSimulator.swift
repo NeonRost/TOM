@@ -15,49 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import AppKit
-import ApplicationServices
 import Combine
 import CoreGraphics
 
-// Wie Taste bzw. Maustaste betaetigt wird: kurz im Intervall, dauerhaft
-// gehalten oder abwechselnd gehalten und losgelassen.
-enum PressMode: String, CaseIterable, Identifiable {
-    case press, hold, cycle
-
-    var id: String { rawValue }
-
-    var displayName: String {
-        switch self {
-        case .press: return String(localized: "Press")
-        case .hold: return String(localized: "Hold")
-        case .cycle: return String(localized: "Hold & Pause")
-        }
-    }
-}
-
-enum PressTiming {
-    static let range: ClosedRange<Double> = 0.1...600
-    static let step = 0.1
-    static let defaultHoldSeconds = 2.0
-    static let defaultPauseSeconds = 5.0
-
-    static func clamp(_ value: Double) -> Double {
-        min(max(value, range.lowerBound), range.upperBound)
-    }
-}
-
+// Der Ein-Zustand wird bewusst nicht gespeichert: Wie die Mausfunktionen
+// startet der Tastendruck nie von selbst – sonst koennte TOM nach der
+// Anmeldung unsichtbar eine Taste druecken oder halten.
 final class KeyPressSimulator: ObservableObject {
-    @Published var isEnabled: Bool {
+    @Published var isEnabled = false {
         didSet {
             guard isEnabled != oldValue else { return }
             isEnabled ? start() : stop()
         }
     }
     @Published var selectedKey: SimulatedKey {
-        didSet { restartIfRunning() }
+        didSet {
+            defaults.set(Int(selectedKey.keyCode), forKey: SettingsKeys.selectedKeyCode)
+            driver.restartIfRunning()
+        }
     }
     @Published var mode: PressMode {
-        didSet { if mode != oldValue { restartIfRunning() } }
+        didSet {
+            guard mode != oldValue else { return }
+            defaults.set(mode.rawValue, forKey: SettingsKeys.keyPressMode)
+            driver.mode = mode
+            driver.restartIfRunning()
+        }
     }
     @Published var intervalSeconds: Double {
         didSet {
@@ -66,7 +49,9 @@ final class KeyPressSimulator: ObservableObject {
                 intervalSeconds = clamped
                 return
             }
-            if mode == .press { restartIfRunning() }
+            defaults.set(intervalSeconds, forKey: SettingsKeys.intervalSeconds)
+            driver.interval = intervalSeconds
+            if mode == .press { driver.restartIfRunning() }
         }
     }
     @Published var holdSeconds: Double {
@@ -76,7 +61,9 @@ final class KeyPressSimulator: ObservableObject {
                 holdSeconds = clamped
                 return
             }
-            if mode == .cycle { restartIfRunning() }
+            defaults.set(holdSeconds, forKey: SettingsKeys.keyHoldSeconds)
+            driver.hold = holdSeconds
+            if mode == .cycle { driver.restartIfRunning() }
         }
     }
     @Published var pauseSeconds: Double {
@@ -86,179 +73,147 @@ final class KeyPressSimulator: ObservableObject {
                 pauseSeconds = clamped
                 return
             }
-            if mode == .cycle { restartIfRunning() }
+            defaults.set(pauseSeconds, forKey: SettingsKeys.keyPauseSeconds)
+            driver.pause = pauseSeconds
+            if mode == .cycle { driver.restartIfRunning() }
         }
     }
     @Published private(set) var accessibilityDenied = false
     @Published private(set) var countdownRemaining = 0
 
-    static let startDelaySeconds = 5
-
-    private var timer: Timer?
-    private var countdownTimer: Timer?
-    private var isRunning = false
-    private var heldKeyCode: CGKeyCode?
-    private var terminateObserver: NSObjectProtocol?
-    private var timerChange: AnyCancellable?
-
     let runTimer = RunTimer(keyPrefix: "keySim")
 
-    init(
-        initiallyEnabled: Bool,
-        selectedKey: SimulatedKey,
-        mode: PressMode,
-        intervalSeconds: Double,
-        holdSeconds: Double,
-        pauseSeconds: Double
-    ) {
-        self.isEnabled = false
+    private let defaults = UserDefaults.standard
+    private let driver = PressDriver()
+    private let countdown = StartCountdown()
+    private var heldKeyCode: CGKeyCode?
+    private var terminateObserver: NSObjectProtocol?
+    private var subscriptions = Set<AnyCancellable>()
+
+    init(selectedKey: SimulatedKey, mode: PressMode, intervalSeconds: Double, holdSeconds: Double, pauseSeconds: Double) {
         self.selectedKey = selectedKey
         self.mode = mode
         self.intervalSeconds = intervalSeconds
         self.holdSeconds = holdSeconds
         self.pauseSeconds = pauseSeconds
+
+        driver.mode = mode
+        driver.interval = intervalSeconds
+        driver.hold = holdSeconds
+        driver.pause = pauseSeconds
+        driver.tap = { [weak self] in self?.sendKeyPress() }
+        driver.press = { [weak self] in self?.pressKeyDown() }
+        driver.release = { [weak self] in self?.releaseHeldKey() }
+
         // Eine beim Beenden noch gehaltene Taste bliebe sonst systemweit "gedrueckt".
         terminateObserver = NotificationCenter.default.addObserver(
             forName: NSApplication.willTerminateNotification, object: nil, queue: .main
         ) { [weak self] _ in
             self?.releaseHeldKey()
         }
-        timerChange = runTimer.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }
-        runTimer.onExpire = { [weak self] in
-            self?.isEnabled = false
-            // Wird sonst nur über die Oberfläche gespeichert.
-            UserDefaults.standard.set(false, forKey: SettingsKeys.keySimEnabled)
-        }
-        if initiallyEnabled && runTimer.resume() {
-            self.isEnabled = true
-            start(timerAlreadyRunning: true)
-        }
+        runTimer.objectWillChange
+            .sink { [weak self] _ in self?.objectWillChange.send() }
+            .store(in: &subscriptions)
+        runTimer.onExpire = { [weak self] in self?.isEnabled = false }
+        AccessibilityAccess.shared.$isTrusted
+            .sink { [weak self] trusted in if trusted { self?.accessibilityDenied = false } }
+            .store(in: &subscriptions)
     }
 
-    private func start(timerAlreadyRunning: Bool = false) {
-        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue(): true] as CFDictionary
-        guard AXIsProcessTrustedWithOptions(options) else {
+    private func start() {
+        guard AccessibilityAccess.shared.requestIfNeeded() else {
             accessibilityDenied = true
             isEnabled = false
             return
         }
         accessibilityDenied = false
-        if !timerAlreadyRunning { runTimer.start() }
-        beginCountdown()
+        runTimer.start()
+        countdown.start(
+            onTick: { [weak self] in self?.countdownRemaining = $0 },
+            onFinish: { [weak self] in self?.driver.start() }
+        )
         EmergencyStop.shared.activeStateChanged()
     }
 
-    // Startverzoegerung, damit das Zielfenster in Ruhe nach vorne geholt
-    // werden kann, bevor der erste Tastendruck kommt.
-    private func beginCountdown() {
-        countdownRemaining = Self.startDelaySeconds
-        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-            guard let self else { return }
-            self.countdownRemaining -= 1
-            if self.countdownRemaining <= 0 {
-                self.countdownTimer?.invalidate()
-                self.countdownTimer = nil
-                self.run()
-            }
-        }
-    }
-
     private func stop() {
-        countdownTimer?.invalidate()
-        countdownTimer = nil
+        countdown.cancel()
         countdownRemaining = 0
-        haltActivity()
-        isRunning = false
+        driver.stop()
         runTimer.stop()
         EmergencyStop.shared.activeStateChanged()
     }
 
-    private func run() {
-        isRunning = true
-        switch mode {
-        case .press:
-            timer = Timer.scheduledTimer(withTimeInterval: intervalSeconds, repeats: true) { [weak self] _ in
-                self?.sendKeyPress()
+    // Wird die Berechtigung im Betrieb entzogen, verwirft macOS jedes Ereignis
+    // stillschweigend – dann lieber sichtbar ausschalten.
+    private func hasAccess() -> Bool {
+        guard AXIsProcessTrusted() else {
+            DispatchQueue.main.async { [weak self] in
+                self?.accessibilityDenied = true
+                self?.isEnabled = false
             }
-        case .hold:
-            pressKeyDown()
-        case .cycle:
-            beginHoldPhase()
+            return false
         }
+        return true
     }
 
-    private func beginHoldPhase() {
-        pressKeyDown()
-        timer = Timer.scheduledTimer(withTimeInterval: holdSeconds, repeats: false) { [weak self] _ in
-            guard let self else { return }
-            self.releaseHeldKey()
-            self.timer = Timer.scheduledTimer(withTimeInterval: self.pauseSeconds, repeats: false) { [weak self] _ in
-                self?.beginHoldPhase()
-            }
-        }
-    }
+    // Ein Frame-genaues Loslassen (keyDown und keyUp im selben Tick) übersehen manche
+    // Spiele, die den Tastaturstatus nur einmal pro Frame abfragen statt auf das
+    // Down/Up-Event zu reagieren. Deshalb wird die Taste kurz "gehalten".
+    private static let tapHoldDuration: TimeInterval = 0.08
 
-    private func haltActivity() {
-        timer?.invalidate()
-        timer = nil
-        releaseHeldKey()
-    }
-
-    // Laufende Aktivitaet mit neuen Einstellungen fortsetzen; vor der ersten
-    // Ausfuehrung (Countdown) gibt es nichts neu zu starten.
-    private func restartIfRunning() {
-        guard isRunning else { return }
-        haltActivity()
-        run()
-    }
-
-    var heldModifierFlags: NSEvent.ModifierFlags {
-        switch heldKeyCode {
-        case 0x38, 0x3C: return .shift
-        case 0x3B, 0x3E: return .control
-        case 0x3A, 0x3D: return .option
-        case 0x37, 0x36: return .command
-        default: return []
+    private func sendKeyPress() {
+        guard hasAccess() else { return }
+        let keyCode = selectedKey.keyCode
+        Self.post(keyCode, down: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + Self.tapHoldDuration) {
+            Self.post(keyCode, down: false)
         }
     }
 
     private func pressKeyDown() {
+        guard hasAccess() else { return }
         releaseHeldKey()
         let keyCode = selectedKey.keyCode
-        guard let source = CGEventSource(stateID: .hidSystemState) else { return }
-        CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: true)?.post(tap: .cghidEventTap)
+        Self.post(keyCode, down: true)
         heldKeyCode = keyCode
     }
 
     private func releaseHeldKey() {
         guard let keyCode = heldKeyCode else { return }
         heldKeyCode = nil
-        guard let source = CGEventSource(stateID: .hidSystemState) else { return }
-        CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: false)?.post(tap: .cghidEventTap)
+        Self.post(keyCode, down: false)
     }
 
-    // Ein Frame-genaues Loslassen (keyDown und keyUp im selben Tick) übersehen manche
-    // Spiele, die den Tastaturstatus nur einmal pro Frame abfragen statt auf das
-    // Down/Up-Event zu reagieren. Deshalb wird die Taste kurz "gehalten".
-    private static let holdDuration: TimeInterval = 0.08
+    private static func post(_ keyCode: CGKeyCode, down: Bool) {
+        guard let source = CGEventSource(stateID: .hidSystemState),
+              let event = CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: down) else { return }
+        if let modifier = modifierFlag(for: keyCode) {
+            // Modifier kommen von echter Hardware als flagsChanged an, nicht als keyDown.
+            event.type = .flagsChanged
+            event.flags = down ? modifier : []
+        } else {
+            // Nur die simulierte Taste: Haelt der Nutzer gerade z. B. ⌘, wuerde
+            // aus "T" sonst ⌘T.
+            event.flags = []
+        }
+        event.post(tap: .cghidEventTap)
+    }
 
-    private func sendKeyPress() {
-        let keyCode = selectedKey.keyCode
-        guard let source = CGEventSource(stateID: .hidSystemState) else { return }
-        CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: true)?.post(tap: .cghidEventTap)
-        DispatchQueue.main.asyncAfter(deadline: .now() + Self.holdDuration) {
-            CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: false)?.post(tap: .cghidEventTap)
+    private static func modifierFlag(for keyCode: CGKeyCode) -> CGEventFlags? {
+        switch keyCode {
+        case 0x38, 0x3C: return .maskShift
+        case 0x3B, 0x3E: return .maskControl
+        case 0x3A, 0x3D: return .maskAlternate
+        case 0x37, 0x36: return .maskCommand
+        default: return nil
         }
     }
 
     func openAccessibilitySettings() {
-        guard let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") else { return }
-        NSWorkspace.shared.open(url)
+        AccessibilityAccess.shared.openSettings()
     }
 
     deinit {
-        timer?.invalidate()
-        countdownTimer?.invalidate()
         releaseHeldKey()
         if let terminateObserver { NotificationCenter.default.removeObserver(terminateObserver) }
     }

@@ -15,70 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import AppKit
-import ApplicationServices
 import Combine
 import CoreGraphics
 
-// Not-Aus: ⌃⌥⌘K stoppt Tastendruck, Mausklick und Mausbewegung sofort, egal
-// welche App im Vordergrund ist. Der globale Monitor laeuft nur, solange eine
-// der Funktionen aktiv ist.
-final class EmergencyStop {
-    static let shared = EmergencyStop()
-    static let shortcutDescription = "⌃⌥⌘K"
-    private static let requiredModifiers: NSEvent.ModifierFlags = [.command, .option, .control]
-
-    var isAnyActive: (() -> Bool)?
-    var stopAll: (() -> Void)?
-    // Von TOM selbst gehaltene Modifier (etwa eine dauerhaft gedrueckte
-    // Shift-Taste) duerfen den Not-Aus nicht blockieren.
-    var heldModifiers: (() -> NSEvent.ModifierFlags)?
-
-    private var globalMonitor: Any?
-    private var localMonitor: Any?
-
-    func activeStateChanged() {
-        if isAnyActive?() ?? false {
-            install()
-        } else {
-            remove()
-        }
+// Wird die Berechtigung im Betrieb entzogen, verwirft macOS jedes Ereignis
+// stillschweigend – dann lieber sichtbar ausschalten.
+private func hasAccess(orElse revoke: @escaping () -> Void) -> Bool {
+    guard AXIsProcessTrusted() else {
+        DispatchQueue.main.async(execute: revoke)
+        return false
     }
-
-    private func handle(_ event: NSEvent) {
-        let ignored = (heldModifiers?() ?? []).subtracting(Self.requiredModifiers)
-        let mods = event.modifierFlags
-            .intersection([.command, .option, .control, .shift])
-            .subtracting(ignored)
-        guard event.keyCode == 0x28, mods == Self.requiredModifiers else { return }
-        DispatchQueue.main.async { self.stopAll?() }
-    }
-
-    private func install() {
-        guard globalMonitor == nil else { return }
-        globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            self?.handle(event)
-        }
-        localMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            self?.handle(event)
-            return event
-        }
-    }
-
-    private func remove() {
-        if let monitor = globalMonitor { NSEvent.removeMonitor(monitor) }
-        if let monitor = localMonitor { NSEvent.removeMonitor(monitor) }
-        globalMonitor = nil
-        localMonitor = nil
-    }
-}
-
-private func checkAccessibility() -> Bool {
-    let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue(): true] as CFDictionary
-    return AXIsProcessTrustedWithOptions(options)
+    return true
 }
 
 final class MouseMoveSimulator: ObservableObject {
-    @Published var isEnabled: Bool {
+    @Published var isEnabled = false {
         didSet {
             guard isEnabled != oldValue else { return }
             if isEnabled {
@@ -96,56 +47,48 @@ final class MouseMoveSimulator: ObservableObject {
                 intervalSeconds = clamped
                 return
             }
+            UserDefaults.standard.set(intervalSeconds, forKey: SettingsKeys.mouseMoveInterval)
             if timer != nil { scheduleTimer() }
         }
     }
     @Published private(set) var accessibilityDenied = false
     @Published private(set) var countdownRemaining = 0
 
-    static let startDelaySeconds = 5
-
     weak var counterpart: MouseClickSimulator?
     let runTimer = RunTimer(keyPrefix: "mouseMove")
+
+    private let countdown = StartCountdown()
     private var timer: Timer?
-    private var countdownTimer: Timer?
-    private var timerChange: AnyCancellable?
+    private var subscriptions = Set<AnyCancellable>()
 
     init(intervalSeconds: Double) {
-        self.isEnabled = false
         self.intervalSeconds = intervalSeconds
-        timerChange = runTimer.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }
+        runTimer.objectWillChange
+            .sink { [weak self] _ in self?.objectWillChange.send() }
+            .store(in: &subscriptions)
         runTimer.onExpire = { [weak self] in self?.isEnabled = false }
+        AccessibilityAccess.shared.$isTrusted
+            .sink { [weak self] trusted in if trusted { self?.accessibilityDenied = false } }
+            .store(in: &subscriptions)
     }
 
     private func start() {
-        guard checkAccessibility() else {
+        guard AccessibilityAccess.shared.requestIfNeeded() else {
             accessibilityDenied = true
             isEnabled = false
             return
         }
         accessibilityDenied = false
         runTimer.start()
-        beginCountdown()
+        countdown.start(
+            onTick: { [weak self] in self?.countdownRemaining = $0 },
+            onFinish: { [weak self] in self?.scheduleTimer() }
+        )
         EmergencyStop.shared.activeStateChanged()
     }
 
-    // Startverzoegerung wie bei Tastendruck und Mausklick.
-    private func beginCountdown() {
-        countdownRemaining = Self.startDelaySeconds
-        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-            guard let self else { return }
-            self.countdownRemaining -= 1
-            if self.countdownRemaining <= 0 {
-                self.countdownTimer?.invalidate()
-                self.countdownTimer = nil
-                self.scheduleTimer()
-            }
-        }
-    }
-
     private func stop() {
-        countdownTimer?.invalidate()
-        countdownTimer = nil
+        countdown.cancel()
         countdownRemaining = 0
         timer?.invalidate()
         timer = nil
@@ -155,14 +98,16 @@ final class MouseMoveSimulator: ObservableObject {
 
     private func scheduleTimer() {
         timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: intervalSeconds, repeats: true) { [weak self] _ in
-            self?.jiggle()
-        }
+        timer = TOM.scheduleTimer(after: intervalSeconds, repeats: true) { [weak self] in self?.jiggle() }
     }
 
     // Zeiger ein Pixel verschieben und sofort zurueck – kein Klick, praktisch
     // unsichtbar, zaehlt fuer das System aber als Mausaktivitaet.
     private func jiggle() {
+        guard hasAccess(orElse: { [weak self] in
+            self?.accessibilityDenied = true
+            self?.isEnabled = false
+        }) else { return }
         guard let position = CGEvent(source: nil)?.location,
               let source = CGEventSource(stateID: .hidSystemState) else { return }
         let offset = CGPoint(x: position.x + 1, y: position.y)
@@ -172,7 +117,6 @@ final class MouseMoveSimulator: ObservableObject {
 
     deinit {
         timer?.invalidate()
-        countdownTimer?.invalidate()
     }
 }
 
@@ -190,27 +134,35 @@ enum MouseButtonChoice: String, CaseIterable, Identifiable {
 }
 
 final class MouseClickSimulator: ObservableObject {
-    static let startDelaySeconds = 5
     static let autoOffSeconds: TimeInterval = 8 * 60 * 60
 
-    @Published var isEnabled: Bool {
+    @Published var isEnabled = false {
         didSet {
             guard isEnabled != oldValue else { return }
             if isEnabled {
                 counterpart?.isEnabled = false
-                beginCountdown()
+                start()
             } else {
-                cancelAll()
+                stop()
             }
         }
     }
     // Im Klick-Modus liest click() die Taste bei jedem Klick neu; nur eine
     // gehaltene Taste muss gewechselt werden.
     @Published var buttonChoice: MouseButtonChoice {
-        didSet { if buttonChoice != oldValue, mode != .press { restartIfRunning() } }
+        didSet {
+            guard buttonChoice != oldValue else { return }
+            UserDefaults.standard.set(buttonChoice.rawValue, forKey: SettingsKeys.mouseClickButton)
+            if mode != .press { driver.restartIfRunning() }
+        }
     }
     @Published var mode: PressMode {
-        didSet { if mode != oldValue { restartIfRunning() } }
+        didSet {
+            guard mode != oldValue else { return }
+            UserDefaults.standard.set(mode.rawValue, forKey: SettingsKeys.mouseClickMode)
+            driver.mode = mode
+            driver.restartIfRunning()
+        }
     }
     @Published var intervalSeconds: Double {
         didSet {
@@ -219,7 +171,9 @@ final class MouseClickSimulator: ObservableObject {
                 intervalSeconds = clamped
                 return
             }
-            if mode == .press { restartIfRunning() }
+            UserDefaults.standard.set(intervalSeconds, forKey: SettingsKeys.mouseClickInterval)
+            driver.interval = intervalSeconds
+            if mode == .press { driver.restartIfRunning() }
         }
     }
     @Published var holdSeconds: Double {
@@ -229,7 +183,9 @@ final class MouseClickSimulator: ObservableObject {
                 holdSeconds = clamped
                 return
             }
-            if mode == .cycle { restartIfRunning() }
+            UserDefaults.standard.set(holdSeconds, forKey: SettingsKeys.mouseHoldSeconds)
+            driver.hold = holdSeconds
+            if mode == .cycle { driver.restartIfRunning() }
         }
     }
     @Published var pauseSeconds: Double {
@@ -239,7 +195,9 @@ final class MouseClickSimulator: ObservableObject {
                 pauseSeconds = clamped
                 return
             }
-            if mode == .cycle { restartIfRunning() }
+            UserDefaults.standard.set(pauseSeconds, forKey: SettingsKeys.mousePauseSeconds)
+            driver.pause = pauseSeconds
+            if mode == .cycle { driver.restartIfRunning() }
         }
     }
     @Published private(set) var countdownRemaining = 0
@@ -247,106 +205,99 @@ final class MouseClickSimulator: ObservableObject {
 
     weak var counterpart: MouseMoveSimulator?
     let runTimer = RunTimer(keyPrefix: "mouseClick")
-    private var timerChange: AnyCancellable?
-    private var countdownTimer: Timer?
-    private var activityTimer: Timer?
-    private var autoOffWorkItem: DispatchWorkItem?
-    private var isRunning = false
-    private var heldButton: MouseButtonChoice?
-    private var terminateObserver: NSObjectProtocol?
 
-    init(
-        buttonChoice: MouseButtonChoice,
-        mode: PressMode,
-        intervalSeconds: Double,
-        holdSeconds: Double,
-        pauseSeconds: Double
-    ) {
-        self.isEnabled = false
+    private let driver = PressDriver()
+    private let countdown = StartCountdown()
+    private var heldButton: MouseButtonChoice?
+    private var autoOffDate: Date?
+    private var autoOffTimer: Timer?
+    private var terminateObserver: NSObjectProtocol?
+    private var wakeObserver: NSObjectProtocol?
+    private var subscriptions = Set<AnyCancellable>()
+
+    init(buttonChoice: MouseButtonChoice, mode: PressMode, intervalSeconds: Double, holdSeconds: Double, pauseSeconds: Double) {
         self.buttonChoice = buttonChoice
         self.mode = mode
         self.intervalSeconds = intervalSeconds
         self.holdSeconds = holdSeconds
         self.pauseSeconds = pauseSeconds
-        timerChange = runTimer.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }
+
+        driver.mode = mode
+        driver.interval = intervalSeconds
+        driver.hold = holdSeconds
+        driver.pause = pauseSeconds
+        driver.tap = { [weak self] in self?.click() }
+        driver.press = { [weak self] in self?.pressButtonDown() }
+        driver.release = { [weak self] in self?.releaseHeldButton() }
+
+        runTimer.objectWillChange
+            .sink { [weak self] _ in self?.objectWillChange.send() }
+            .store(in: &subscriptions)
         runTimer.onExpire = { [weak self] in self?.isEnabled = false }
+        AccessibilityAccess.shared.$isTrusted
+            .sink { [weak self] trusted in if trusted { self?.accessibilityDenied = false } }
+            .store(in: &subscriptions)
         // Eine beim Beenden noch gehaltene Maustaste bliebe sonst "gedrueckt".
         terminateObserver = NotificationCenter.default.addObserver(
             forName: NSApplication.willTerminateNotification, object: nil, queue: .main
         ) { [weak self] _ in
             self?.releaseHeldButton()
         }
+        // Timer zaehlen waehrend des Ruhezustands nicht weiter.
+        wakeObserver = NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didWakeNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            self?.autoOffIfDue()
+        }
     }
 
-    // Startverzoegerung, damit der Zeiger in Ruhe positioniert werden kann.
-    private func beginCountdown() {
-        guard checkAccessibility() else {
+    private func start() {
+        guard AccessibilityAccess.shared.requestIfNeeded() else {
             accessibilityDenied = true
             isEnabled = false
             return
         }
         accessibilityDenied = false
         runTimer.start()
-        countdownRemaining = Self.startDelaySeconds
+        countdown.start(
+            onTick: { [weak self] in self?.countdownRemaining = $0 },
+            onFinish: { [weak self] in self?.startClicking() }
+        )
         EmergencyStop.shared.activeStateChanged()
-        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-            guard let self else { return }
-            self.countdownRemaining -= 1
-            if self.countdownRemaining <= 0 {
-                self.countdownTimer?.invalidate()
-                self.countdownTimer = nil
-                self.startClicking()
-            }
-        }
     }
 
     private func startClicking() {
-        run()
-        // Optionale Sicherheitsabschaltung (Setup). Erst beim Auslösen geprüft,
-        // damit ein nachträgliches Einschalten auch für den laufenden Klick gilt.
-        let workItem = DispatchWorkItem { [weak self] in
-            guard UserDefaults.standard.bool(forKey: SettingsKeys.mouseClickAutoOff) else { return }
-            self?.isEnabled = false
-        }
-        autoOffWorkItem = workItem
-        DispatchQueue.main.asyncAfter(deadline: .now() + Self.autoOffSeconds, execute: workItem)
+        driver.start()
+        // Optionale Sicherheitsabschaltung (Setup), nach Uhrzeit gerechnet und
+        // erst beim Ausloesen geprueft, damit ein nachtraegliches Einschalten
+        // auch fuer den laufenden Klick gilt.
+        let date = Date().addingTimeInterval(Self.autoOffSeconds)
+        autoOffDate = date
+        let timer = Timer(fire: date, interval: 0, repeats: false) { [weak self] _ in self?.autoOffIfDue() }
+        RunLoop.main.add(timer, forMode: .common)
+        autoOffTimer = timer
     }
 
-    private func run() {
-        isRunning = true
-        switch mode {
-        case .press:
-            activityTimer = Timer.scheduledTimer(withTimeInterval: intervalSeconds, repeats: true) { [weak self] _ in
-                self?.click()
-            }
-        case .hold:
-            pressButtonDown()
-        case .cycle:
-            beginHoldPhase()
-        }
+    private func autoOffIfDue() {
+        guard isEnabled, let autoOffDate, autoOffDate <= Date(),
+              UserDefaults.standard.bool(forKey: SettingsKeys.mouseClickAutoOff) else { return }
+        isEnabled = false
     }
 
-    private func beginHoldPhase() {
-        pressButtonDown()
-        activityTimer = Timer.scheduledTimer(withTimeInterval: holdSeconds, repeats: false) { [weak self] _ in
-            guard let self else { return }
-            self.releaseHeldButton()
-            self.activityTimer = Timer.scheduledTimer(withTimeInterval: self.pauseSeconds, repeats: false) { [weak self] _ in
-                self?.beginHoldPhase()
-            }
-        }
+    private func stop() {
+        countdown.cancel()
+        countdownRemaining = 0
+        driver.stop()
+        runTimer.stop()
+        autoOffTimer?.invalidate()
+        autoOffTimer = nil
+        autoOffDate = nil
+        EmergencyStop.shared.activeStateChanged()
     }
 
-    private func haltActivity() {
-        activityTimer?.invalidate()
-        activityTimer = nil
-        releaseHeldButton()
-    }
-
-    private func restartIfRunning() {
-        guard isRunning else { return }
-        haltActivity()
-        run()
+    private func revokeAccess() {
+        accessibilityDenied = true
+        isEnabled = false
     }
 
     private static func eventTypes(for choice: MouseButtonChoice) -> (down: CGEventType, up: CGEventType, button: CGMouseButton) {
@@ -355,21 +306,28 @@ final class MouseClickSimulator: ObservableObject {
             : (.rightMouseDown, .rightMouseUp, .right)
     }
 
+    private static func post(_ type: CGEventType, button: CGMouseButton) {
+        guard let position = CGEvent(source: nil)?.location,
+              let source = CGEventSource(stateID: .hidSystemState),
+              let event = CGEvent(mouseEventSource: source, mouseType: type, mouseCursorPosition: position, mouseButton: button) else { return }
+        // Ein gerade gehaltenes ⌘ des Nutzers soll keinen ⌘-Klick daraus machen.
+        event.flags = []
+        event.post(tap: .cghidEventTap)
+    }
+
     // Klickt an der aktuellen Zeigerposition, ohne den Zeiger zu bewegen.
     private func click() {
-        guard let position = CGEvent(source: nil)?.location,
-              let source = CGEventSource(stateID: .hidSystemState) else { return }
+        guard hasAccess(orElse: { [weak self] in self?.revokeAccess() }) else { return }
         let types = Self.eventTypes(for: buttonChoice)
-        CGEvent(mouseEventSource: source, mouseType: types.down, mouseCursorPosition: position, mouseButton: types.button)?.post(tap: .cghidEventTap)
-        CGEvent(mouseEventSource: source, mouseType: types.up, mouseCursorPosition: position, mouseButton: types.button)?.post(tap: .cghidEventTap)
+        Self.post(types.down, button: types.button)
+        Self.post(types.up, button: types.button)
     }
 
     private func pressButtonDown() {
+        guard hasAccess(orElse: { [weak self] in self?.revokeAccess() }) else { return }
         releaseHeldButton()
-        guard let position = CGEvent(source: nil)?.location,
-              let source = CGEventSource(stateID: .hidSystemState) else { return }
         let types = Self.eventTypes(for: buttonChoice)
-        CGEvent(mouseEventSource: source, mouseType: types.down, mouseCursorPosition: position, mouseButton: types.button)?.post(tap: .cghidEventTap)
+        Self.post(types.down, button: types.button)
         heldButton = buttonChoice
     }
 
@@ -377,29 +335,14 @@ final class MouseClickSimulator: ObservableObject {
     private func releaseHeldButton() {
         guard let choice = heldButton else { return }
         heldButton = nil
-        guard let position = CGEvent(source: nil)?.location,
-              let source = CGEventSource(stateID: .hidSystemState) else { return }
         let types = Self.eventTypes(for: choice)
-        CGEvent(mouseEventSource: source, mouseType: types.up, mouseCursorPosition: position, mouseButton: types.button)?.post(tap: .cghidEventTap)
-    }
-
-    private func cancelAll() {
-        countdownTimer?.invalidate()
-        countdownTimer = nil
-        haltActivity()
-        isRunning = false
-        runTimer.stop()
-        autoOffWorkItem?.cancel()
-        autoOffWorkItem = nil
-        countdownRemaining = 0
-        EmergencyStop.shared.activeStateChanged()
+        Self.post(types.up, button: types.button)
     }
 
     deinit {
-        countdownTimer?.invalidate()
-        activityTimer?.invalidate()
-        autoOffWorkItem?.cancel()
+        autoOffTimer?.invalidate()
         releaseHeldButton()
         if let terminateObserver { NotificationCenter.default.removeObserver(terminateObserver) }
+        if let wakeObserver { NSWorkspace.shared.notificationCenter.removeObserver(wakeObserver) }
     }
 }
